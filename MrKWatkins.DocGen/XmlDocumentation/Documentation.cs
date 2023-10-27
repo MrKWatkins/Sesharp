@@ -13,7 +13,7 @@ public sealed class Documentation
     }
 
     [Pure]
-    public bool TryGetMemberDocumentation(string key, [MaybeNullWhen(false)] out MemberDocumentation value) => memberDocumentation.TryGetValue(key, out value);
+    public MemberDocumentation? GetMemberDocumentationOrNull(string key) => memberDocumentation.GetValueOrDefault(key);
 
     [Pure]
     public static Documentation Load(string path)

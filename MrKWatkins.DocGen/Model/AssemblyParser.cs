@@ -1,11 +1,12 @@
 using System.Reflection;
+using MrKWatkins.DocGen.XmlDocumentation;
 
 namespace MrKWatkins.DocGen.Model;
 
 public static class AssemblyParser
 {
     [Pure]
-    public static Assembly Parse(System.Reflection.Assembly assembly)
+    public static Assembly Parse(System.Reflection.Assembly assembly, Documentation documentation)
     {
         var assemblyNode = new Assembly(assembly);
 
@@ -18,13 +19,15 @@ public static class AssemblyParser
             assemblyNode.Children.Add(@namespace);
         }
 
+        new DocumentationListener().Listen(documentation, assemblyNode);
+
         return assemblyNode;
     }
 
     [Pure]
-    private static Model.Type Parse(System.Type type)
+    private static Type Parse(System.Type type)
     {
-        var typeNode = new Model.Type(type);
+        var typeNode = new Type(type);
 
         if (type.IsGenericType)
         {

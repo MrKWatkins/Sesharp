@@ -2,7 +2,7 @@ using System.Xml.Linq;
 
 namespace MrKWatkins.DocGen.XmlDocumentation;
 
-public sealed class MemberDocumentation : DocumentationElement
+public sealed class MemberDocumentation
 {
     private MemberDocumentation(string name, DocumentationSection? summary)
     {

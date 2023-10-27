@@ -6,6 +6,8 @@ public class TypeExtensionsTests
     [TestCase(typeof(int), "Int32")]
     [TestCase(typeof(List<string>), "List<String>")]
     [TestCase(typeof(Dictionary<string, int>), "Dictionary<String, Int32>")]
+    [TestCase(typeof(ITestContravariant<>), "ITestContravariant<in T>")]
+    [TestCase(typeof(ITestCovariant<>), "ITestCovariant<out T>")]
     public void DisplayName(Type type, string expected) => type.DisplayName().Should().Be(expected);
 
     [TestCase(typeof(TestClass), false)]
@@ -16,5 +18,11 @@ public class TypeExtensionsTests
     private sealed class TestClass;
 
     private sealed record TestRecord;
+
+    // ReSharper disable once UnusedTypeParameter
+    private interface ITestContravariant<in T>;
+
+    // ReSharper disable once UnusedTypeParameter
+    private interface ITestCovariant<out T>;
 #pragma warning restore CA1812
 }

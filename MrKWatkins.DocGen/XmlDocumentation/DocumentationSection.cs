@@ -39,7 +39,7 @@ public sealed class DocumentationSection
                     element.Value.Trim());
 
             case "see":
-                return new TypeParamRef(
+                return new See(
                     element.Attribute("cref")?.Value ?? throw new FormatException("<see> element does not have cref attribute."),
                     element.Value.Trim());
 
