@@ -18,6 +18,30 @@ public static class TypeMarkdownGenerator
         }
 
         WriteSignature(writer, type);
+
+        WriteTypeParameters(typeLookup, writer, type);
+    }
+
+    private static void WriteTypeParameters(TypeLookup typeLookup, MarkdownWriter writer, Model.Type type)
+    {
+        var typeParameters = type.TypeParameters.ToList();
+        if (typeParameters.Count == 0)
+        {
+            return;
+        }
+
+        using var table = writer.Table("Parameter", "Description");
+
+        foreach (var typeParameter in typeParameters)
+        {
+            table.NewRow();
+            table.Write(typeParameter.Name);
+            table.NewColumn();
+            if (type.Documentation?.TypeParameters.TryGetValue(typeParameter.Name, out var summary) == true)
+            {
+                WriteSection(typeLookup, table, summary);
+            }
+        }
     }
 
     private static void WriteSection(TypeLookup typeLookup, MarkdownWriter writer, DocumentationSection section)
@@ -28,8 +52,15 @@ public static class TypeMarkdownGenerator
 
     private static void WriteSection(TypeLookup typeLookup, IParagraphWriter writer, DocumentationSection section)
     {
+        var isFirst = true;
         foreach (var element in section.Elements)
         {
+            if (!isFirst)
+            {
+                writer.Write(" ");
+                isFirst = false;
+            }
+
             switch (element)
             {
                 case CodeElement codeElement:
@@ -50,8 +81,6 @@ public static class TypeMarkdownGenerator
                 default:
                     throw new NotSupportedException($"The {nameof(DocumentationElement)} {element.GetType()} is not supported.");
             }
-
-            writer.Write(" ");
         }
     }
 

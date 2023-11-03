@@ -54,6 +54,14 @@ public sealed partial class MarkdownWriter : IDisposable
         return new ParagraphWriter(this);
     }
 
+    [MustUseReturnValue]
+    public ITableWriter Table(params string[] headers)
+    {
+        ValidateNotInChildState();
+
+        return new TableWriter(this, headers);
+    }
+
     public void Dispose() => writer.Dispose();
 
     private void ValidateNotInChildState()

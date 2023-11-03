@@ -6,4 +6,6 @@ public sealed class TypeParameter : ModelNode
         : base(type.DisplayName())
     {
     }
+
+    public new Type Parent => (Type)base.Parent;
 }

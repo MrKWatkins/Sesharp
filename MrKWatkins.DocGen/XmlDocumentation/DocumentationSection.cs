@@ -12,7 +12,11 @@ public sealed class DocumentationSection
     public IReadOnlyList<DocumentationElement> Elements { get; }
 
     [Pure]
-    public static DocumentationSection? Parse(XElement? element) =>
+    public static DocumentationSection Parse(XElement element) => new(ParseChildren(element));
+
+    [Pure]
+    [return: NotNullIfNotNull(nameof(element))]
+    public static DocumentationSection? ParseOrNull(XElement? element) =>
         element != null ? new DocumentationSection(ParseChildren(element)) : null;
 
     [Pure]
