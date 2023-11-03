@@ -3,30 +3,30 @@ using MrKWatkins.DocGen.XmlDocumentation;
 
 namespace MrKWatkins.DocGen.Markdown;
 
-public static class TypeMarkdown
+public static class TypeMarkdownGenerator
 {
-    public static void Generate(string namespaceDirectory, Model.Type type)
+    public static void Generate(TypeLookup typeLookup, string namespaceDirectory, Model.Type type)
     {
         var filePath = Path.Combine(namespaceDirectory, type.FileName);
-        using var writer = new MarkdownWriter(filePath + ".md");
+        using var writer = new MarkdownWriter(filePath);
 
         writer.WriteMainHeading($"{type.DisplayName} {type.Kind.Capitalize()}");
 
         if (type.Documentation?.Summary != null)
         {
-            WriteSection(writer, type.Documentation.Summary);
+            WriteSection(typeLookup, writer, type.Documentation.Summary);
         }
 
         WriteSignature(writer, type);
     }
 
-    private static void WriteSection(MarkdownWriter writer, DocumentationSection section)
+    private static void WriteSection(TypeLookup typeLookup, MarkdownWriter writer, DocumentationSection section)
     {
         using var paragraph = writer.Paragraph();
-        WriteSection(paragraph, section);
+        WriteSection(typeLookup, paragraph, section);
     }
 
-    private static void WriteSection(IParagraphWriter writer, DocumentationSection section)
+    private static void WriteSection(TypeLookup typeLookup, IParagraphWriter writer, DocumentationSection section)
     {
         foreach (var element in section.Elements)
         {
@@ -38,7 +38,7 @@ public static class TypeMarkdown
                 case ParamRef paramRef:
                     break;
                 case See see:
-                    writer.WriteLink(see.Text, see.Key);
+                    WriteSee(typeLookup, writer, see);
                     break;
                 case TypeParamRef typeParamRef:
                     break;
@@ -52,6 +52,30 @@ public static class TypeMarkdown
             }
 
             writer.Write(" ");
+        }
+    }
+
+    private static void WriteSee(TypeLookup typeLookup, IParagraphWriter writer, See see)
+    {
+        var text = see.Text;
+        if (text != null)
+        {
+            writer.WriteLink(text, see.Key);
+            return;
+        }
+
+        var reference = MemberReference.Parse(typeLookup, see.Key);
+        switch (reference.Location)
+        {
+            case TypeLocation.DocumentAssembly:
+                writer.WriteLink(reference.Type.DisplayName(), reference.Type.DocumentationFileName());
+                break;
+            case TypeLocation.System:
+                writer.WriteLink(reference.Type.DisplayName(), reference.Type.MicrosoftFileName());
+                break;
+            default:
+                writer.Write(reference.Type.DisplayName());
+                break;
         }
     }
 

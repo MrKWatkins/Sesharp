@@ -6,6 +6,8 @@ public static class MarkdownGenerator
 {
     public static void Generate(Assembly assembly, string outputDirectory)
     {
+        var typeLookup = new TypeLookup(assembly.ReflectionAssembly);
+
         Directory.CreateDirectory(outputDirectory);
 
         foreach (var @namespace in assembly.Namespaces)
@@ -15,7 +17,7 @@ public static class MarkdownGenerator
 
             foreach (var type in @namespace.Types)
             {
-                TypeMarkdown.Generate(namespaceDirectory, type);
+                TypeMarkdownGenerator.Generate(typeLookup, namespaceDirectory, type);
             }
         }
     }
