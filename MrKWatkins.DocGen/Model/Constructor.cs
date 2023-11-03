@@ -9,5 +9,6 @@ public sealed class Constructor : Function<ConstructorInfo>
     {
     }
 
-    public override string DocumentationKey => throw new NotSupportedException();
+    // TODO: Parameters.
+    public override string DocumentationKey => $"C:{Parent.Namespace.Name}.{Parent.MemberInfo.Name}.{Name}";
 }

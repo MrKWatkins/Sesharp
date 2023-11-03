@@ -19,9 +19,13 @@ public sealed class Type : DocumentableNode<System.Type>
 
     public IEnumerable<Constructor> Constructors => Children.OfType<Constructor>();
 
-    public IEnumerable<Method> Methods => Children.OfType<Method>();
+    public IEnumerable<Field> Fields => Children.OfType<Field>();
 
     public new IEnumerable<Property> Properties => Children.OfType<Property>();
+
+    public IEnumerable<Method> Methods => Children.OfType<Method>();
+
+    public IEnumerable<Event> Events => Children.OfType<Event>();
 
     public string Kind
     {

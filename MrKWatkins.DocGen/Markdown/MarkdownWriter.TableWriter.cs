@@ -45,7 +45,7 @@ public sealed partial class MarkdownWriter
 
         public override void Dispose()
         {
-            Writer.Write(" |", false);
+            Writer.WriteLine(" |", false);
             base.Dispose();
         }
     }

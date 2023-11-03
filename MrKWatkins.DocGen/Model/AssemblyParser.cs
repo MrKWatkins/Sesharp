@@ -35,9 +35,29 @@ public static class AssemblyParser
         }
 
         typeNode.Children.Add(
+            type.GetConstructors(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+                .Select(c => new Constructor(c))
+                .OrderBy(f => f.Name));
+
+        typeNode.Children.Add(
+            type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+                .Select(f => new Field(f))
+                .OrderBy(f => f.Name));
+
+        typeNode.Children.Add(
             type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
                 .Select(p => new Property(p))
                 .OrderBy(p => p.Name));
+
+        typeNode.Children.Add(
+            type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+                .Select(m => new Method(m))
+                .OrderBy(m => m.Name));
+
+        typeNode.Children.Add(
+            type.GetEvents(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+                .Select(e => new Event(e))
+                .OrderBy(e => e.Name));
 
         return typeNode;
     }

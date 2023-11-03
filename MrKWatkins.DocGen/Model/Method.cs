@@ -9,5 +9,6 @@ public sealed class Method : Function<MethodInfo>
     {
     }
 
-    public override string DocumentationKey => throw new NotSupportedException();
+    // TODO: Parameters.
+    public override string DocumentationKey => $"M:{Parent.Namespace.Name}.{Parent.MemberInfo.Name}.{Name}";
 }
