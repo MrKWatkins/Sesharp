@@ -2,13 +2,12 @@ using System.Reflection;
 
 namespace MrKWatkins.DocGen.Model;
 
-public sealed class Method : Function<MethodInfo>
+public sealed class Method : Function
 {
-    public Method(MethodInfo methodInfo)
-        : base(methodInfo)
+    public Method(MethodInfo method)
+        : base(method)
     {
     }
 
-    // TODO: Parameters.
-    public override string DocumentationKey => $"M:{Parent.Namespace.Name}.{Parent.MemberInfo.Name}.{Name}";
+    public new MethodInfo MemberInfo => (MethodInfo)base.MemberInfo;
 }

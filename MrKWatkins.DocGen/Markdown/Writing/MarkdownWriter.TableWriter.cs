@@ -1,4 +1,4 @@
-namespace MrKWatkins.DocGen.Markdown;
+namespace MrKWatkins.DocGen.Markdown.Writing;
 
 public sealed partial class MarkdownWriter
 {
@@ -9,6 +9,11 @@ public sealed partial class MarkdownWriter
         internal TableWriter(MarkdownWriter writer, IReadOnlyList<string> headers)
             : base(writer)
         {
+            if (!headers.Any())
+            {
+                return;
+            }
+
             Writer.Write("|", false);
             foreach (var header in headers)
             {

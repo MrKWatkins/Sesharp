@@ -1,6 +1,6 @@
 using System.Web;
 
-namespace MrKWatkins.DocGen.Markdown;
+namespace MrKWatkins.DocGen.Markdown.Writing;
 
 public sealed partial class MarkdownWriter : IDisposable
 {
@@ -25,6 +25,8 @@ public sealed partial class MarkdownWriter : IDisposable
     public void WriteMainHeading(string text) => WriteHeading(text, 1);
 
     public void WriteSubHeading(string text) => WriteHeading(text, 2);
+
+    public void WriteSubSubHeading(string text) => WriteHeading(text, 3);
 
     public void WriteHeading(string text, int level)
     {

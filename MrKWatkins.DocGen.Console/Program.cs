@@ -1,4 +1,4 @@
-﻿using MrKWatkins.DocGen.Markdown;
+﻿using MrKWatkins.DocGen.Markdown.Generation;
 using MrKWatkins.DocGen.Model;
 using MrKWatkins.DocGen.XmlDocumentation;
 using Assembly = System.Reflection.Assembly;
@@ -16,6 +16,6 @@ var ast = model.Descendents.First(n => n.Name == "MrKWatkins.Ast");
 
 var node = model.Descendents.First(n => n.Name == "Node`1");
 
-MarkdownGenerator.Generate(model, "/home/mrkwatkins/DocGenOutput");
+AssemblyMarkdownGenerator.Generate(model, "/home/mrkwatkins/DocGenOutput");
 
 return;

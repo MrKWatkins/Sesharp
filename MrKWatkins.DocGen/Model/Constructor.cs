@@ -2,13 +2,12 @@ using System.Reflection;
 
 namespace MrKWatkins.DocGen.Model;
 
-public sealed class Constructor : Function<ConstructorInfo>
+public sealed class Constructor : Function
 {
     public Constructor(ConstructorInfo constructorInfo)
         : base(constructorInfo)
     {
     }
 
-    // TODO: Parameters.
-    public override string DocumentationKey => $"C:{Parent.Namespace.Name}.{Parent.MemberInfo.Name}.{Name}";
+    public new ConstructorInfo MemberInfo => (ConstructorInfo)base.MemberInfo;
 }

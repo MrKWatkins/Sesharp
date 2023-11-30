@@ -5,6 +5,10 @@ public sealed class Type : DocumentableNode<System.Type>
     public Type(System.Type type)
         : base(type)
     {
+        if (type.IsGenericType)
+        {
+            Children.Add(type.GetGenericArguments().Select(t => new TypeParameter(t)));
+        }
     }
 
     public override string DisplayName => MemberInfo.DisplayName();
@@ -15,17 +19,19 @@ public sealed class Type : DocumentableNode<System.Type>
 
     public Namespace Namespace => Parent;
 
-    public IEnumerable<TypeParameter> TypeParameters => Children.OfType<TypeParameter>();
+    public IReadOnlyList<TypeParameter> TypeParameters => Children.OfType<TypeParameter>().ToList();    // Keep in declaration order.
 
-    public IEnumerable<Constructor> Constructors => Children.OfType<Constructor>();
+    public IReadOnlyList<Constructor> Constructors => Children.OfType<Constructor>().ToList();
 
-    public IEnumerable<Field> Fields => Children.OfType<Field>();
+    public IReadOnlyList<Field> Fields => Children.OfType<Field>().ToList();
 
-    public new IEnumerable<Property> Properties => Children.OfType<Property>();
+    public new IReadOnlyList<Property> Properties => Children.OfType<Property>().ToList();
 
-    public IEnumerable<Method> Methods => Children.OfType<Method>();
+    public IReadOnlyList<Method> Methods => Children.OfType<Method>().ToList();
 
-    public IEnumerable<Event> Events => Children.OfType<Event>();
+    public IReadOnlyList<Operator> Operators => Children.OfType<Operator>().ToList();
+
+    public IReadOnlyList<Event> Events => Children.OfType<Event>().ToList();
 
     public string Kind
     {

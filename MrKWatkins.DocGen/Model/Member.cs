@@ -5,8 +5,8 @@ namespace MrKWatkins.DocGen.Model;
 public abstract class Member<TMemberInfo> : DocumentableNode<TMemberInfo>
     where TMemberInfo : MemberInfo
 {
-    protected Member(TMemberInfo memberInfo)
-        : base(memberInfo)
+    protected Member(TMemberInfo methodInfo)
+        : base(methodInfo)
     {
     }
 

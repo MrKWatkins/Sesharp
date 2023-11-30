@@ -1,8 +1,8 @@
 using MrKWatkins.DocGen.Model;
 
-namespace MrKWatkins.DocGen.Markdown;
+namespace MrKWatkins.DocGen.Markdown.Generation;
 
-public static class MarkdownGenerator
+public static class AssemblyMarkdownGenerator
 {
     public static void Generate(Assembly assembly, string outputDirectory)
     {
@@ -12,12 +12,15 @@ public static class MarkdownGenerator
 
         foreach (var @namespace in assembly.Namespaces)
         {
+            // TODO: Namespace file.
             var namespaceDirectory = Path.Combine(outputDirectory, @namespace.Name);
             Directory.CreateDirectory(namespaceDirectory);
 
+            var typeGenerator = new TypeMarkdownGenerator(typeLookup, namespaceDirectory);
+
             foreach (var type in @namespace.Types)
             {
-                TypeMarkdownGenerator.Generate(typeLookup, namespaceDirectory, type);
+                typeGenerator.Generate(type);
             }
         }
     }

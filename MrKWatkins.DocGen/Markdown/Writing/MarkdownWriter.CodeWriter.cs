@@ -1,4 +1,4 @@
-namespace MrKWatkins.DocGen.Markdown;
+namespace MrKWatkins.DocGen.Markdown.Writing;
 
 public sealed partial class MarkdownWriter
 {

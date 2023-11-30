@@ -34,11 +34,17 @@ public sealed class MemberReference
         {
             var lastSeparatorIndex = typeName.LastIndexOf('.');
             memberName = typeName[(lastSeparatorIndex + 1)..];
+            var bracketIndex = memberName.IndexOf('(', StringComparison.Ordinal);
+            if (bracketIndex != -1)
+            {
+                memberName = memberName[..bracketIndex];
+            }
             typeName = typeName[..lastSeparatorIndex];
         }
 
         var (type, location) = typeLookup.Get(typeName);
 
+        // TODO: Proper overload resolution.
         var member = memberName != null
             ? type.GetMember(memberName).FirstOrDefault() ?? throw new InvalidOperationException($"Member {memberName} not found on type {typeName}.")
             : null;
