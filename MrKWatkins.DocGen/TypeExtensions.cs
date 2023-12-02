@@ -45,4 +45,21 @@ public static class TypeExtensions
         return type.GetProperty("EqualityContract", BindingFlags.Instance | BindingFlags.NonPublic)?
             .GetCustomAttribute(typeof(CompilerGeneratedAttribute)) != null;
     }
+
+    /// <summary>
+    /// If a type is a nested type then it enumerates its parents, starting at the outermost type, followed by the type itself.
+    /// If it is not nested then it just returns the type.
+    /// </summary>
+    public static IEnumerable<Type> EnumerateNestedTypes(this Type type)
+    {
+        if (type.IsNested)
+        {
+            foreach (var parent in EnumerateNestedTypes(type.DeclaringType!))
+            {
+                yield return parent;
+            }
+        }
+
+        yield return type;
+    }
 }
