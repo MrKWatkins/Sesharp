@@ -1,6 +1,6 @@
 namespace MrKWatkins.DocGen.Tests;
 
-public class TypeExtensionsTests
+public class ReflectionExtensionsTests
 {
     [TestCase(typeof(string), "String")]
     [TestCase(typeof(int), "Int32")]
@@ -14,9 +14,9 @@ public class TypeExtensionsTests
     [TestCase(typeof(TestRecord), true)]
     public void IsRecord(Type type, bool expected) => type.IsRecord().Should().Be(expected);
 
-    [TestCase(typeof(TypeExtensionsTests), typeof(TypeExtensionsTests))]
-    [TestCase(typeof(NestedType), typeof(TypeExtensionsTests), typeof(NestedType))]
-    [TestCase(typeof(NestedType.ReallyNestedType), typeof(TypeExtensionsTests), typeof(NestedType), typeof(NestedType.ReallyNestedType))]
+    [TestCase(typeof(ReflectionExtensionsTests), typeof(ReflectionExtensionsTests))]
+    [TestCase(typeof(NestedType), typeof(ReflectionExtensionsTests), typeof(NestedType))]
+    [TestCase(typeof(NestedType.ReallyNestedType), typeof(ReflectionExtensionsTests), typeof(NestedType), typeof(NestedType.ReallyNestedType))]
     public void EnumerateTypeAndParentTypes(Type type, params Type[] expected) => type.EnumerateNestedTypes().Should().BeEquivalentTo(expected);
 
 #pragma warning disable CA1812

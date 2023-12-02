@@ -1,6 +1,6 @@
 namespace MrKWatkins.DocGen;
 
-public enum TypeLocation
+public enum MemberLocation
 {
     DocumentAssembly,
     System,

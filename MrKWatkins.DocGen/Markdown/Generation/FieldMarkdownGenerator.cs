@@ -5,8 +5,8 @@ namespace MrKWatkins.DocGen.Markdown.Generation;
 
 public sealed class FieldMarkdownGenerator : MemberMarkdownGenerator<FieldInfo, Field>
 {
-    public FieldMarkdownGenerator(TypeLookup typeLookup, string parentDirectory)
-        : base(typeLookup, parentDirectory)
+    public FieldMarkdownGenerator(MemberLookup memberLookup, string parentDirectory)
+        : base(memberLookup, parentDirectory)
     {
     }
 }

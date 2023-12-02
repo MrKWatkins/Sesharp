@@ -7,8 +7,8 @@ namespace MrKWatkins.DocGen.Markdown.Generation;
 
 public sealed class TypeMarkdownGenerator : MarkdownGenerator
 {
-    public TypeMarkdownGenerator(TypeLookup typeLookup, string parentDirectory)
-        : base(typeLookup, parentDirectory)
+    public TypeMarkdownGenerator(MemberLookup memberLookup, string parentDirectory)
+        : base(memberLookup, parentDirectory)
     {
     }
 
@@ -42,7 +42,7 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
 
         WriteMembers<OperatorMarkdownGenerator, MethodBase, Operator>(writer, type.Operators);
 
-        WriteEvents(TypeLookup, writer, type);
+        WriteMembers<EventMarkdownGenerator, EventInfo, Event>(writer, type.Events);
     }
 
     private void WriteTypeParameters(MarkdownWriter writer, Model.Type type)
@@ -79,20 +79,9 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
             return;
         }
 
-        var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), TypeLookup, ParentDirectory)!;
+        var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), MemberLookup, ParentDirectory)!;
 
         generator.WriteTypeSection(writer, members);
-    }
-
-    private static void WriteEvents(TypeLookup typeLookup, MarkdownWriter writer, Model.Type type)
-    {
-        var events = type.Events.ToList();
-        if (events.Count == 0)
-        {
-            return;
-        }
-
-        writer.WriteSubHeading("Events");
     }
 
     private static void WriteSignature(MarkdownWriter writer, Model.Type type)

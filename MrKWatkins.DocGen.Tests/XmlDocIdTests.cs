@@ -7,7 +7,12 @@ namespace MrKWatkins.DocGen.Tests;
 public sealed class XmlDocIdTests : EqualityTestFixture
 {
     [TestCaseSource(nameof(CreateTestCases))]
-    public void Create(MemberInfo member, string expected) => XmlDocId.Create(member).ToString().Should().Be(expected);
+    public void Create(MemberInfo member, string expectedId)
+    {
+        var id = XmlDocId.Create(member);
+        id.ToString().Should().Be(expectedId);
+        id.Id.Should().Be(expectedId);
+    }
 
     [Test]
     public void Create_UnsupportedMemberInfoThrows() => FluentActions.Invoking(() => XmlDocId.Create(new InvalidMemberInfo())).Should().Throw<NotSupportedException>();
@@ -15,7 +20,7 @@ public sealed class XmlDocIdTests : EqualityTestFixture
     [Pure]
     public static IEnumerable<TestCaseData> CreateTestCases()
     {
-        static TestCaseData Create(MemberInfo member, string expected) => new TestCaseData(member, expected).SetName(expected);
+        static TestCaseData Create(MemberInfo member, string expectedId) => new TestCaseData(member, expectedId).SetName(expectedId);
 
         // Types.
         yield return Create(
@@ -53,7 +58,8 @@ public sealed class XmlDocIdTests : EqualityTestFixture
             "P:System.Collections.ArrayList.Item(System.Int32)");
 
         yield return Create(
-            typeof(Dictionary<,>).GetProperty("System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.IsReadOnly", BindingFlags.Instance | BindingFlags.NonPublic)!,
+            typeof(Dictionary<,>).GetProperty("System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.IsReadOnly",
+                BindingFlags.Instance | BindingFlags.NonPublic)!,
             "P:System.Collections.Generic.Dictionary`2.System#Collections#Generic#ICollection{System#Collections#Generic#KeyValuePair{TKey@TValue}}#IsReadOnly");
 
         // Methods.
@@ -62,7 +68,7 @@ public sealed class XmlDocIdTests : EqualityTestFixture
             "M:System.Object.ToString");
 
         yield return Create(
-            typeof(HashSet<>).GetMethod(nameof(HashSet<int>.CopyTo), new []
+            typeof(HashSet<>).GetMethod(nameof(HashSet<int>.CopyTo), new[]
             {
                 typeof(HashSet<>).GetGenericArguments()[0].MakeArrayType()
             })!,
@@ -118,7 +124,7 @@ public sealed class XmlDocIdTests : EqualityTestFixture
             "M:System.Collections.Generic.Dictionary`2.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}})");
 
         yield return Create(
-            typeof(string).GetConstructor(new [] { typeof(char).MakePointerType() })!,
+            typeof(string).GetConstructor(new[] { typeof(char).MakePointerType() })!,
             "M:System.String.#ctor(System.Char*)");
 
         // Events.
@@ -128,12 +134,16 @@ public sealed class XmlDocIdTests : EqualityTestFixture
 
         // Operators.
         yield return Create(
-            typeof(decimal).GetMethod("op_Implicit", new [] { typeof(byte) })!,
+            typeof(decimal).GetMethod("op_Implicit", new[] { typeof(byte) })!,
             "M:System.Decimal.op_Implicit(System.Byte)~System.Decimal");
 
         yield return Create(
-            typeof(decimal).GetMethod("op_Explicit", new [] { typeof(double) })!,
+            typeof(decimal).GetMethod("op_Explicit", new[] { typeof(double) })!,
             "M:System.Decimal.op_Explicit(System.Double)~System.Decimal");
+
+        yield return Create(
+            typeof(Half).GetMethods().Single(m => m.Name == "op_CheckedExplicit" && m.ReturnType == typeof(byte)),
+            "M:System.Half.op_CheckedExplicit(System.Half)~System.Byte");
     }
 
     [TestCaseSource(nameof(EqualityTestCases))]

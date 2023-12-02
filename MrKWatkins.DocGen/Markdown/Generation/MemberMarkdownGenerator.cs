@@ -10,8 +10,8 @@ public abstract class MemberMarkdownGenerator<TMemberInfo, TMember> : MarkdownGe
     where TMemberInfo : MemberInfo
     where TMember : DocumentableNode<TMemberInfo>
 {
-    protected MemberMarkdownGenerator(TypeLookup typeLookup, string parentDirectory)
-        : base(typeLookup, parentDirectory)
+    protected MemberMarkdownGenerator(MemberLookup memberLookup, string parentDirectory)
+        : base(memberLookup, parentDirectory)
     {
     }
 

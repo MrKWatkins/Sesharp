@@ -2,13 +2,13 @@ namespace MrKWatkins.DocGen.XmlDocumentation;
 
 public abstract class ReferenceElement : DocumentationElement
 {
-    protected ReferenceElement(string key, string? text)
+    protected ReferenceElement(string name, string? text)
     {
-        Key = key;
+        Name = name;
         Text = string.IsNullOrWhiteSpace(text) ? null : text;
     }
 
-    public string Key { get; }
+    public string Name { get; }
 
     public string? Text { get; }
 }

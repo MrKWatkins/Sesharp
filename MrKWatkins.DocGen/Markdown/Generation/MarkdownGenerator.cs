@@ -5,13 +5,13 @@ namespace MrKWatkins.DocGen.Markdown.Generation;
 
 public abstract class MarkdownGenerator
 {
-    protected MarkdownGenerator(TypeLookup typeLookup, string parentDirectory)
+    protected MarkdownGenerator(MemberLookup memberLookup, string parentDirectory)
     {
-        TypeLookup = typeLookup;
+        MemberLookup = memberLookup;
         ParentDirectory = parentDirectory;
     }
 
-    protected TypeLookup TypeLookup { get; }
+    protected MemberLookup MemberLookup { get; }
 
     protected string ParentDirectory { get; }
 
@@ -41,13 +41,13 @@ public abstract class MarkdownGenerator
                     writer.WriteCode(codeElement.Code);
                     break;
                 case ParamRef paramRef:
-                    writer.WriteCode(paramRef.Key);
+                    writer.WriteCode(paramRef.Name);
                     break;
                 case See see:
                     WriteSee(writer, see);
                     break;
                 case TypeParamRef typeParamRef:
-                    writer.WriteCode(typeParamRef.Key);
+                    writer.WriteCode(typeParamRef.Name);
                     break;
                 case TextElement textElement:
                     writer.Write(textElement.Text);
@@ -63,21 +63,21 @@ public abstract class MarkdownGenerator
         var text = see.Text;
         if (text != null)
         {
-            writer.WriteLink(text, see.Key);
+            writer.WriteLink(text, see.Id.ToString());
             return;
         }
 
-        var reference = MemberReference.Parse(TypeLookup, see.Key);
-        switch (reference.Location)
+        var (member, location) = MemberLookup.Get(see.Id);
+        switch (location)
         {
-            case TypeLocation.DocumentAssembly:
-                writer.WriteLink(reference.Type.DisplayName(), reference.Type.DocumentationFileName());
+            case MemberLocation.DocumentAssembly:
+                writer.WriteLink(member.DisplayName(), member.DocumentationFileName());
                 break;
-            case TypeLocation.System:
-                writer.WriteLink(reference.Type.DisplayName(), reference.Type.MicrosoftFileName());
+            case MemberLocation.System:
+                writer.WriteLink(member.DisplayName(), member.MicrosoftFileName());
                 break;
             default:
-                writer.Write(reference.Type.DisplayName());
+                writer.Write(member.DisplayName());
                 break;
         }
     }

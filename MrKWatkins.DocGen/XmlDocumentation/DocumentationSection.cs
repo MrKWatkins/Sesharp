@@ -54,7 +54,7 @@ public sealed class DocumentationSection
 
             case "see":
                 return new See(
-                    element.Attribute("cref")?.Value ?? throw new FormatException("<see> element does not have cref attribute."),
+                    XmlDocId.Create(element.Attribute("cref")?.Value ?? throw new FormatException("<see> element does not have cref attribute.")),
                     element.Value);
 
             case "typeparamref":

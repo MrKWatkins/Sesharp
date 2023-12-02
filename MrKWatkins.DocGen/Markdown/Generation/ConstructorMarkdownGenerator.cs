@@ -5,8 +5,8 @@ namespace MrKWatkins.DocGen.Markdown.Generation;
 
 public sealed class ConstructorMarkdownGenerator : MemberMarkdownGenerator<MethodBase, Constructor>
 {
-    public ConstructorMarkdownGenerator(TypeLookup typeLookup, string parentDirectory)
-        : base(typeLookup, parentDirectory)
+    public ConstructorMarkdownGenerator(MemberLookup memberLookup, string parentDirectory)
+        : base(memberLookup, parentDirectory)
     {
     }
 }

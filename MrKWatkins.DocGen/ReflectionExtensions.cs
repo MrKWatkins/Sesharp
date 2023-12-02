@@ -4,12 +4,38 @@ using System.Runtime.CompilerServices;
 
 namespace MrKWatkins.DocGen;
 
-public static class TypeExtensions
+public static class ReflectionExtensions
 {
-    private static readonly ConcurrentDictionary<Type, string> Cache = new();
+    private static readonly ConcurrentDictionary<MemberInfo, string> Cache = new();
 
     [Pure]
-    public static string DisplayName(this Type type) => Cache.GetOrAdd(type, BuildDisplayName);
+    public static string DisplayName(this MemberInfo member) => Cache.GetOrAdd(member, m =>
+        m switch
+        {
+            ConstructorInfo constructor => BuildDisplayName(constructor),
+            EventInfo @event => BuildDisplayName(@event),
+            FieldInfo field => BuildDisplayName(field),
+            MethodInfo method => BuildDisplayName(method),
+            PropertyInfo property => BuildDisplayName(property),
+            Type type => BuildDisplayName(type),
+            _ => throw new NotSupportedException($"Members of type {member.GetType().DisplayName()} are not supported.")
+        });
+
+    [Pure]
+    private static string BuildDisplayName(ConstructorInfo constructor) =>
+        $"{constructor.DeclaringType!.Name[..^2]}{BuildParameterList(constructor)}";
+
+    [Pure]
+    private static string BuildDisplayName(EventInfo @event) => @event.Name;
+
+    [Pure]
+    private static string BuildDisplayName(FieldInfo field) => field.Name;
+
+    [Pure]
+    private static string BuildDisplayName(MethodInfo method) => $"{method.Name}{BuildParameterList(method)}";
+
+    [Pure]
+    private static string BuildDisplayName(PropertyInfo property) => property.Name;
 
     [Pure]
     private static string BuildDisplayName(Type type)
@@ -33,6 +59,10 @@ public static class TypeExtensions
             ? $"{type.Name[..^2]}<{string.Join(", ", type.GetGenericArguments().Select(DisplayName))}>"
             : type.Name;
     }
+
+    [Pure]
+    private static string BuildParameterList(MethodBase method) =>
+        $"({string.Join(", ", method.GetParameters().Select(p => p.ParameterType.DisplayName()))})";
 
     [Pure]
     public static bool IsRecord(this Type type)

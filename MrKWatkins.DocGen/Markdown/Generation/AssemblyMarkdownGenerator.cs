@@ -6,7 +6,7 @@ public static class AssemblyMarkdownGenerator
 {
     public static void Generate(Assembly assembly, string outputDirectory)
     {
-        var typeLookup = new TypeLookup(assembly.ReflectionAssembly);
+        var memberLookup = new MemberLookup(assembly.ReflectionAssembly);
 
         Directory.CreateDirectory(outputDirectory);
 
@@ -16,7 +16,7 @@ public static class AssemblyMarkdownGenerator
             var namespaceDirectory = Path.Combine(outputDirectory, @namespace.Name);
             Directory.CreateDirectory(namespaceDirectory);
 
-            var typeGenerator = new TypeMarkdownGenerator(typeLookup, namespaceDirectory);
+            var typeGenerator = new TypeMarkdownGenerator(memberLookup, namespaceDirectory);
 
             foreach (var type in @namespace.Types)
             {

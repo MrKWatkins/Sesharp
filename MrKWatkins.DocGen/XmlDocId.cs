@@ -7,14 +7,18 @@ namespace MrKWatkins.DocGen;
 // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/#id-strings
 public sealed class XmlDocId : IEquatable<XmlDocId>
 {
-    private readonly string id;
-
     private XmlDocId(string id)
     {
-        this.id = id;
+        Id = id;
     }
 
-    public override string ToString() => id;
+    public string Id { get; }
+
+    public override string ToString() => Id;
+
+    // TODO: Some validation.
+    [Pure]
+    public static XmlDocId Create(string id) => new(id);
 
     [Pure]
     public static XmlDocId Create(MemberInfo member) =>
@@ -41,14 +45,9 @@ public sealed class XmlDocId : IEquatable<XmlDocId>
     public static XmlDocId Create(EventInfo @event)
     {
         var id = new StringBuilder("E:");
-        if (@event.DeclaringType != null)
-        {
-            AppendType(id, @event.DeclaringType!);
-            id.Append('.');
-        }
-
+        AppendType(id, @event.DeclaringType!);
+        id.Append('.');
         AppendName(id, @event);
-
         return new XmlDocId(id.ToString());
     }
 
@@ -56,14 +55,9 @@ public sealed class XmlDocId : IEquatable<XmlDocId>
     public static XmlDocId Create(FieldInfo field)
     {
         var id = new StringBuilder("F:");
-        if (field.DeclaringType != null)
-        {
-            AppendType(id, field.DeclaringType!);
-            id.Append('.');
-        }
-
+        AppendType(id, field.DeclaringType!);
+        id.Append('.');
         AppendName(id, field);
-
         return new XmlDocId(id.ToString());
     }
 
@@ -71,12 +65,8 @@ public sealed class XmlDocId : IEquatable<XmlDocId>
     public static XmlDocId Create(PropertyInfo property)
     {
         var id = new StringBuilder("P:");
-        if (property.DeclaringType != null)
-        {
-            AppendType(id, property.DeclaringType!);
-            id.Append('.');
-        }
-
+        AppendType(id, property.DeclaringType!);
+        id.Append('.');
         AppendName(id, property);
         AppendParameters(id, property.GetIndexParameters());
 
@@ -89,7 +79,7 @@ public sealed class XmlDocId : IEquatable<XmlDocId>
         var id = new StringBuilder("M:");
         Append(id, method);
 
-        if (method.Name is "op_Implicit" or "op_Explicit")
+        if (method.Name is "op_Implicit" or "op_Explicit" or "op_CheckedExplicit")
         {
             id.Append('~');
             AppendParameterType(id, method, method.ReturnType);
@@ -107,11 +97,8 @@ public sealed class XmlDocId : IEquatable<XmlDocId>
 
     private static void Append(StringBuilder id, MethodBase method)
     {
-        if (method.DeclaringType != null)
-        {
-            AppendType(id, method.DeclaringType!);
-            id.Append('.');
-        }
+        AppendType(id, method.DeclaringType!);  // Ignoring global methods on a module; we don't generate documentation for them.
+        id.Append('.');
 
         AppendName(id, method);
 
@@ -290,12 +277,12 @@ public sealed class XmlDocId : IEquatable<XmlDocId>
             return true;
         }
 
-        return id.Equals(other.id, StringComparison.OrdinalIgnoreCase);
+        return Id.Equals(other.Id, StringComparison.OrdinalIgnoreCase);
     }
 
     public override bool Equals(object? obj) => Equals(obj as XmlDocId);
 
-    public override int GetHashCode() => id.GetHashCode(StringComparison.OrdinalIgnoreCase);
+    public override int GetHashCode() => Id.GetHashCode(StringComparison.OrdinalIgnoreCase);
 
     public static bool operator ==(XmlDocId? left, XmlDocId? right) => Equals(left, right);
 
