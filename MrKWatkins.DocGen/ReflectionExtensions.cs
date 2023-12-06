@@ -26,16 +26,10 @@ public static class ReflectionExtensions
         $"{constructor.DeclaringType!.Name[..^2]}{BuildParameterList(constructor)}";
 
     [Pure]
-    private static string BuildDisplayName(EventInfo @event) => @event.Name;
-
-    [Pure]
-    private static string BuildDisplayName(FieldInfo field) => field.Name;
+    private static string BuildDisplayName(MemberInfo member) => member.Name;
 
     [Pure]
     private static string BuildDisplayName(MethodInfo method) => $"{method.Name}{BuildParameterList(method)}";
-
-    [Pure]
-    private static string BuildDisplayName(PropertyInfo property) => property.Name;
 
     [Pure]
     private static string BuildDisplayName(Type type)
