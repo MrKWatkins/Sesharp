@@ -20,7 +20,7 @@ public sealed class XmlDocIdTests : EqualityTestFixture
     [Pure]
     public static IEnumerable<TestCaseData> CreateTestCases()
     {
-        static TestCaseData Create(MemberInfo member, string expectedId) => new TestCaseData(member, expectedId).SetName(expectedId);
+        static TestCaseData Create(MemberInfo member, string expectedId) => new TestCaseData(member, expectedId).SetName($"{nameof(XmlDocId.Create)}: {expectedId}");
 
         // Types.
         yield return Create(
@@ -155,13 +155,13 @@ public sealed class XmlDocIdTests : EqualityTestFixture
         var type = XmlDocId.Create(typeof(string));
         var property = XmlDocId.Create(typeof(string).GetProperty(nameof(string.Length))!);
 
-        yield return new TestCaseData(type, null, false).SetName("null");
-        yield return new TestCaseData(type, type, true).SetName("Type reference equals");
-        yield return new TestCaseData(type, XmlDocId.Create(typeof(string)), true).SetName("Type value equals");
-        yield return new TestCaseData(property, property, true).SetName("Property reference equals");
-        yield return new TestCaseData(property, XmlDocId.Create(typeof(string).GetProperty(nameof(string.Length))!), true).SetName("Property value equals");
-        yield return new TestCaseData(type, XmlDocId.Create(typeof(int)), false).SetName("Different types");
-        yield return new TestCaseData(type, XmlDocId.Create(typeof(string).GetProperty(nameof(string.Length))!), false).SetName("Different kind");
+        yield return new TestCaseData(type, null, false).SetName("Equality: null");
+        yield return new TestCaseData(type, type, true).SetName("Equality: Type reference equals");
+        yield return new TestCaseData(type, XmlDocId.Create(typeof(string)), true).SetName("Equality: Type value equals");
+        yield return new TestCaseData(property, property, true).SetName("Equality: Property reference equals");
+        yield return new TestCaseData(property, XmlDocId.Create(typeof(string).GetProperty(nameof(string.Length))!), true).SetName("Equality: Property value equals");
+        yield return new TestCaseData(type, XmlDocId.Create(typeof(int)), false).SetName("Equality: Different types");
+        yield return new TestCaseData(type, XmlDocId.Create(typeof(string).GetProperty(nameof(string.Length))!), false).SetName("Equality: Different kind");
     }
 
     [UsedImplicitly(ImplicitUseTargetFlags.Members)]
