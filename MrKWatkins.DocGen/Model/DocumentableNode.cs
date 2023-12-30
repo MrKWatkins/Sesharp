@@ -9,6 +9,7 @@ public abstract class DocumentableNode : ModelNode
         : base(memberInfo.Name)
     {
         MemberInfo = memberInfo;
+        XmlDocId = XmlDocId.Create(memberInfo);
     }
 
     public MemberInfo MemberInfo
@@ -17,11 +18,15 @@ public abstract class DocumentableNode : ModelNode
         private init => Properties.Set(nameof(MemberInfo), value);
     }
 
+    public XmlDocId XmlDocId
+    {
+        get => Properties.GetOrThrow<XmlDocId>(nameof(XmlDocId));
+        private init => Properties.Set(nameof(XmlDocId), value);
+    }
+
     public virtual string DisplayName => Name;
 
     public string FileName => MemberInfo.DocumentationFileName();
-
-    public abstract string DocumentationKey { get; }
 
     public MemberDocumentation? Documentation
     {

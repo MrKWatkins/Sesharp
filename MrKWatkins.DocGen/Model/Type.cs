@@ -13,8 +13,6 @@ public sealed class Type : DocumentableNode<System.Type>
 
     public override string DisplayName => MemberInfo.DisplayName();
 
-    public override string DocumentationKey => $"T:{Namespace.Name}.{MemberInfo.Name}";
-
     public new Namespace Parent => (Namespace)base.Parent;
 
     public Namespace Namespace => Parent;

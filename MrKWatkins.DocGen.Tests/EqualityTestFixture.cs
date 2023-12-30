@@ -40,8 +40,8 @@ public abstract class EqualityTestFixture
         var method = typeof(T).GetMethod($"op_{name}", BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
         if (method != null)
         {
-            method.Invoke(null, new object?[] { x, y }).Should().Be(expected);
-            method.Invoke(null, new object?[] { y, x }).Should().Be(expected);
+            method.Invoke(null, [x, y]).Should().Be(expected);
+            method.Invoke(null, [y, x]).Should().Be(expected);
         }
     }
 }

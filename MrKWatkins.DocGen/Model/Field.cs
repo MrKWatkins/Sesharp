@@ -8,6 +8,4 @@ public sealed class Field : Member<FieldInfo>
         : base(fieldInfo)
     {
     }
-
-    public override string DocumentationKey => $"F:{Parent.Namespace.Name}.{Parent.MemberInfo.Name}.{Name}";
 }

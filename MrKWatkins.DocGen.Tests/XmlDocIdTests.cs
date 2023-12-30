@@ -68,10 +68,10 @@ public sealed class XmlDocIdTests : EqualityTestFixture
             "M:System.Object.ToString");
 
         yield return Create(
-            typeof(HashSet<>).GetMethod(nameof(HashSet<int>.CopyTo), new[]
-            {
+            typeof(HashSet<>).GetMethod(nameof(HashSet<int>.CopyTo),
+            [
                 typeof(HashSet<>).GetGenericArguments()[0].MakeArrayType()
-            })!,
+            ])!,
             "M:System.Collections.Generic.HashSet`1.CopyTo(`0[])");
 
         yield return Create(
@@ -96,35 +96,29 @@ public sealed class XmlDocIdTests : EqualityTestFixture
             "M:System.Collections.Generic.Dictionary`2.#ctor");
 
         yield return Create(
-            typeof(Dictionary<int, string>).GetConstructor(new[]
-            {
-                typeof(int)
-            })!,
+            typeof(Dictionary<int, string>).GetConstructor([typeof(int)])!,
             "M:System.Collections.Generic.Dictionary`2.#ctor(System.Int32)");
 
         yield return Create(
-            typeof(Dictionary<int, string>).GetConstructor(new[]
-            {
-                typeof(IEqualityComparer<int>)
-            })!,
+            typeof(Dictionary<int, string>).GetConstructor([typeof(IEqualityComparer<int>)])!,
             "M:System.Collections.Generic.Dictionary`2.#ctor(System.Collections.Generic.IEqualityComparer{System.Int32})");
 
         yield return Create(
-            typeof(Dictionary<,>).GetConstructor(new[]
-            {
+            typeof(Dictionary<,>).GetConstructor(
+            [
                 typeof(IEqualityComparer<>).MakeGenericType(typeof(Dictionary<,>).GetGenericArguments()[0])
-            })!,
+            ])!,
             "M:System.Collections.Generic.Dictionary`2.#ctor(System.Collections.Generic.IEqualityComparer{`0})");
 
         yield return Create(
-            typeof(Dictionary<,>).GetConstructor(new[]
-            {
+            typeof(Dictionary<,>).GetConstructor(
+            [
                 typeof(IEnumerable<>).MakeGenericType(typeof(KeyValuePair<,>).MakeGenericType(typeof(Dictionary<,>).GetGenericArguments()))
-            })!,
+            ])!,
             "M:System.Collections.Generic.Dictionary`2.#ctor(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}})");
 
         yield return Create(
-            typeof(string).GetConstructor(new[] { typeof(char).MakePointerType() })!,
+            typeof(string).GetConstructor([typeof(char).MakePointerType()])!,
             "M:System.String.#ctor(System.Char*)");
 
         // Events.
@@ -134,11 +128,11 @@ public sealed class XmlDocIdTests : EqualityTestFixture
 
         // Operators.
         yield return Create(
-            typeof(decimal).GetMethod("op_Implicit", new[] { typeof(byte) })!,
+            typeof(decimal).GetMethod("op_Implicit", [typeof(byte)])!,
             "M:System.Decimal.op_Implicit(System.Byte)~System.Decimal");
 
         yield return Create(
-            typeof(decimal).GetMethod("op_Explicit", new[] { typeof(double) })!,
+            typeof(decimal).GetMethod("op_Explicit", [typeof(double)])!,
             "M:System.Decimal.op_Explicit(System.Double)~System.Decimal");
 
         yield return Create(

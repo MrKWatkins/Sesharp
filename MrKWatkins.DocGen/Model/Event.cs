@@ -8,6 +8,4 @@ public sealed class Event : Member<EventInfo>
         : base(eventInfo)
     {
     }
-
-    public override string DocumentationKey => $"E:{Parent.Namespace.Name}.{Parent.MemberInfo.Name}.{Name}";
 }

@@ -7,6 +7,6 @@ public sealed class DocumentationListener : ListenerWithContext<Documentation, M
 {
     protected override void ListenToNode(Documentation context, DocumentableNode node)
     {
-        node.Documentation = context.GetMemberDocumentationOrNull(node.DocumentationKey);
+        node.Documentation = context.GetMemberDocumentationOrNull(node.XmlDocId);
     }
 }
