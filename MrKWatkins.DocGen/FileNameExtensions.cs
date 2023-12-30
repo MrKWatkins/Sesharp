@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace MrKWatkins.DocGen;
 
-public static class MemberInfoExtensions
+public static class FileNameExtensions
 {
     [Pure]
     public static string DocumentationFileName(this MemberInfo memberInfo) => $"{memberInfo.BaseFilename()}.md";
