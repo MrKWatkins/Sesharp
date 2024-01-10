@@ -1,19 +1,31 @@
 using MrKWatkins.DocGen.Markdown.Writing;
+using MrKWatkins.DocGen.Model;
 using MrKWatkins.DocGen.XmlDocumentation;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
-public abstract class MarkdownGenerator
+public abstract class MarkdownGenerator<TNode>
+    where TNode : DocumentableNode
 {
-    protected MarkdownGenerator(MemberLookup memberLookup, string parentDirectory)
+    protected MarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
     {
         MemberLookup = memberLookup;
-        ParentDirectory = parentDirectory;
+        OutputDirectory = outputDirectory;
     }
+
+    public virtual void Generate(IReadOnlyList<TNode> nodes)
+    {
+        foreach (var node in nodes)
+        {
+            Generate(node);
+        }
+    }
+
+    public abstract void Generate(TNode node);
 
     protected MemberLookup MemberLookup { get; }
 
-    protected string ParentDirectory { get; }
+    protected string OutputDirectory { get; }
 
     protected void WriteSection(MarkdownWriter writer, DocumentationSection? section)
     {

@@ -1,8 +1,9 @@
 namespace MrKWatkins.DocGen.Model;
 
-public sealed class Assembly : ModelNode
+// TODO: Group members by overload groups - make it easier for page per group.
+public sealed class AssemblyDetails : ModelNode
 {
-    public Assembly(System.Reflection.Assembly assembly)
+    public AssemblyDetails(System.Reflection.Assembly assembly)
         : base(assembly.GetName().Name ?? throw new ArgumentException("Value has no name.", nameof(assembly)))
     {
         ReflectionAssembly = assembly;

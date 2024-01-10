@@ -4,19 +4,17 @@ namespace MrKWatkins.DocGen.Markdown.Generation;
 
 public static class AssemblyMarkdownGenerator
 {
-    public static void Generate(Assembly assembly, string outputDirectory)
+    public static void Generate(AssemblyDetails assemblyDetails, string outputDirectory)
     {
-        var memberLookup = new MemberLookup(assembly.ReflectionAssembly);
+        var memberLookup = new MemberLookup(assemblyDetails.ReflectionAssembly);
 
         Directory.CreateDirectory(outputDirectory);
 
-        foreach (var @namespace in assembly.Namespaces)
+        foreach (var @namespace in assemblyDetails.Namespaces)
         {
             // TODO: Namespace file.
-            var namespaceDirectory = Path.Combine(outputDirectory, @namespace.Name);
-            Directory.CreateDirectory(namespaceDirectory);
 
-            var typeGenerator = new TypeMarkdownGenerator(memberLookup, namespaceDirectory);
+            var typeGenerator = new TypeMarkdownGenerator(memberLookup, outputDirectory);
 
             foreach (var type in @namespace.Types)
             {

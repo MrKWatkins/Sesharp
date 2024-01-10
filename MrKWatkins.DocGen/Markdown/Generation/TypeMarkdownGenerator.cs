@@ -5,16 +5,16 @@ using Type = System.Type;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
-public sealed class TypeMarkdownGenerator : MarkdownGenerator
+public sealed class TypeMarkdownGenerator : MarkdownGenerator<Model.Type>
 {
-    public TypeMarkdownGenerator(MemberLookup memberLookup, string parentDirectory)
-        : base(memberLookup, parentDirectory)
+    public TypeMarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
+        : base(memberLookup, outputDirectory)
     {
     }
 
-    public void Generate(Model.Type type)
+    public override void Generate(Model.Type type)
     {
-        var filePath = Path.Combine(ParentDirectory, type.FileName);
+        var filePath = Path.Combine(OutputDirectory, type.FileName);
         using var writer = new MarkdownWriter(filePath);
 
         // TODO: Namespace.
@@ -32,17 +32,17 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
 
         // TODO: Inheritance.
 
-        WriteMembers<ConstructorMarkdownGenerator, MethodBase, Constructor>(writer, type.Constructors);
+        WriteMembers<ConstructorMarkdownGenerator, Constructor, MethodBase>(writer, type.Constructors);
 
-        WriteMembers<FieldMarkdownGenerator, FieldInfo, Field>(writer, type.Fields);
+        WriteMembers<FieldMarkdownGenerator, Field, FieldInfo>(writer, type.Fields);
 
-        WriteMembers<PropertyMarkdownGenerator, PropertyInfo, Property>(writer, type.Properties);
+        WriteMembers<PropertyMarkdownGenerator, Property, PropertyInfo>(writer, type.Properties);
 
-        WriteMembers<MethodMarkdownGenerator, MethodBase, Method>(writer, type.Methods);
+        WriteMembers<MethodMarkdownGenerator, Method, MethodBase>(writer, type.Methods);
 
-        WriteMembers<OperatorMarkdownGenerator, MethodBase, Operator>(writer, type.Operators);
+        WriteMembers<OperatorMarkdownGenerator, Operator, MethodBase>(writer, type.Operators);
 
-        WriteMembers<EventMarkdownGenerator, EventInfo, Event>(writer, type.Events);
+        WriteMembers<EventMarkdownGenerator, Event, EventInfo>(writer, type.Events);
     }
 
     private void WriteTypeParameters(MarkdownWriter writer, Model.Type type)
@@ -69,18 +69,19 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
         }
     }
 
-    private void WriteMembers<TMemberGenerator, TMemberInfo, TMember>(MarkdownWriter writer, IReadOnlyList<TMember> members)
-        where TMemberGenerator : MemberMarkdownGenerator<TMemberInfo, TMember>
-        where TMemberInfo : MemberInfo
+    private void WriteMembers<TMemberGenerator, TMember, TMemberInfo>(MarkdownWriter writer, IReadOnlyList<TMember> members)
+        where TMemberGenerator : MemberMarkdownGenerator<TMember, TMemberInfo>
         where TMember : DocumentableNode<TMemberInfo>
+        where TMemberInfo : MemberInfo
     {
         if (members.Count == 0)
         {
             return;
         }
 
-        var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), MemberLookup, ParentDirectory)!;
+        var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), MemberLookup, OutputDirectory)!;
 
+        generator.Generate(members);
         generator.WriteTypeSection(writer, members);
     }
 

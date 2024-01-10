@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using MrKWatkins.DocGen.XmlDocumentation;
 
 namespace MrKWatkins.DocGen.Model;
@@ -6,9 +7,9 @@ namespace MrKWatkins.DocGen.Model;
 public static class AssemblyParser
 {
     [Pure]
-    public static Assembly Parse(System.Reflection.Assembly assembly, Documentation documentation)
+    public static AssemblyDetails Parse(Assembly assembly, Documentation documentation)
     {
-        var assemblyNode = new Assembly(assembly);
+        var assemblyNode = new AssemblyDetails(assembly);
 
         foreach (var group in assembly.GetTypes().Where(t => t.IsPublic).GroupBy(t => t.Namespace ?? "global").OrderBy(g => g.Key))
         {
@@ -32,42 +33,50 @@ public static class AssemblyParser
 
         typeNode.Children.Add(
             type.GetConstructors(bindingFlags)
-                .Where(IsPublicOrProtected)
+                .Where(c => IsNotCompilerGenerated(c) && IsPublicOrProtected(c))
                 .Select(c => new Constructor(c))
                 .OrderBy(f => f.DisplayName));
 
         typeNode.Children.Add(
             type.GetFields(bindingFlags)
-                .Where(IsPublicOrProtected)
+                .Where(f => IsNotCompilerGenerated(f) &&
+                            (type.IsEnum && IsPublic(f) && IsStatic(f)
+                             || !type.IsEnum && IsPublicOrProtected(f)))
                 .Select(f => new Field(f))
                 .OrderBy(f => f.DisplayName));
 
         typeNode.Children.Add(
             type.GetProperties(bindingFlags)
-                .Where(IsPublicOrProtected)
+                .Where(p => IsNotCompilerGenerated(p) && IsPublicOrProtected(p))
                 .Select(p => new Property(p))
                 .OrderBy(p => p.DisplayName));
 
         typeNode.Children.Add(
             type.GetMethods(bindingFlags)
-                .Where(m => IsPublicOrProtected(m) && !IsPropertyMethod(m) && !IsOperatorMethod(m))
+                .Where(m => IsNotCompilerGenerated(m) && IsPublicOrProtected(m) && !IsPropertyMethod(m) && !IsOperatorMethod(m))
                 .Select(m => new Method(m))
                 .OrderBy(m => m.DisplayName));
 
         typeNode.Children.Add(
             type.GetMethods(bindingFlags)
-                .Where(m => IsPublicOrProtected(m) && IsOperatorMethod(m))
+                .Where(m => IsNotCompilerGenerated(m) && IsPublicOrProtected(m) && IsOperatorMethod(m))
                 .Select(m => new Operator(m))
                 .OrderBy(m => m.DisplayName));
 
         typeNode.Children.Add(
             type.GetEvents(bindingFlags)
-                .Where(IsPublicOrProtected)
+                .Where(e => IsNotCompilerGenerated(e) && IsPublicOrProtected(e))
                 .Select(e => new Event(e))
                 .OrderBy(e => e.DisplayName));
 
         return typeNode;
     }
+
+    [Pure]
+    private static bool IsStatic(FieldInfo field) => field.IsStatic;
+
+    [Pure]
+    private static bool IsPublic(FieldInfo field) => field.IsPublic;
 
     [Pure]
     private static bool IsPublicOrProtected(FieldInfo field) => field.IsPublic || field.IsFamily;
@@ -94,4 +103,7 @@ public static class AssemblyParser
     [Pure]
     private static bool IsOperatorMethod(MethodInfo method) =>
         method.Name.StartsWith("op_", StringComparison.Ordinal);
+
+    [Pure]
+    private static bool IsNotCompilerGenerated(MemberInfo member) => member.GetCustomAttribute<CompilerGeneratedAttribute>() == null;
 }

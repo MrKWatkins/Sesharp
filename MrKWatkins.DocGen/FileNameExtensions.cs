@@ -16,10 +16,15 @@ public static class FileNameExtensions
     {
         if (memberInfo is Type type)
         {
-            return type.Name.Replace('`', '-');
+            return $"{type.Namespace}.{type.Name.Replace('`', '-')}";
         }
 
         type = memberInfo.DeclaringType!;
-        return type.Name.Replace('`', '-');
+        if (memberInfo is ConstructorInfo)
+        {
+            return $"{type.Namespace}.{type.Name.Replace('`', '-')}.-ctor";
+        }
+
+        return $"{type.Namespace}.{type.Name}.{memberInfo.Name}".Replace('`', '-');
     }
 }

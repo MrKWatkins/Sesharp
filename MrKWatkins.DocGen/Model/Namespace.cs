@@ -7,7 +7,7 @@ public sealed class Namespace : ModelNode
     {
     }
 
-    public new Assembly Parent => (Assembly)base.Parent;
+    public new AssemblyDetails Parent => (AssemblyDetails)base.Parent;
 
     public IEnumerable<Type> Types => Children.OfType<Type>();
 }

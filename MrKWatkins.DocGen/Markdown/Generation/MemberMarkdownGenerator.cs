@@ -6,14 +6,23 @@ using MrKWatkins.DocGen.Model;
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
-public abstract class MemberMarkdownGenerator<TMemberInfo, TMember> : MarkdownGenerator
-    where TMemberInfo : MemberInfo
+public abstract class MemberMarkdownGenerator<TMember, TMemberInfo> : MarkdownGenerator<TMember>
     where TMember : DocumentableNode<TMemberInfo>
+    where TMemberInfo : MemberInfo
 {
-    protected MemberMarkdownGenerator(MemberLookup memberLookup, string parentDirectory)
-        : base(memberLookup, parentDirectory)
+    protected MemberMarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
+        : base(memberLookup, outputDirectory)
     {
     }
+
+    public sealed override void Generate(TMember member)
+    {
+        var filePath = Path.Combine(OutputDirectory, member.FileName);
+        using var writer = new MarkdownWriter(filePath);
+        Generate(member, writer);
+    }
+
+    protected abstract void Generate(TMember member, MarkdownWriter writer);
 
     protected string Name => typeof(TMember).Name;
 
