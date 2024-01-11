@@ -10,5 +10,7 @@ public abstract class Member<TMemberInfo> : DocumentableNode<TMemberInfo>
     {
     }
 
-    public new Type Parent => (Type)base.Parent;
+    public Type Type => Ancestors.OfType<Type>().First();
+
+    public virtual string MemberName => DisplayName;
 }

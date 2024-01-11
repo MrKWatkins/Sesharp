@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace MrKWatkins.DocGen.Model;
 
-public sealed class Operator : Function
+public sealed class Operator : Function<MethodInfo>
 {
     public Operator(MethodInfo methodInfo)
         : base(methodInfo)
@@ -10,6 +10,4 @@ public sealed class Operator : Function
     }
 
     public override string DisplayName => Name[3..];
-
-    public new MethodInfo MemberInfo => (MethodInfo)base.MemberInfo;
 }

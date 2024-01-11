@@ -6,6 +6,8 @@ namespace MrKWatkins.DocGen.Model;
 
 public static class AssemblyParser
 {
+    private const BindingFlags Binding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+
     [Pure]
     public static AssemblyDetails Parse(Assembly assembly, Documentation documentation)
     {
@@ -28,48 +30,84 @@ public static class AssemblyParser
     [Pure]
     private static Type Parse(System.Type type)
     {
-        const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
         var typeNode = new Type(type);
 
-        typeNode.Children.Add(
-            type.GetConstructors(bindingFlags)
-                .Where(c => IsNotCompilerGenerated(c) && IsPublicOrProtected(c))
-                .Select(c => new Constructor(c))
-                .OrderBy(f => f.DisplayName));
+        AddConstructors(type, typeNode);
 
+        AddFields(type, typeNode);
+
+        AddProperties(type, typeNode);
+
+        AddMethods(type, typeNode);
+
+        AddOperators(type, typeNode);
+
+        AddEvents(type, typeNode);
+
+        return typeNode;
+    }
+
+    private static void AddConstructors(System.Type type, Type typeNode)
+    {
         typeNode.Children.Add(
-            type.GetFields(bindingFlags)
+            new ConstructorGroup(
+                type.GetConstructors(Binding)
+                    .Where(c => IsNotCompilerGenerated(c) && IsPublicOrProtected(c))
+                    .Select(c => new Constructor(c))
+                    .OrderBy(f => f.DisplayName)));
+    }
+
+    private static void AddFields(System.Type type, Type typeNode)
+    {
+        typeNode.Children.Add(
+            type.GetFields(Binding)
                 .Where(f => IsNotCompilerGenerated(f) &&
                             (type.IsEnum && IsPublic(f) && IsStatic(f)
                              || !type.IsEnum && IsPublicOrProtected(f)))
                 .Select(f => new Field(f))
                 .OrderBy(f => f.DisplayName));
+    }
 
+    private static void AddProperties(System.Type type, Type typeNode)
+    {
         typeNode.Children.Add(
-            type.GetProperties(bindingFlags)
+            type.GetProperties(Binding)
                 .Where(p => IsNotCompilerGenerated(p) && IsPublicOrProtected(p))
                 .Select(p => new Property(p))
                 .OrderBy(p => p.DisplayName));
+    }
 
+    private static void AddMethods(System.Type type, Type typeNode)
+    {
         typeNode.Children.Add(
-            type.GetMethods(bindingFlags)
+            type.GetMethods(Binding)
                 .Where(m => IsNotCompilerGenerated(m) && IsPublicOrProtected(m) && !IsPropertyMethod(m) && !IsOperatorMethod(m))
-                .Select(m => new Method(m))
+                .GroupBy(m => m.Name)   // TODO: Remove generic parameters?
+                .Select(g => g.Count() == 1
+                    ? (OutputNode) new Method(g.First())
+                    : new MethodGroup(g.Key, g.Select(m => new Method(m))))
                 .OrderBy(m => m.DisplayName));
+    }
 
+    private static void AddOperators(System.Type type, Type typeNode)
+    {
         typeNode.Children.Add(
-            type.GetMethods(bindingFlags)
+            type.GetMethods(Binding)
                 .Where(m => IsNotCompilerGenerated(m) && IsPublicOrProtected(m) && IsOperatorMethod(m))
-                .Select(m => new Operator(m))
+                .GroupBy(m => m.Name)
+                .Select(g => g.Count() == 1
+                    ? (OutputNode) new Operator(g.First())
+                    : new OperatorGroup(g.Key, g.Select(m => new Operator(m))))
                 .OrderBy(m => m.DisplayName));
+    }
 
+    private static void AddEvents(System.Type type, Type typeNode)
+    {
         typeNode.Children.Add(
-            type.GetEvents(bindingFlags)
+            type.GetEvents(Binding)
                 .Where(e => IsNotCompilerGenerated(e) && IsPublicOrProtected(e))
                 .Select(e => new Event(e))
                 .OrderBy(e => e.DisplayName));
-
-        return typeNode;
     }
 
     [Pure]

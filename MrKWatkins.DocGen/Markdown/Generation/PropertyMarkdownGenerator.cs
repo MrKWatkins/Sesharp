@@ -11,7 +11,8 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
     {
     }
 
-    protected override void Generate(Property member, MarkdownWriter writer)
+    protected override void Generate(Property property, MarkdownWriter writer)
     {
+        writer.WriteMainHeading($"{property.Type.DisplayName}.{property.DisplayName} Property");
     }
 }

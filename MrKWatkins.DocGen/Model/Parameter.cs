@@ -10,7 +10,5 @@ public sealed class Parameter : ModelNode
         Type = parameter.ParameterType;
     }
 
-    public new Function Parent => (Function)base.Parent;
-
     public System.Type Type { get; }
 }

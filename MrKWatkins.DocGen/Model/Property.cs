@@ -12,5 +12,5 @@ public sealed class Property : Member<PropertyInfo>
 
     public IReadOnlyList<Parameter> IndexParameters => Children.OfType<Parameter>().ToList();    // Keep in declaration order.
 
-    public override string DisplayName => IndexParameters.Any() ? $"{Name}[]" : Name;
+    public override string MemberName => IndexParameters.Any() ? $"{Name}[]" : Name;
 }

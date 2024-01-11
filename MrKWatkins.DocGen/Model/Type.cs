@@ -19,15 +19,15 @@ public sealed class Type : DocumentableNode<System.Type>
 
     public IReadOnlyList<TypeParameter> TypeParameters => Children.OfType<TypeParameter>().ToList();    // Keep in declaration order.
 
-    public IReadOnlyList<Constructor> Constructors => Children.OfType<Constructor>().ToList();
+    public ConstructorGroup? ConstructorGroup => Children.FirstOfTypeOrDefault<ConstructorGroup>();
 
     public IReadOnlyList<Field> Fields => Children.OfType<Field>().ToList();
 
     public new IReadOnlyList<Property> Properties => Children.OfType<Property>().ToList();
 
-    public IReadOnlyList<Method> Methods => Children.OfType<Method>().ToList();
+    public IReadOnlyList<OutputNode> Methods => Children.Where(c => c is Method or MethodGroup).OfType<OutputNode>().ToList();
 
-    public IReadOnlyList<Operator> Operators => Children.OfType<Operator>().ToList();
+    public IReadOnlyList<OutputNode> Operators => Children.Where(c => c is Operator or OperatorGroup).OfType<OutputNode>().ToList();
 
     public IReadOnlyList<Event> Events => Children.OfType<Event>().ToList();
 

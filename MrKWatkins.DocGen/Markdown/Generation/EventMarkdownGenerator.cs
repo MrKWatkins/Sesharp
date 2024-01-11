@@ -11,7 +11,8 @@ public sealed class EventMarkdownGenerator : MemberMarkdownGenerator<Event, Even
     {
     }
 
-    protected override void Generate(Event member, MarkdownWriter writer)
+    protected override void Generate(Event @event, MarkdownWriter writer)
     {
+        writer.WriteMainHeading($"{@event.Type.DisplayName}.{@event.DisplayName} Event");
     }
 }

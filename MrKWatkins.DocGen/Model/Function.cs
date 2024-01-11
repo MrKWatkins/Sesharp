@@ -3,11 +3,12 @@ using System.Text;
 
 namespace MrKWatkins.DocGen.Model;
 
-public abstract class Function : Member<MethodBase>
+public abstract class Function<TMethodInfo> : Member<TMethodInfo>
+    where TMethodInfo : MethodBase
 {
-    private string? displayName;
+    private string? memberName;
 
-    protected Function(MethodBase method)
+    protected Function(TMethodInfo method)
         : base(method)
     {
         if (method.IsGenericMethod)
@@ -21,9 +22,9 @@ public abstract class Function : Member<MethodBase>
 
     public IReadOnlyList<Parameter> Parameters => Children.OfType<Parameter>().ToList();    // Keep in declaration order.
 
-    public override string DisplayName => displayName ??= BuildDisplayName();
+    public override string MemberName => memberName ??= BuildMemberName();
 
-    private string BuildDisplayName()
+    private string BuildMemberName()
     {
         var sb = new StringBuilder(Name);
 

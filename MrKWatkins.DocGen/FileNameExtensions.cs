@@ -12,7 +12,7 @@ public static class FileNameExtensions
         $"{baseUrl}{memberInfo.BaseFilename()}";
 
     [Pure]
-    private static string BaseFilename(this MemberInfo memberInfo)
+    public static string BaseFilename(this MemberInfo memberInfo)
     {
         if (memberInfo is Type type)
         {
@@ -20,10 +20,7 @@ public static class FileNameExtensions
         }
 
         type = memberInfo.DeclaringType!;
-        if (memberInfo is ConstructorInfo)
-        {
-            return $"{type.Namespace}.{type.Name.Replace('`', '-')}.-ctor";
-        }
+        // TODO: Links within group.
 
         return $"{type.Namespace}.{type.Name}.{memberInfo.Name}".Replace('`', '-');
     }

@@ -4,8 +4,7 @@ using MrKWatkins.DocGen.XmlDocumentation;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
-public abstract class MarkdownGenerator<TNode>
-    where TNode : DocumentableNode
+public abstract class MarkdownGenerator
 {
     protected MarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
     {
@@ -13,19 +12,18 @@ public abstract class MarkdownGenerator<TNode>
         OutputDirectory = outputDirectory;
     }
 
-    public virtual void Generate(IReadOnlyList<TNode> nodes)
-    {
-        foreach (var node in nodes)
-        {
-            Generate(node);
-        }
-    }
-
-    public abstract void Generate(TNode node);
+    public abstract void Generate(OutputNode node);
 
     protected MemberLookup MemberLookup { get; }
 
     protected string OutputDirectory { get; }
+
+    [MustUseReturnValue]
+    protected MarkdownWriter CreateWriter(OutputNode node)
+    {
+        var filePath = Path.Combine(OutputDirectory, node.FileName);
+        return new MarkdownWriter(filePath);
+    }
 
     protected void WriteSection(MarkdownWriter writer, DocumentationSection? section)
     {

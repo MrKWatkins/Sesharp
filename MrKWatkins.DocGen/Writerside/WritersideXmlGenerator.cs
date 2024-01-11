@@ -1,7 +1,6 @@
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Humanizer;
 using MrKWatkins.DocGen.Model;
 using Type = MrKWatkins.DocGen.Model.Type;
 
@@ -64,31 +63,29 @@ public static class WritersideXmlGenerator
 
         var title = CreateTitleElement(type.DisplayName);
         title.Add(CreateMemberTocElement(type));
-        if (type.Constructors.Count > 0)
+        if (type.ConstructorGroup != null)
         {
-            title.Add(CreateTocElement("Constructors", type.Constructors[0].FileName));
+            title.Add(CreateTocElement("Constructors", type.ConstructorGroup.FileName));
         }
-        title.Add(CreateMemberElements(type.Fields));
-        title.Add(CreateMemberElements(type.Properties));
-        title.Add(CreateMemberElements(type.Methods));
-        title.Add(CreateMemberElements(type.Operators));
-        title.Add(CreateMemberElements(type.Events));
+        title.Add(CreateMemberElements("Fields", type.Fields));
+        title.Add(CreateMemberElements("Properties", type.Properties));
+        title.Add(CreateMemberElements("Methods", type.Methods));
+        title.Add(CreateMemberElements("Operators", type.Operators));
+        title.Add(CreateMemberElements("Events", type.Events));
         return title;
     }
 
     [Pure]
-    private static IEnumerable<XElement> CreateMemberElements<TMember>(IReadOnlyList<TMember> members)
-        where TMember : DocumentableNode
+    private static IEnumerable<XElement> CreateMemberElements(string name, IReadOnlyList<OutputNode> members)
     {
         if (members.Count == 0)
         {
             yield break;
         }
 
-        var container = CreateTitleElement(typeof(TMember).Name.Pluralize());
+        var container = CreateTitleElement(name);
 
         container.Add(members
-            .DistinctBy(m => m.MemberInfo.DocumentationFileName())
             .OrderBy(m => m.DisplayName)
             .Select(CreateMemberTocElement));
 
@@ -102,7 +99,7 @@ public static class WritersideXmlGenerator
     private static XElement CreateTopicElement(string topic) => CreateTocElement(null, topic);
 
     [Pure]
-    private static XElement CreateMemberTocElement(DocumentableNode member) => CreateTocElement(member.DisplayName, member.MemberInfo.DocumentationFileName());
+    private static XElement CreateMemberTocElement(OutputNode member) => CreateTocElement(member.DisplayName, member.FileName);
 
     [Pure]
     private static XElement CreateTocElement(string? title, string? topic)

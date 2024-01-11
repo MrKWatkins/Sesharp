@@ -3,7 +3,7 @@ using MrKWatkins.DocGen.XmlDocumentation;
 
 namespace MrKWatkins.DocGen.Model;
 
-public abstract class DocumentableNode : ModelNode
+public abstract class DocumentableNode : OutputNode
 {
     protected DocumentableNode(MemberInfo memberInfo)
         : base(memberInfo.Name)
@@ -24,9 +24,7 @@ public abstract class DocumentableNode : ModelNode
         private init => Properties.Set(nameof(XmlDocId), value);
     }
 
-    public virtual string DisplayName => Name;
-
-    public string FileName => MemberInfo.DocumentationFileName();
+    public override string FileName => MemberInfo.DocumentationFileName();
 
     public MemberDocumentation? Documentation
     {

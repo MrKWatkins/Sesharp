@@ -4,23 +4,15 @@ using MrKWatkins.DocGen.Model;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
-public sealed class ConstructorMarkdownGenerator : MemberMarkdownGenerator<Constructor, MethodBase>
+public sealed class ConstructorMarkdownGenerator : MemberMarkdownGenerator<Constructor, ConstructorInfo>
 {
     public ConstructorMarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
         : base(memberLookup, outputDirectory)
     {
     }
 
-    public override void Generate(IReadOnlyList<Constructor> nodes)
+    protected override void Generate(MemberGroup<Constructor, ConstructorInfo> group, MarkdownWriter writer)
     {
-        if (nodes.Count == 0)
-        {
-            return;
-        }
-
-        var filePath = Path.Combine(OutputDirectory, nodes.First().FileName);
-        using var writer = new MarkdownWriter(filePath);
+        writer.WriteMainHeading($"{group.Type.DisplayName} Constructors");
     }
-
-    protected override void Generate(Constructor member, MarkdownWriter writer) => throw new NotSupportedException("Cannot write a page for a single constructor, just one page for all constructors.");
 }

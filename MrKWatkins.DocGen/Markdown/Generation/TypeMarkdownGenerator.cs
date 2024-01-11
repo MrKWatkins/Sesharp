@@ -1,21 +1,26 @@
 using System.Reflection;
+using Humanizer;
 using MrKWatkins.DocGen.Markdown.Writing;
 using MrKWatkins.DocGen.Model;
 using Type = System.Type;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
-public sealed class TypeMarkdownGenerator : MarkdownGenerator<Model.Type>
+public sealed class TypeMarkdownGenerator : MarkdownGenerator
 {
     public TypeMarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
         : base(memberLookup, outputDirectory)
     {
     }
 
-    public override void Generate(Model.Type type)
+    public override void Generate(OutputNode node)
     {
-        var filePath = Path.Combine(OutputDirectory, type.FileName);
-        using var writer = new MarkdownWriter(filePath);
+        if (node is not Model.Type type)
+        {
+            throw new ArgumentException($"Value must be a {nameof(Model.Type)}.", nameof(node));
+        }
+
+        using var writer = CreateWriter(node);
 
         // TODO: Namespace.
         // TODO: Source code links.
@@ -32,15 +37,15 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator<Model.Type>
 
         // TODO: Inheritance.
 
-        WriteMembers<ConstructorMarkdownGenerator, Constructor, MethodBase>(writer, type.Constructors);
+        WriteMembers<ConstructorMarkdownGenerator, Constructor, ConstructorInfo>(writer, type.ConstructorGroup);
 
         WriteMembers<FieldMarkdownGenerator, Field, FieldInfo>(writer, type.Fields);
 
         WriteMembers<PropertyMarkdownGenerator, Property, PropertyInfo>(writer, type.Properties);
 
-        WriteMembers<MethodMarkdownGenerator, Method, MethodBase>(writer, type.Methods);
+        WriteMembers<MethodMarkdownGenerator, Method, MethodInfo>(writer, type.Methods);
 
-        WriteMembers<OperatorMarkdownGenerator, Operator, MethodBase>(writer, type.Operators);
+        WriteMembers<OperatorMarkdownGenerator, Operator, MethodInfo>(writer, type.Operators);
 
         WriteMembers<EventMarkdownGenerator, Event, EventInfo>(writer, type.Events);
     }
@@ -55,7 +60,7 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator<Model.Type>
 
         writer.WriteSubSubHeading("Type Parameters");
 
-        using var table = writer.Table();
+        using var table = writer.Table("Name", "Description");
 
         foreach (var typeParameter in typeParameters)
         {
@@ -69,9 +74,22 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator<Model.Type>
         }
     }
 
-    private void WriteMembers<TMemberGenerator, TMember, TMemberInfo>(MarkdownWriter writer, IReadOnlyList<TMember> members)
+    private void WriteMembers<TMemberGenerator, TMember, TMemberInfo>(MarkdownWriter writer, OutputNode? member)
         where TMemberGenerator : MemberMarkdownGenerator<TMember, TMemberInfo>
-        where TMember : DocumentableNode<TMemberInfo>
+        where TMember : Member<TMemberInfo>
+        where TMemberInfo : MemberInfo
+    {
+        if (member == null)
+        {
+            return;
+        }
+
+        WriteMembers<TMemberGenerator, TMember, TMemberInfo>(writer, [member]);
+    }
+
+    private void WriteMembers<TMemberGenerator, TMember, TMemberInfo>(MarkdownWriter writer, IReadOnlyList<OutputNode> members)
+        where TMemberGenerator : MemberMarkdownGenerator<TMember, TMemberInfo>
+        where TMember : Member<TMemberInfo>
         where TMemberInfo : MemberInfo
     {
         if (members.Count == 0)
@@ -82,7 +100,17 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator<Model.Type>
         var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), MemberLookup, OutputDirectory)!;
 
         generator.Generate(members);
-        generator.WriteTypeSection(writer, members);
+
+        var allMembers = members
+            .SelectMany(m => m switch
+            {
+                TMember member => [member],
+                MemberGroup<TMember, TMemberInfo> group => group.Members,
+                _ => throw new ArgumentException($"Value must only contain {typeof(TMember).Name} or groups of {typeof(TMember).Name.Pluralize()}.", nameof(members))
+            })
+            .ToList();
+
+        generator.WriteTypeSection(writer, allMembers);
     }
 
     private static void WriteSignature(MarkdownWriter writer, Model.Type type)

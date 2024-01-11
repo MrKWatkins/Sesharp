@@ -5,7 +5,6 @@ public sealed partial class MarkdownWriter
     private sealed class TableWriter : ParagraphWriter, ITableWriter
     {
         private bool inRow;
-        private int columnCount;
 
         internal TableWriter(MarkdownWriter writer, IReadOnlyList<string> headers)
             : base(writer)
@@ -36,11 +35,7 @@ public sealed partial class MarkdownWriter
             Writer.WriteLine();
         }
 
-        public void NewColumn()
-        {
-            Writer.Write(" | ", false);
-            columnCount++;
-        }
+        public void NewColumn() => Writer.Write(" | ", false);
 
         public void NewRow()
         {
@@ -51,17 +46,14 @@ public sealed partial class MarkdownWriter
 
             Writer.Write("| ", false);
             inRow = true;
-            columnCount = 1;
         }
 
         public override void Dispose()
         {
-            Writer.WriteLine(" |", false);
-            for (var f = 0; f < columnCount; f++)
+            if (inRow)
             {
-                Writer.Write("|---", false);
+                Writer.WriteLine(" |", false);
             }
-            Writer.WriteLine("|", false);
             base.Dispose();
         }
     }
