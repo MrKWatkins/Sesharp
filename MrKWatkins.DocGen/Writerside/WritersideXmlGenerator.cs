@@ -86,7 +86,7 @@ public static class WritersideXmlGenerator
         var container = CreateTitleElement(name);
 
         container.Add(members
-            .OrderBy(m => m.DisplayName)
+            .OrderBy(m => m.MenuName)
             .Select(CreateMemberTocElement));
 
         yield return container;
@@ -99,7 +99,7 @@ public static class WritersideXmlGenerator
     private static XElement CreateTopicElement(string topic) => CreateTocElement(null, topic);
 
     [Pure]
-    private static XElement CreateMemberTocElement(OutputNode member) => CreateTocElement(member.DisplayName, member.FileName);
+    private static XElement CreateMemberTocElement(OutputNode member) => CreateTocElement(member.MenuName, member.FileName);
 
     [Pure]
     private static XElement CreateTocElement(string? title, string? topic)

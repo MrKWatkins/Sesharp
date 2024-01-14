@@ -57,7 +57,7 @@ public abstract class Function<TMethodInfo> : Member<TMethodInfo>
                     sb.Append(", ");
                 }
 
-                sb.Append(parameter.Type.DisplayName());
+                sb.Append(parameter.Type.DisplayNameOrKeyword());
             }
         }
 

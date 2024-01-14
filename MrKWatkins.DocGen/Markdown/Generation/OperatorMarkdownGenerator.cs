@@ -11,7 +11,7 @@ public sealed class OperatorMarkdownGenerator : MemberMarkdownGenerator<Operator
     {
     }
 
-    protected override void Generate(Operator @operator, MarkdownWriter writer)
+    protected override void Generate(MarkdownWriter writer, Operator @operator)
     {
         writer.WriteMainHeading($"{@operator.Type.DisplayName}.{@operator.DisplayName} Operator");
     }

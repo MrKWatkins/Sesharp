@@ -8,7 +8,7 @@ public static class FileNameExtensions
     public static string DocumentationFileName(this MemberInfo memberInfo) => $"{memberInfo.BaseFilename()}.md";
 
     [Pure]
-    public static string MicrosoftFileName(this MemberInfo memberInfo, string baseUrl = "https://learn.microsoft.com/en-gb/dotnet/api/") =>
+    public static string MicrosoftUrl(this MemberInfo memberInfo, string baseUrl = "https://learn.microsoft.com/en-gb/dotnet/api/") =>
         $"{baseUrl}{memberInfo.BaseFilename()}";
 
     [Pure]

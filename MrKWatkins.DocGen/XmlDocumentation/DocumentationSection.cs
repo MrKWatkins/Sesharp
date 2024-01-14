@@ -3,6 +3,7 @@ using System.Xml.Linq;
 
 namespace MrKWatkins.DocGen.XmlDocumentation;
 
+// TODO: Space between two <see>s.
 public sealed class DocumentationSection
 {
     private static readonly Regex SummaryTrimRegex = new(@"\r?\n\s*");

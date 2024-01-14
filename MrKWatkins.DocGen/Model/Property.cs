@@ -1,9 +1,12 @@
 using System.Reflection;
+using System.Text;
 
 namespace MrKWatkins.DocGen.Model;
 
 public sealed class Property : Member<PropertyInfo>
 {
+    private string? memberName;
+
     public Property(PropertyInfo propertyInfo)
         : base(propertyInfo)
     {
@@ -12,5 +15,61 @@ public sealed class Property : Member<PropertyInfo>
 
     public IReadOnlyList<Parameter> IndexParameters => Children.OfType<Parameter>().ToList();    // Keep in declaration order.
 
-    public override string MemberName => IndexParameters.Any() ? $"{Name}[]" : Name;
+    public override string MenuName => IndexParameters.Any() ? $"{Name}[]" : Name;
+
+    public override string MemberName => memberName ??= BuildMemberName();
+
+    private string BuildMemberName()
+    {
+        var parameters = IndexParameters;
+        if (parameters.Count == 0)
+        {
+            return DisplayName;
+        }
+
+        var sb = new StringBuilder(DisplayName);
+        sb.Append('[');
+
+        if (parameters.Count > 0)
+        {
+            foreach (var parameter in parameters)
+            {
+                if (parameter != parameters[0])
+                {
+                    sb.Append(", ");
+                }
+
+                sb.Append(parameter.Type.DisplayName());
+            }
+        }
+
+        sb.Append(']');
+        return sb.ToString();
+    }
+
+    public MethodInfo? Getter => MemberInfo.GetMethod;
+
+    public MethodInfo? Setter => MemberInfo.SetMethod;
+
+    public Visibility? GetterVisibility => Getter?.GetVisibility();
+
+    public Visibility? SetterVisibility => Setter?.GetVisibility();
+
+    public Visibility Visibility
+    {
+        get
+        {
+            if (GetterVisibility == Visibility.Public ||
+                SetterVisibility == Visibility.Public)
+            {
+                return Visibility.Public;
+            }
+
+            return Visibility.Protected;
+        }
+    }
+
+    public Virtuality? Virtuality => (Getter ?? Setter!).GetVirtuality();
+
+    public bool IsStatic => (Getter ?? Setter!).IsStatic;
 }

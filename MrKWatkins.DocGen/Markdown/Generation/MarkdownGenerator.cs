@@ -1,3 +1,4 @@
+using System.Reflection;
 using MrKWatkins.DocGen.Markdown.Writing;
 using MrKWatkins.DocGen.Model;
 using MrKWatkins.DocGen.XmlDocumentation;
@@ -23,6 +24,19 @@ public abstract class MarkdownGenerator
     {
         var filePath = Path.Combine(OutputDirectory, node.FileName);
         return new MarkdownWriter(filePath);
+    }
+
+    protected void WriteRemarks(MarkdownWriter writer, MemberDocumentation? documentation)
+    {
+        if (documentation?.Remarks == null)
+        {
+            return;
+        }
+
+        writer.WriteSubHeading("Remarks");
+
+        using var paragraph = writer.Paragraph();
+        WriteSection(paragraph, documentation.Remarks);
     }
 
     protected void WriteSection(MarkdownWriter writer, DocumentationSection? section)
@@ -70,24 +84,27 @@ public abstract class MarkdownGenerator
 
     private void WriteSee(IParagraphWriter writer, See see)
     {
-        var text = see.Text;
-        if (text != null)
-        {
-            writer.WriteLink(text, see.Id.ToString());
-            return;
-        }
-
         var (member, location) = MemberLookup.Get(see.Id);
+        WriteMemberLink(writer, member, location, see.Text);
+    }
+
+    protected void WriteMemberLink(IParagraphWriter writer, MemberInfo member, string? text = null) =>
+        WriteMemberLink(writer, member, MemberLookup.GetLocation(member), text);
+
+    protected static void WriteMemberLink(IParagraphWriter writer, MemberInfo member, MemberLocation location, string? text = null)
+    {
+        text ??= member.DisplayName();
+
         switch (location)
         {
             case MemberLocation.DocumentAssembly:
-                writer.WriteLink(member.DisplayName(), member.DocumentationFileName());
+                writer.WriteLink(text, member.DocumentationFileName());
                 break;
             case MemberLocation.System:
-                writer.WriteLink(member.DisplayName(), member.MicrosoftFileName());
+                writer.WriteLink(text, member.MicrosoftUrl());
                 break;
             default:
-                writer.Write(member.DisplayName());
+                writer.Write(text);
                 break;
         }
     }

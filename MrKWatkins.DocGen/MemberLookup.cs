@@ -42,18 +42,24 @@ public sealed class MemberLookup
             throw new KeyNotFoundException($"Could not find the type {id}.");
         }
 
+        return (member, GetLocation(member));
+    }
+
+    [Pure]
+    public MemberLocation GetLocation(MemberInfo member)
+    {
         var rootType = GetRootType(member);
         if (rootType.Assembly == documentAssembly)
         {
-            return (member, MemberLocation.DocumentAssembly);
+            return MemberLocation.DocumentAssembly;
         }
 
         if (rootType.Namespace?.StartsWith("System", StringComparison.Ordinal) == true)
         {
-            return (member, MemberLocation.System);
+            return MemberLocation.System;
         }
 
-        return (member, MemberLocation.Other);
+        return MemberLocation.Other;
     }
 
     [Pure]

@@ -10,5 +10,8 @@ public abstract class OutputNode : ModelNode
 
     public virtual string DisplayName => Name;
 
+    public virtual string MenuName => DisplayName;
+
     public abstract string FileName { get; }
+
 }

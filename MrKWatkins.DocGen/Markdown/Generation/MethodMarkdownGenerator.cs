@@ -11,12 +11,12 @@ public sealed class MethodMarkdownGenerator : MemberMarkdownGenerator<Method, Me
     {
     }
 
-    protected override void Generate(Method method, MarkdownWriter writer)
+    protected override void Generate(MarkdownWriter writer, Method method)
     {
         writer.WriteMainHeading($"{method.Type.DisplayName}.{method.DisplayName} Method");
     }
 
-    protected override void Generate(MemberGroup<Method, MethodInfo> group, MarkdownWriter writer)
+    protected override void Generate(MarkdownWriter writer, MemberGroup<Method, MethodInfo> group)
     {
         writer.WriteMainHeading($"{group.Type.DisplayName}.{group.DisplayName} Method");
     }

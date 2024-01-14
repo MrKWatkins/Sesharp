@@ -11,7 +11,7 @@ public sealed class ConstructorMarkdownGenerator : MemberMarkdownGenerator<Const
     {
     }
 
-    protected override void Generate(MemberGroup<Constructor, ConstructorInfo> group, MarkdownWriter writer)
+    protected override void Generate(MarkdownWriter writer, MemberGroup<Constructor, ConstructorInfo> group)
     {
         writer.WriteMainHeading($"{group.Type.DisplayName} Constructors");
     }

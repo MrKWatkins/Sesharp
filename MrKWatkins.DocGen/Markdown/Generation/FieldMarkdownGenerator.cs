@@ -11,7 +11,7 @@ public sealed class FieldMarkdownGenerator : MemberMarkdownGenerator<Field, Fiel
     {
     }
 
-    protected override void Generate(Field field, MarkdownWriter writer)
+    protected override void Generate(MarkdownWriter writer, Field field)
     {
         writer.WriteMainHeading($"{field.Type.DisplayName}.{field.DisplayName} Field");
     }

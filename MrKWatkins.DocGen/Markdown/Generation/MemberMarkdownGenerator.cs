@@ -34,18 +34,18 @@ public abstract class MemberMarkdownGenerator<TMember, TMemberInfo> : MarkdownGe
 
         if (node is TMember member)
         {
-            Generate(member, writer);
+            Generate(writer, member);
         }
         else
         {
-            Generate((MemberGroup<TMember, TMemberInfo>)node, writer);
+            Generate(writer, (MemberGroup<TMember, TMemberInfo>)node);
         }
     }
 
-    protected virtual void Generate(TMember member, MarkdownWriter writer) =>
+    protected virtual void Generate(MarkdownWriter writer, TMember member) =>
         throw new NotSupportedException($"Single {typeof(TMember).Name.Pluralize()} are not supported.");
 
-    protected virtual void Generate(MemberGroup<TMember, TMemberInfo> group, MarkdownWriter writer) =>
+    protected virtual void Generate(MarkdownWriter writer, MemberGroup<TMember, TMemberInfo> group) =>
         throw new NotSupportedException($"Groups of {typeof(TMember).Name.Pluralize()} are not supported.");
 
     protected string Name => typeof(TMember).Name;
@@ -66,10 +66,56 @@ public abstract class MemberMarkdownGenerator<TMember, TMemberInfo> : MarkdownGe
         foreach (var member in members)
         {
             table.NewRow();
-            table.Write(member.MemberName);
+            WriteMemberLink(table, member.MemberInfo);
             table.NewColumn();
 
             WriteSection(table, member.Documentation?.Summary);
+        }
+    }
+
+    protected void WriteParameters(MarkdownWriter writer, DocumentableNode member, IReadOnlyList<Parameter> parameters)
+    {
+        if (parameters.Count == 0)
+        {
+            return;
+        }
+
+        writer.WriteSubHeading("Parameters");
+
+        using var table = writer.Table("Name", "Type", "Description");
+
+        var documentation = member.Documentation;
+        foreach (var parameter in parameters)
+        {
+            table.NewRow();
+            table.Write(parameter.Name);
+            table.NewColumn();
+            WriteMemberLink(table, parameter.Type);
+            table.NewColumn();
+
+            var parameterDocumentation = documentation?.Parameters.GetValueOrDefault(parameter.Name);
+            WriteSection(table, parameterDocumentation);
+        }
+    }
+
+    protected void WriteReturns(MarkdownWriter writer, DocumentableNode member, System.Type returnType, string sectionName = "Returns")
+    {
+        writer.WriteSubHeading(sectionName);
+
+        using (var typeParagraph = writer.Paragraph())
+        {
+            WriteMemberLink(typeParagraph, returnType);
+        }
+
+        var returns = member.Documentation?.Returns;
+        if (returns == null)
+        {
+            return;
+        }
+
+        using (var returnsParagraph = writer.Paragraph())
+        {
+            WriteSection(returnsParagraph, returns);
         }
     }
 }
