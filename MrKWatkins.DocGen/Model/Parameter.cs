@@ -12,7 +12,9 @@ public sealed class Parameter : ModelNode
 
     public ParameterInfo ParameterInfo { get; }
 
-    public System.Type Type => ParameterInfo.ParameterType;
+    public System.Type Type => ParameterInfo.ParameterType.IsByRef ? ParameterInfo.ParameterType.GetElementType()! : ParameterInfo.ParameterType;
+
+    public ParameterKind? Kind => ParameterInfo.GetKind();
 
     public bool HasDefaultValue => ParameterInfo.HasDefaultValue;
 

@@ -86,7 +86,7 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
             })
             .ToList();
 
-        generator.WriteTypeSection(writer, allMembers);
+        generator.WriteMemberTable(writer, allMembers);
     }
 
     private static void WriteSignature(MarkdownWriter writer, Model.Type type)

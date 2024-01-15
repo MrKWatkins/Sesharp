@@ -79,6 +79,18 @@ public static class ReflectionExtensions
     [Pure]
     private static string BuildDisplayName(Type type)
     {
+        if (type.IsArray)
+        {
+            var elementType = BuildDisplayName(type.GetElementType()!);
+            var rank = new string(',', type.GetArrayRank() - 1);
+            return $"{elementType}[{rank}]";
+        }
+
+        if (type.IsByRef)
+        {
+            return BuildDisplayName(type.GetElementType()!);
+        }
+
         var underlyingType = Nullable.GetUnderlyingType(type);
         if (underlyingType != null)
         {
@@ -207,5 +219,42 @@ public static class ReflectionExtensions
             Virtuality.NewAbstract => "new abstract",
             Virtuality.NewVirtual => "new virtual",
             _ => throw new NotSupportedException($"The {nameof(Virtuality)} {virtuality} is not supported.")
+        };
+
+    [Pure]
+    public static ParameterKind? GetKind(this ParameterInfo parameter)
+    {
+        if (parameter.IsIn)
+        {
+            return ParameterKind.In;
+        }
+
+        if (parameter.IsOut)
+        {
+            return ParameterKind.Out;
+        }
+
+        if (parameter.GetCustomAttribute<ParamArrayAttribute>() != null)
+        {
+            return ParameterKind.Params;
+        }
+
+        if (parameter.ParameterType.IsByRef)
+        {
+            return ParameterKind.Ref;
+        }
+
+        return null;
+    }
+
+    [Pure]
+    public static string ToKeyword(this ParameterKind parameterKind) =>
+        parameterKind switch
+        {
+            ParameterKind.Params => "params",
+            ParameterKind.Ref => "ref",
+            ParameterKind.Out => "out",
+            ParameterKind.In => "in",
+            _ => throw new NotSupportedException($"The {nameof(ParameterKind)} {parameterKind} is not supported.")
         };
 }

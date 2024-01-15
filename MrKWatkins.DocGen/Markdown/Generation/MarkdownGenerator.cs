@@ -58,8 +58,15 @@ public abstract class MarkdownGenerator
                 code.Write(", ");
             }
 
+            if (parameter.Kind.HasValue)
+            {
+                code.Write(parameter.Kind.Value.ToKeyword());
+                code.Write(" ");
+            }
+
             code.Write(parameter.Type.DisplayNameOrKeyword());
             code.Write(" ");
+
             if (CSharp.Keywords.Contains(parameter.Name))
             {
                 code.Write("@");

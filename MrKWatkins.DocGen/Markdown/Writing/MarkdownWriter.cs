@@ -12,13 +12,16 @@ public sealed partial class MarkdownWriter : IDisposable
         writer = File.CreateText(path);
     }
 
-    private void Write(string text, bool escape) => writer.Write(escape ? HttpUtility.HtmlEncode(text) : text);
+    private void Write(string text, bool escape) => writer.Write(escape ? Escape(text) : text);
 
     private void WriteLine(string text, bool escape)
     {
         Write(text, escape);
         WriteLine();
     }
+
+    [Pure]
+    private static string Escape(string text) => HttpUtility.HtmlEncode(text).Replace("[]", @"\[\]");
 
     private void WriteLine() => writer.WriteLine();
 

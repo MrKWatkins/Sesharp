@@ -52,14 +52,14 @@ public abstract class MemberMarkdownGenerator<TMember, TMemberInfo> : MarkdownGe
 
     protected string PluralName => typeof(TMember).Name.Pluralize();
 
-    public void WriteTypeSection(MarkdownWriter writer, IReadOnlyList<TMember> members)
+    public void WriteMemberTable(MarkdownWriter writer, IReadOnlyList<TMember> members, string? heading = null)
     {
         if (members.Count == 0)
         {
             return;
         }
 
-        writer.WriteSubHeading(PluralName);
+        writer.WriteSubHeading(heading ?? PluralName);
 
         using var table = writer.Table("Name", "Description");
 

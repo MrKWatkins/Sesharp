@@ -46,6 +46,19 @@ public class ReflectionExtensionsTests
         methodInfo.GetVirtuality().Should().Be(expected);
     }
 
+    [TestCase(0, null)]
+    [TestCase(1, ParameterKind.In)]
+    [TestCase(2, ParameterKind.Out)]
+    [TestCase(3, ParameterKind.Ref)]
+    [TestCase(4, ParameterKind.Params)]
+    public void GetKind(int parameterIndex, ParameterKind? expected)
+    {
+        var methodInfo = typeof(TestParameterClass).GetMethod(nameof(TestParameterClass.TestMethod))
+                         ?? throw new InvalidOperationException($"Method {nameof(TestParameterClass.TestMethod)} not found on type {nameof(TestParameterClass)}.");
+
+        methodInfo.GetParameters()[parameterIndex].GetKind().Should().Be(expected);
+    }
+
 #pragma warning disable CA1812
 #pragma warning disable CA1822
     private sealed class TestClass;
@@ -98,6 +111,11 @@ public class ReflectionExtensionsTests
         public new virtual void TestMethod()
         {
         }
+    }
+
+    public abstract class TestParameterClass
+    {
+        public abstract void TestMethod(string normal, in string @in, out string @out, ref string @ref, params string[] @params);
     }
 #pragma warning restore CA1822
 #pragma warning restore CA1812

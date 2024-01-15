@@ -17,6 +17,11 @@ public sealed class MethodMarkdownGenerator : MemberMarkdownGenerator<Method, Me
 
         writer.WriteSubHeading("Definition");
 
+        WriteMethod(writer, method);
+    }
+
+    private void WriteMethod(MarkdownWriter writer, Method method)
+    {
         WriteSection(writer, method.Documentation?.Summary);
 
         WriteSignature(writer, method);
@@ -33,6 +38,15 @@ public sealed class MethodMarkdownGenerator : MemberMarkdownGenerator<Method, Me
     protected override void Generate(MarkdownWriter writer, MemberGroup<Method, MethodInfo> group)
     {
         writer.WriteMainHeading($"{group.Type.DisplayName}.{group.DisplayName} Method");
+
+        WriteMemberTable(writer, group.Members, "Overloads");
+
+        foreach (var method in group.Members)
+        {
+            writer.WriteSubHeading(method.MemberName);
+
+            WriteMethod(writer, method);
+        }
     }
 
     private static void WriteSignature(MarkdownWriter writer, Method method)
