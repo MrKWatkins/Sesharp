@@ -100,6 +100,11 @@ public abstract class MemberMarkdownGenerator<TMember, TMemberInfo> : MarkdownGe
 
     protected void WriteReturns(MarkdownWriter writer, DocumentableNode member, System.Type returnType, string sectionName = "Returns")
     {
+        if (returnType == typeof(void))
+        {
+            return;
+        }
+
         writer.WriteSubHeading(sectionName);
 
         using (var typeParagraph = writer.Paragraph())

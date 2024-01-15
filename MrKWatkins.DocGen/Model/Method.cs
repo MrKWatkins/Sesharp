@@ -8,4 +8,6 @@ public sealed class Method : Function<MethodInfo>
         : base(method)
     {
     }
+
+    public Virtuality? Virtuality => MemberInfo.GetVirtuality();
 }

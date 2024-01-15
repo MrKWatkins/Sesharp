@@ -38,7 +38,8 @@ public static class ReflectionExtensions
             { typeof(ulong), "ulong" },
             { typeof(ulong?), "ulong?" },
             { typeof(ushort), "ushort" },
-            { typeof(ushort?), "ushort?" }
+            { typeof(ushort?), "ushort?" },
+            { typeof(void), "void" }
         }
         .ToFrozenDictionary();
 
@@ -138,7 +139,7 @@ public static class ReflectionExtensions
     }
 
     [Pure]
-    public static Visibility GetVisibility(this MethodInfo method) => method.IsPublic ? Visibility.Public : Visibility.Protected;
+    public static Visibility GetVisibility(this MethodBase method) => method.IsPublic ? Visibility.Public : Visibility.Protected;
 
     [Pure]
     public static string ToKeyword(this Visibility visibility) =>

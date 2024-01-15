@@ -7,8 +7,14 @@ public sealed class Parameter : ModelNode
     public Parameter(ParameterInfo parameter)
         : base(parameter.Name ?? "")
     {
-        Type = parameter.ParameterType;
+        ParameterInfo = parameter;
     }
 
-    public System.Type Type { get; }
+    public ParameterInfo ParameterInfo { get; }
+
+    public System.Type Type => ParameterInfo.ParameterType;
+
+    public bool HasDefaultValue => ParameterInfo.HasDefaultValue;
+
+    public object? DefaultValue => ParameterInfo.DefaultValue;
 }

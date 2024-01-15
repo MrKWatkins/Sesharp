@@ -2,7 +2,6 @@ using System.Reflection;
 using Humanizer;
 using MrKWatkins.DocGen.Markdown.Writing;
 using MrKWatkins.DocGen.Model;
-using Type = System.Type;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
@@ -23,6 +22,7 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
         using var writer = CreateWriter(node);
 
         // TODO: Namespace.
+        // TODO: Assembly.
         // TODO: Source code links.
 
         writer.WriteMainHeading($"{type.DisplayName} {type.Kind.Capitalize()}");
@@ -33,7 +33,7 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
 
         WriteSignature(writer, type);
 
-        WriteTypeParameters(writer, type);
+        WriteTypeParameters(writer, type, type.TypeParameters);
 
         // TODO: Inheritance.
 
@@ -48,30 +48,6 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
         WriteMembers<OperatorMarkdownGenerator, Operator, MethodInfo>(writer, type.Operators);
 
         WriteMembers<EventMarkdownGenerator, Event, EventInfo>(writer, type.Events);
-    }
-
-    private void WriteTypeParameters(MarkdownWriter writer, Model.Type type)
-    {
-        var typeParameters = type.TypeParameters.ToList();
-        if (typeParameters.Count == 0)
-        {
-            return;
-        }
-
-        writer.WriteSubSubHeading("Type Parameters");
-
-        using var table = writer.Table("Name", "Description");
-
-        foreach (var typeParameter in typeParameters)
-        {
-            table.NewRow();
-            table.Write(typeParameter.Name);
-            table.NewColumn();
-            if (type.Documentation?.TypeParameters.TryGetValue(typeParameter.Name, out var summary) == true)
-            {
-                WriteSection(table, summary);
-            }
-        }
     }
 
     private void WriteMembers<TMemberGenerator, TMember, TMemberInfo>(MarkdownWriter writer, OutputNode? member)
@@ -145,31 +121,6 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
             separator = ", ";
         }
 
-        WriteGenericTypeConstraints(code, type.MemberInfo.GetGenericArguments());
-    }
-
-    private static void WriteGenericTypeConstraints(ITextWriter code, [InstantHandle] IEnumerable<Type> genericArguments)
-    {
-        foreach (var genericArgument in genericArguments)
-        {
-            code.WriteLine();
-            code.Write("   where ");
-            code.Write(genericArgument.Name);
-
-            var separator = " : ";
-            foreach (var constraint in genericArgument.GetGenericParameterConstraints())
-            {
-                code.Write(separator);
-                code.Write(constraint.DisplayName());
-                separator = ", ";
-            }
-
-            var attributes = genericArgument.GenericParameterAttributes;
-            if (attributes.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint))
-            {
-                code.Write(separator);
-                code.Write("new()");
-            }
-        }
+        WriteSignatureTypeConstraints(code, type.MemberInfo.GetGenericArguments());
     }
 }

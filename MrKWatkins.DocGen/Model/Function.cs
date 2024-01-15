@@ -22,6 +22,10 @@ public abstract class Function<TMethodInfo> : Member<TMethodInfo>
 
     public IReadOnlyList<Parameter> Parameters => Children.OfType<Parameter>().ToList();    // Keep in declaration order.
 
+    public Visibility Visibility => MemberInfo.GetVisibility();
+
+    public bool IsStatic => MemberInfo.IsStatic;
+
     public override string MemberName => memberName ??= BuildMemberName();
 
     private string BuildMemberName()

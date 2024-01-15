@@ -71,22 +71,7 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
         }
 
         code.Write("[");
-
-        if (parameters.Count > 0)
-        {
-            foreach (var parameter in parameters)
-            {
-                if (parameter != parameters[0])
-                {
-                    code.Write(", ");
-                }
-
-                code.Write(parameter.Type.DisplayNameOrKeyword());
-                code.Write(" ");
-                code.Write(parameter.Name);
-            }
-        }
-
+        WriteSignatureParameters(code, parameters);
         code.Write("]");
     }
 
