@@ -13,7 +13,7 @@ public sealed class MemberLookupTests
     public static IEnumerable<TestCaseData> GetTestCases()
     {
         static TestCaseData Create(string id, MemberInfo expectedMember, MemberLocation memberLocation) =>
-            new TestCaseData(XmlDocId.Create(id), expectedMember, memberLocation).SetName(id);
+            new TestCaseData(XmlDocId.Parse(id), expectedMember, memberLocation).SetName(id);
 
         // Types.
         yield return Create(

@@ -3,10 +3,11 @@ using System.Xml.Linq;
 
 namespace MrKWatkins.DocGen.XmlDocumentation;
 
-// TODO: Space between two <see>s.
+// TODO: More unit tests.
 public sealed class DocumentationSection
 {
-    private static readonly Regex SummaryTrimRegex = new(@"\r?\n\s*");
+    private static readonly Regex NewLineRegex = new(@"\r?\n", RegexOptions.Compiled);
+    private static readonly Regex ReduceWhitespaceRegex = new(@"\s\s+", RegexOptions.Compiled);
 
     private DocumentationSection([InstantHandle] IEnumerable<DocumentationElement> elements)
     {
@@ -27,57 +28,52 @@ public sealed class DocumentationSection
     private static IEnumerable<DocumentationElement> ParseChildren(XElement element)
     {
         var nodes = element.Nodes().ToList();
+
         foreach (var node in nodes)
         {
             var isFirst = node == nodes[0];
             var isLast = node == nodes[^1];
-            yield return node switch
+
+            var docElement = node switch
             {
                 XElement xElement => ParseElement(xElement),
                 XText xText => ParseTextElement(xText, isFirst, isLast),
                 _ => throw new NotSupportedException($"The element type {node.GetType().Name} is not supported.")
             };
+
+            if (docElement != null)
+            {
+                yield return docElement;
+            }
         }
     }
 
     [Pure]
-    private static DocumentationElement ParseElement(XElement element)
-    {
-        switch (element.Name.LocalName)
+    private static DocumentationElement ParseElement(XElement element) =>
+        element.Name.LocalName switch
         {
-            case "c":
-                return new CodeElement(element.Value);
-
-            case "paramref":
-                return new ParamRef(
-                    element.Attribute("name")?.Value ?? throw new FormatException("<paramref> element does not have name attribute."),
-                    element.Value);
-
-            case "see":
-                return new See(
-                    XmlDocId.Create(element.Attribute("cref")?.Value ?? throw new FormatException("<see> element does not have cref attribute.")),
-                    element.Value);
-
-            case "typeparamref":
-                return new TypeParamRef(
-                    element.Attribute("name")?.Value ?? throw new FormatException("<typeparamref> element does not have name attribute."),
-                    element.Value);
-        }
-        throw new NotSupportedException($"Elements of name {element.Name} are not supported.");
-    }
+            "c" => new CodeElement(element.Value),
+            "paramref" => new ParamRef(element.Attribute("name")?.Value ?? throw new FormatException("<paramref> element does not have name attribute."), element.Value),
+            "see" => new See(XmlDocId.Parse(element.Attribute("cref")?.Value ?? throw new FormatException("<see> element does not have cref attribute.")), element.Value),
+            "typeparamref" => new TypeParamRef(element.Attribute("name")?.Value ?? throw new FormatException("<typeparamref> element does not have name attribute."), element.Value),
+            _ => throw new NotSupportedException($"Elements of name {element.Name} are not supported.")
+        };
 
     [Pure]
-    private static TextElement ParseTextElement(XText textElement, bool isFirst, bool isLast)
+    private static TextElement? ParseTextElement(XText textElement, bool isFirst, bool isLast)
     {
-        var text = SummaryTrimRegex.Replace(textElement.Value, "");
+        var text = NewLineRegex.Replace(textElement.Value, " ");
+        text = ReduceWhitespaceRegex.Replace(text, " ");
+
         if (isFirst)
         {
             text = text.TrimStart();
         }
-        else if (isLast)
+        if (isLast)
         {
             text = text.TrimEnd();
         }
-        return new TextElement(text);
+
+        return text.Length > 0 ? new TextElement(text) : null;
     }
 }

@@ -18,7 +18,7 @@ public sealed class XmlDocId : IEquatable<XmlDocId>
 
     // TODO: Some validation.
     [Pure]
-    public static XmlDocId Create(string id) => new(id);
+    public static XmlDocId Parse(string id) => new(id);
 
     [Pure]
     public static XmlDocId Create(MemberInfo member) =>

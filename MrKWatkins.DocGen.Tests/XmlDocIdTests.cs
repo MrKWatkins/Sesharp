@@ -20,7 +20,7 @@ public sealed class XmlDocIdTests : EqualityTestFixture
     [Pure]
     public static IEnumerable<TestCaseData> CreateTestCases()
     {
-        static TestCaseData Create(MemberInfo member, string expectedId) => new TestCaseData(member, expectedId).SetName($"{nameof(XmlDocId.Create)}: {expectedId}");
+        static TestCaseData Create(MemberInfo member, string expectedId) => new TestCaseData(member, expectedId).SetName($"{nameof(XmlDocId.Parse)}: {expectedId}");
 
         // Types.
         yield return Create(

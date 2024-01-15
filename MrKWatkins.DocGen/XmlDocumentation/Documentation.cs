@@ -19,7 +19,7 @@ public sealed class Documentation
     public static Documentation Load(string path)
     {
         using var file = File.OpenRead(path);
-        var xDocument = XDocument.Load(file);
+        var xDocument = XDocument.Load(file, LoadOptions.PreserveWhitespace);
 
         return Parse(xDocument);
     }
@@ -32,7 +32,7 @@ public sealed class Documentation
         foreach (var memberXml in xml.XPathSelectElements("/doc/members/member"))
         {
             var member = MemberDocumentation.Parse(memberXml);
-            members.Add(XmlDocId.Create(member.Name), member);
+            members.Add(XmlDocId.Parse(member.Name), member);
         }
 
         return new Documentation(members);
