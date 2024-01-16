@@ -1,18 +1,34 @@
 using System.Reflection;
+using MrKWatkins.DocGen.Markdown.Writing;
 
 namespace MrKWatkins.DocGen;
 
 public static class FileNameExtensions
 {
     [Pure]
-    public static string DocumentationFileName(this MemberInfo memberInfo) => $"{memberInfo.BaseFilename()}.md";
+    public static string DocumentationFileName(this MemberInfo memberInfo) => $"{memberInfo.BuildBaseFilename()}.md";
 
     [Pure]
-    public static string MicrosoftUrl(this MemberInfo memberInfo, string baseUrl = "https://learn.microsoft.com/en-gb/dotnet/api/") =>
-        $"{baseUrl}{memberInfo.BaseFilename()}";
+    public static string DocumentationLink(this MemberInfo memberInfo) =>
+        BuildMemberLink($"{memberInfo.DocumentationFileName()}", memberInfo);
 
     [Pure]
-    public static string BaseFilename(this MemberInfo memberInfo)
+    public static string MicrosoftLink(this MemberInfo memberInfo, string baseUrl = "https://learn.microsoft.com/en-gb/dotnet/api/") =>
+        BuildMemberLink($"{baseUrl}{memberInfo.BuildBaseFilename()}", memberInfo);
+
+    [Pure]
+    private static string BuildMemberLink(string baseLink, MemberInfo memberInfo)
+    {
+        if (memberInfo is MethodInfo methodInfo && methodInfo.HasPublicOrProtectedOverloads())
+        {
+            return $"{baseLink}#{MarkdownId.FromMember(methodInfo)}";
+        }
+
+        return baseLink;
+    }
+
+    [Pure]
+    public static string BuildBaseFilename(this MemberInfo memberInfo)
     {
         if (memberInfo is Type type)
         {
@@ -20,8 +36,9 @@ public static class FileNameExtensions
         }
 
         type = memberInfo.DeclaringType!;
-        // TODO: Links within group.
 
-        return $"{type.Namespace}.{type.Name}.{memberInfo.Name}".Replace('`', '-');
+        var memberName = memberInfo is ConstructorInfo ? "-ctor" : memberInfo.Name;
+
+        return $"{type.Namespace}.{type.Name}.{memberName}".Replace('`', '-');
     }
 }

@@ -6,6 +6,7 @@ public sealed partial class MarkdownWriter : IDisposable
 {
     private readonly StreamWriter writer;
     private bool inChildBlock;
+    private MarkdownId? idSuffix;
 
     public MarkdownWriter(string path)
     {
@@ -25,13 +26,26 @@ public sealed partial class MarkdownWriter : IDisposable
 
     private void WriteLine() => writer.WriteLine();
 
-    public void WriteMainHeading(string text) => WriteHeading(text, 1);
+    [MustUseReturnValue]
+    public IDisposable WithIdSuffix(MarkdownId suffix)
+    {
+        if (idSuffix != null)
+        {
+            throw new InvalidOperationException("Suffix already set.");
+        }
 
-    public void WriteSubHeading(string text) => WriteHeading(text, 2);
+        idSuffix = suffix;
 
-    public void WriteSubSubHeading(string text) => WriteHeading(text, 3);
+        return new Disposable(() => idSuffix = null);
+    }
 
-    public void WriteHeading(string text, int level)
+    public void WriteMainHeading(string text, MarkdownId? id = null) => WriteHeading(text, 1, id);
+
+    public void WriteSubHeading(string text, MarkdownId? id = null) => WriteHeading(text, 2, id);
+
+    public void WriteSubSubHeading(string text, MarkdownId? id = null) => WriteHeading(text, 3, id);
+
+    public void WriteHeading(string text, int level, MarkdownId? id)
     {
         ValidateNotInChildState();
 
@@ -40,7 +54,19 @@ public sealed partial class MarkdownWriter : IDisposable
             writer.Write('#');
         }
         writer.Write(' ');
-        WriteLine(text, true);
+        Write(text, true);
+
+        if (idSuffix != null)
+        {
+            id = (id ?? MarkdownId.FromText(text)) + idSuffix;
+        }
+
+        if (id != null)
+        {
+            Write($" {{id=\"{id}\"}}", false);
+        }
+
+        WriteLine();
     }
 
     [MustUseReturnValue]

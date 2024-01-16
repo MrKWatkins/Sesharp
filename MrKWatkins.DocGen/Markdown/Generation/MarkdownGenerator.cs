@@ -221,6 +221,12 @@ public abstract class MarkdownGenerator
     {
         text ??= member.DisplayName();
 
+        if (member is System.Type type && (type.IsArray || type.IsByRef))
+        {
+            WriteMemberLink(writer, type.GetElementType()!, location, text);
+            return;
+        }
+
         if (member is System.Type { IsGenericParameter: true })
         {
             writer.Write(text);
@@ -230,10 +236,10 @@ public abstract class MarkdownGenerator
         switch (location)
         {
             case MemberLocation.DocumentAssembly:
-                writer.WriteLink(text, member.DocumentationFileName());
+                writer.WriteLink(text, member.DocumentationLink());
                 break;
             case MemberLocation.System:
-                writer.WriteLink(text, member.MicrosoftUrl());
+                writer.WriteLink(text, member.MicrosoftLink());
                 break;
             default:
                 writer.Write(text);

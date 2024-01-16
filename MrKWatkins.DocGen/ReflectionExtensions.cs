@@ -257,4 +257,46 @@ public static class ReflectionExtensions
             ParameterKind.In => "in",
             _ => throw new NotSupportedException($"The {nameof(ParameterKind)} {parameterKind} is not supported.")
         };
+
+    [Pure]
+    public static bool IsIndexer(this PropertyInfo propertyInfo) => propertyInfo.GetIndexParameters().Length > 0;
+
+    [Pure]
+    public static bool HasPublicOrProtectedOverloads(this MethodInfo method)
+    {
+        var type = method.DeclaringType!;
+        var methods = type
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+            .Where(m => m != method && m.Name == method.Name && (m.IsPublic || m.IsFamily));
+        return methods.Any();
+    }
+
+    [Pure]
+    public static bool HasPublicOrProtectedOverloads(this ConstructorInfo constructor)
+    {
+        var type = constructor.DeclaringType!;
+        var constructors = type
+            .GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+            .Where(c => c != constructor && (c.IsPublic || c.IsFamily));
+        return constructors.Any();
+    }
+
+    [Pure]
+    public static bool HasPublicOrProtectedOverloads(this PropertyInfo property)
+    {
+        if (!property.IsIndexer())
+        {
+            return false;
+        }
+
+        var type = property.DeclaringType!;
+        var indexers = type
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+            .Where(p => p != property && p.IsIndexer() && (PropertyAccessorIsPublicOrProtected(p.GetMethod) || PropertyAccessorIsPublicOrProtected(p.SetMethod)));
+        return indexers.Any();
+    }
+
+    [Pure]
+    private static bool PropertyAccessorIsPublicOrProtected(MethodInfo? accessor) =>
+        accessor == null || accessor.IsPublic || accessor.IsFamily;
 }

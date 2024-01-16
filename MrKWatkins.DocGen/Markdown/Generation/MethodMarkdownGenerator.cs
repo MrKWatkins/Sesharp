@@ -43,7 +43,14 @@ public sealed class MethodMarkdownGenerator : MemberMarkdownGenerator<Method, Me
 
         foreach (var method in group.Members)
         {
-            writer.WriteSubHeading(method.MemberName);
+            var id = MarkdownId.FromMember(method.MemberInfo);
+
+            writer.WriteSubHeading(method.MemberName, id);
+
+            // False positive on Dispose pattern.
+#pragma warning disable CA2000
+            using var _ = writer.WithIdSuffix(id);
+#pragma warning restore CA2000
 
             WriteMethod(writer, method);
         }

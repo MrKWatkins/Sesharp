@@ -14,7 +14,7 @@ public abstract class MemberGroup<TMember, TMemberInfo> : OutputNode
 
     public abstract string GroupFileName { get; }
 
-    public override string FileName => $"{Type.MemberInfo.BaseFilename()}.{GroupFileName}.md";
+    public override string FileName => $"{Type.MemberInfo.BuildBaseFilename()}.{GroupFileName}.md";
 
     public new Type Parent => (Type)base.Parent;
 

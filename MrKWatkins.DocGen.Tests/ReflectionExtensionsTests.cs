@@ -1,3 +1,7 @@
+using System.Data;
+using System.Reflection;
+using MrKWatkins.Ast.Position;
+
 namespace MrKWatkins.DocGen.Tests;
 
 public class ReflectionExtensionsTests
@@ -57,6 +61,70 @@ public class ReflectionExtensionsTests
                          ?? throw new InvalidOperationException($"Method {nameof(TestParameterClass.TestMethod)} not found on type {nameof(TestParameterClass)}.");
 
         methodInfo.GetParameters()[parameterIndex].GetKind().Should().Be(expected);
+    }
+
+    [TestCase(typeof(string), nameof(string.Length), false)]
+    [TestCase(typeof(List<string>), "Item", true)]
+    public void IsIndexer(Type type, string propertyName, bool expected)
+    {
+        var property = type
+            .GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not find property.");
+
+        property.IsIndexer().Should().Be(expected);
+    }
+
+    [TestCase(typeof(int), nameof(int.ToString), true)]
+    [TestCase(typeof(object), nameof(int.ToString), false)]
+    [TestCase(typeof(MemoryStream), nameof(MemoryStream.Flush), false)]
+    [TestCase(typeof(SourceFilePosition<,>), "Combine", false)]
+    public void HasPublicOrProtectedOverloads_MethodInfo(Type type, string methodName, bool expected)
+    {
+        var methods = type
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+            .Where(m => m.Name == methodName)
+            .ToList();
+
+        if (methods.Count == 0)
+        {
+            throw new InvalidOperationException("Could not find method.");
+        }
+
+        methods[0].HasPublicOrProtectedOverloads().Should().Be(expected);
+    }
+
+    [TestCase(typeof(string), true)]
+    [TestCase(typeof(object), false)]
+    public void HasPublicOrProtectedOverloads_ConstructorInfo(Type type, bool expected)
+    {
+        var constructors = type
+            .GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+            .ToList();
+
+        if (constructors.Count == 0)
+        {
+            throw new InvalidOperationException("Could not find constructor.");
+        }
+
+        constructors[0].HasPublicOrProtectedOverloads().Should().Be(expected);
+    }
+
+    [TestCase(typeof(string), nameof(string.Length), false)]
+    [TestCase(typeof(List<string>), "Item", false)]
+    [TestCase(typeof(DataRow), "Item", true)]
+    public void HasPublicOrProtectedOverloads_PropertyInfo(Type type, string propertyName, bool expected)
+    {
+        var properties = type
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+            .Where(p => p.Name == propertyName)
+            .ToList();
+
+        if (properties.Count == 0)
+        {
+            throw new InvalidOperationException("Could not find property.");
+        }
+
+        properties[0].HasPublicOrProtectedOverloads().Should().Be(expected);
     }
 
 #pragma warning disable CA1812
