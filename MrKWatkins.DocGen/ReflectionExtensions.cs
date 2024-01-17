@@ -122,6 +122,42 @@ public static class ReflectionExtensions
         $"({string.Join(", ", method.GetParameters().Select(p => p.ParameterType.DisplayName()))})";
 
     [Pure]
+    public static bool IsPublicOrProtected(this FieldInfo field) => field.IsPublic || field.IsProtected();
+
+    [Pure]
+    public static bool IsProtected(this FieldInfo field) => field.IsFamily || field.IsFamilyOrAssembly;
+
+    [Pure]
+    public static bool IsPublicOrProtected(this MethodBase method) => method.IsPublic || method.IsProtected();
+
+    [Pure]
+    public static bool IsProtected(this MethodBase method) => method.IsFamily || method.IsFamilyOrAssembly;
+
+    [Pure]
+    public static bool IsPublic(this PropertyInfo property) =>
+        (property.GetMethod != null && property.GetMethod.IsPublic) ||
+        (property.SetMethod != null && property.SetMethod.IsPublic);
+
+    [Pure]
+    public static bool IsProtected(this PropertyInfo property) =>
+        (property.GetMethod != null && property.GetMethod.IsProtected()) ||
+        (property.SetMethod != null && property.SetMethod.IsProtected());
+
+    [Pure]
+    public static bool IsPublicOrProtected(this PropertyInfo property) =>
+        (property.GetMethod != null && property.GetMethod.IsPublicOrProtected()) ||
+        (property.SetMethod != null && property.SetMethod.IsPublicOrProtected());
+
+    [Pure]
+    public static bool IsPublic(this EventInfo @event) => @event.AddMethod?.IsPublic == true;
+
+    [Pure]
+    public static bool IsProtected(this EventInfo @event) => @event.AddMethod?.IsProtected() == true;
+
+    [Pure]
+    public static bool IsPublicOrProtected(this EventInfo @event) => @event.AddMethod?.IsPublicOrProtected() == true;
+
+    [Pure]
     public static bool IsRecord(this Type type)
     {
         if (!type.IsClass)
@@ -260,14 +296,13 @@ public static class ReflectionExtensions
 
     [Pure]
     public static bool IsIndexer(this PropertyInfo propertyInfo) => propertyInfo.GetIndexParameters().Length > 0;
-
     [Pure]
     public static bool HasPublicOrProtectedOverloads(this MethodInfo method)
     {
         var type = method.DeclaringType!;
         var methods = type
             .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
-            .Where(m => m != method && m.Name == method.Name && (m.IsPublic || m.IsFamily));
+            .Where(m => m != method && m.Name == method.Name && m.IsPublicOrProtected());
         return methods.Any();
     }
 
@@ -277,7 +312,7 @@ public static class ReflectionExtensions
         var type = constructor.DeclaringType!;
         var constructors = type
             .GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
-            .Where(c => c != constructor && (c.IsPublic || c.IsFamily));
+            .Where(c => c != constructor && c.IsPublicOrProtected());
         return constructors.Any();
     }
 
@@ -297,6 +332,5 @@ public static class ReflectionExtensions
     }
 
     [Pure]
-    private static bool PropertyAccessorIsPublicOrProtected(MethodInfo? accessor) =>
-        accessor == null || accessor.IsPublic || accessor.IsFamily;
+    private static bool PropertyAccessorIsPublicOrProtected(MethodInfo? accessor) => accessor == null || accessor.IsPublicOrProtected();
 }

@@ -4,6 +4,7 @@ using MrKWatkins.DocGen.Model;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
+// TODO: init and readonly properties.
 public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property, PropertyInfo>
 {
     public PropertyMarkdownGenerator(MemberLookup memberLookup, string outputDirectory)

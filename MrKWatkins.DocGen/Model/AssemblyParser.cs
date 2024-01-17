@@ -52,7 +52,7 @@ public static class AssemblyParser
         typeNode.Children.Add(
             new ConstructorGroup(
                 type.GetConstructors(Binding)
-                    .Where(c => IsNotCompilerGenerated(c) && IsPublicOrProtected(c))
+                    .Where(c => IsNotCompilerGenerated(c) && c.IsPublicOrProtected())
                     .Select(c => new Constructor(c))
                     .OrderBy(f => f.DisplayName)));
     }
@@ -62,8 +62,8 @@ public static class AssemblyParser
         typeNode.Children.Add(
             type.GetFields(Binding)
                 .Where(f => IsNotCompilerGenerated(f) &&
-                            (type.IsEnum && IsPublic(f) && IsStatic(f)
-                             || !type.IsEnum && IsPublicOrProtected(f)))
+                            type.IsEnum && f is { IsPublic: true, IsStatic: true } ||
+                            !type.IsEnum && f.IsPublicOrProtected())
                 .Select(f => new Field(f))
                 .OrderBy(f => f.DisplayName));
     }
@@ -72,7 +72,7 @@ public static class AssemblyParser
     {
         typeNode.Children.Add(
             type.GetProperties(Binding)
-                .Where(p => IsNotCompilerGenerated(p) && IsPublicOrProtected(p))
+                .Where(p => IsNotCompilerGenerated(p) && p.IsPublicOrProtected())
                 .Select(p => new Property(p))
                 .OrderBy(p => p.DisplayName));
     }
@@ -81,7 +81,7 @@ public static class AssemblyParser
     {
         typeNode.Children.Add(
             type.GetMethods(Binding)
-                .Where(m => IsNotCompilerGenerated(m) && IsPublicOrProtected(m) && !IsPropertyMethod(m) && !IsOperatorMethod(m))
+                .Where(m => IsNotCompilerGenerated(m) && m.IsPublicOrProtected() && !IsPropertyMethod(m) && !IsOperatorMethod(m))
                 .GroupBy(m => m.Name)   // TODO: Remove generic parameters?
                 .Select(g => g.Count() == 1
                     ? (OutputNode) new Method(g.First())
@@ -93,7 +93,7 @@ public static class AssemblyParser
     {
         typeNode.Children.Add(
             type.GetMethods(Binding)
-                .Where(m => IsNotCompilerGenerated(m) && IsPublicOrProtected(m) && IsOperatorMethod(m))
+                .Where(m => IsNotCompilerGenerated(m) && m.IsPublicOrProtected() && IsOperatorMethod(m))
                 .GroupBy(m => m.Name)
                 .Select(g => g.Count() == 1
                     ? (OutputNode) new Operator(g.First())
@@ -105,33 +105,10 @@ public static class AssemblyParser
     {
         typeNode.Children.Add(
             type.GetEvents(Binding)
-                .Where(e => IsNotCompilerGenerated(e) && IsPublicOrProtected(e))
+                .Where(e => IsNotCompilerGenerated(e) && e.IsPublicOrProtected())
                 .Select(e => new Event(e))
                 .OrderBy(e => e.DisplayName));
     }
-
-    [Pure]
-    private static bool IsStatic(FieldInfo field) => field.IsStatic;
-
-    [Pure]
-    private static bool IsPublic(FieldInfo field) => field.IsPublic;
-
-    [Pure]
-    private static bool IsPublicOrProtected(FieldInfo field) => field.IsPublic || field.IsFamily;
-
-    [Pure]
-    private static bool IsPublicOrProtected(MethodBase method) => method.IsPublic || method.IsFamily;
-
-    [Pure]
-    private static bool IsPublicOrProtected(PropertyInfo property) =>
-        (property.GetMethod != null && IsPublicOrProtected(property.GetMethod)) ||
-        (property.SetMethod != null && IsPublicOrProtected(property.SetMethod));
-
-    [Pure]
-    private static bool IsPublicOrProtected(EventInfo @event) =>
-        (@event.AddMethod != null && IsPublicOrProtected(@event.AddMethod)) ||
-        (@event.RemoveMethod != null && IsPublicOrProtected(@event.RemoveMethod)) ||
-        (@event.RaiseMethod != null && IsPublicOrProtected(@event.RaiseMethod));
 
     [Pure]
     private static bool IsPropertyMethod(MethodInfo method) =>
