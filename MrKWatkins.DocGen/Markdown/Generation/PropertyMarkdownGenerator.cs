@@ -4,7 +4,6 @@ using MrKWatkins.DocGen.Model;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
-// TODO: init and readonly properties.
 public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property, PropertyInfo>
 {
     public PropertyMarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
@@ -50,6 +49,11 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
             code.Write(" ");
         }
 
+        if (property.IsRequired)
+        {
+            code.Write("required ");
+        }
+
         code.Write(property.MemberInfo.PropertyType.DisplayNameOrKeyword());
         code.Write(" ");
 
@@ -59,7 +63,7 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
 
         code.Write(" { ");
         WritePropertyMethodSignature(code, property, getter, "get");
-        WritePropertyMethodSignature(code, property, setter, "set");
+        WritePropertyMethodSignature(code, property, setter, property.HasInitSetter ? "init" : "set");
         code.Write("}");
     }
 

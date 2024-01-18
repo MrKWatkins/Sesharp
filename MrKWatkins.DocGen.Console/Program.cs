@@ -7,7 +7,12 @@ using Assembly = System.Reflection.Assembly;
 var assemblyPath = args[0];
 var writersideOptions = new WritersideOptions(args[1]);
 
-var xmlPath = args.Length > 2 ? args[2] : assemblyPath.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
+if (args.Length > 2)
+{
+    writersideOptions.TreeFile = args[2];
+}
+
+var xmlPath = assemblyPath.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
 
 var documentation = Documentation.Load(xmlPath);
 

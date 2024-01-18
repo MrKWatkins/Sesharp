@@ -47,9 +47,13 @@ public sealed class Property : Member<PropertyInfo>
         return sb.ToString();
     }
 
+    public bool IsRequired => MemberInfo.IsRequired();
+
     public MethodInfo? Getter => MemberInfo.GetMethod;
 
     public MethodInfo? Setter => MemberInfo.SetMethod;
+
+    public bool HasInitSetter => MemberInfo.HasInitSetter();
 
     public Visibility? GetterVisibility => Getter?.GetVisibility();
 

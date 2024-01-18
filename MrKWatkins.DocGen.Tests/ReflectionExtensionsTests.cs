@@ -203,6 +203,25 @@ public class ReflectionExtensionsTests
         @event.IsPublicOrProtected().Should().Be(expected);
     }
 
+    [TestCase("PublicGetPublicInitProperty", true)]
+    [TestCase("PublicGetPublicSetProperty", false)]
+    [TestCase("PublicGetNoSetProperty", false)]
+    public void HasInitSetter(string name, bool expected)
+    {
+        var property = typeof(TestVisibilityClass).GetProperty(name) ?? throw new InvalidOperationException($"Could not find property {name}.");
+
+        property.HasInitSetter().Should().Be(expected);
+    }
+
+    [TestCase("RequiredProperty", true)]
+    [TestCase("PublicGetPublicInitProperty", false)]
+    public void IsRequired(string name, bool expected)
+    {
+        var property = typeof(TestVisibilityClass).GetProperty(name) ?? throw new InvalidOperationException($"Could not find property {name}.");
+
+        property.IsRequired().Should().Be(expected);
+    }
+
     [TestCase(typeof(TestClass), false)]
     [TestCase(typeof(TestRecord), true)]
     [TestCase(typeof(int), false)]
@@ -409,6 +428,10 @@ public class ReflectionExtensionsTests
         private TestVisibilityClass(string _)
         {
         }
+
+        public required int RequiredProperty { get; init; }
+
+        public int PublicGetPublicInitProperty { get; init; }
 
         public int PublicGetPublicSetProperty { get; set; }
         public int PublicGetProtectedSetProperty { get; protected set; }

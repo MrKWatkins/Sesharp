@@ -158,6 +158,13 @@ public static class ReflectionExtensions
     public static bool IsPublicOrProtected(this EventInfo @event) => @event.AddMethod?.IsPublicOrProtected() == true;
 
     [Pure]
+    public static bool HasInitSetter(this PropertyInfo propertyInfo) =>
+        propertyInfo.SetMethod?.ReturnParameter.GetRequiredCustomModifiers().Contains(typeof(IsExternalInit)) == true;
+
+    [Pure]
+    public static bool IsRequired(this PropertyInfo propertyInfo) => propertyInfo.IsDefined(typeof(RequiredMemberAttribute));
+
+    [Pure]
     public static bool IsRecord(this Type type)
     {
         if (!type.IsClass)
