@@ -59,7 +59,7 @@ public abstract class MemberMarkdownGenerator<TMember, TMemberInfo> : MarkdownGe
             return;
         }
 
-        getMemberName ??= m => m.DisplayName;
+        getMemberName ??= m => m.MemberName;
 
         writer.WriteSubHeading(heading ?? PluralName);
 
