@@ -300,6 +300,7 @@ public class ReflectionExtensionsTests
         }
 
         methods[0].HasPublicOrProtectedOverloads().Should().Be(expected);
+        ((MethodBase)methods[0]).HasPublicOrProtectedOverloads().Should().Be(expected);
     }
 
     [TestCase(typeof(string), true)]
@@ -316,6 +317,7 @@ public class ReflectionExtensionsTests
         }
 
         constructors[0].HasPublicOrProtectedOverloads().Should().Be(expected);
+        ((MethodBase)constructors[0]).HasPublicOrProtectedOverloads().Should().Be(expected);
     }
 
     [TestCase(typeof(string), nameof(string.Length), false)]

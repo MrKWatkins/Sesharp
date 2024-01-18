@@ -303,6 +303,16 @@ public static class ReflectionExtensions
 
     [Pure]
     public static bool IsIndexer(this PropertyInfo propertyInfo) => propertyInfo.GetIndexParameters().Length > 0;
+
+    [Pure]
+    public static bool HasPublicOrProtectedOverloads(this MethodBase method) =>
+        method switch
+        {
+            ConstructorInfo constructorInfo => constructorInfo.HasPublicOrProtectedOverloads(),
+            MethodInfo methodInfo => methodInfo.HasPublicOrProtectedOverloads(),
+            _ => throw new NotSupportedException($"Methods of type {method.GetType().DisplayName()} are not supported.")
+        };
+
     [Pure]
     public static bool HasPublicOrProtectedOverloads(this MethodInfo method)
     {

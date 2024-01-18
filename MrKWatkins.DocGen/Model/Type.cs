@@ -13,6 +13,8 @@ public sealed class Type : DocumentableNode<System.Type>
 
     public override string DisplayName => MemberInfo.DisplayName();
 
+    public string NonGenericName => MemberInfo.IsGenericType ? MemberInfo.Name[..^2] : MemberInfo.Name;
+
     public new Namespace Parent => (Namespace)base.Parent;
 
     public Namespace Namespace => Parent;

@@ -37,7 +37,7 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
 
         // TODO: Inheritance.
 
-        WriteMembers<ConstructorMarkdownGenerator, Constructor, ConstructorInfo>(writer, type.ConstructorGroup);
+        WriteMembers<ConstructorMarkdownGenerator, Constructor, ConstructorInfo>(writer, type.ConstructorGroup, c => c.TitleName);
 
         WriteMembers<FieldMarkdownGenerator, Field, FieldInfo>(writer, type.Fields);
 
@@ -50,7 +50,7 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
         WriteMembers<EventMarkdownGenerator, Event, EventInfo>(writer, type.Events);
     }
 
-    private void WriteMembers<TMemberGenerator, TMember, TMemberInfo>(MarkdownWriter writer, OutputNode? member)
+    private void WriteMembers<TMemberGenerator, TMember, TMemberInfo>(MarkdownWriter writer, OutputNode? member, Func<TMember, string>? getMemberName = null)
         where TMemberGenerator : MemberMarkdownGenerator<TMember, TMemberInfo>
         where TMember : Member<TMemberInfo>
         where TMemberInfo : MemberInfo
@@ -60,10 +60,10 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
             return;
         }
 
-        WriteMembers<TMemberGenerator, TMember, TMemberInfo>(writer, [member]);
+        WriteMembers<TMemberGenerator, TMember, TMemberInfo>(writer, [member], getMemberName);
     }
 
-    private void WriteMembers<TMemberGenerator, TMember, TMemberInfo>(MarkdownWriter writer, IReadOnlyList<OutputNode> members)
+    private void WriteMembers<TMemberGenerator, TMember, TMemberInfo>(MarkdownWriter writer, IReadOnlyList<OutputNode> members, Func<TMember, string>? getMemberName = null)
         where TMemberGenerator : MemberMarkdownGenerator<TMember, TMemberInfo>
         where TMember : Member<TMemberInfo>
         where TMemberInfo : MemberInfo
@@ -86,7 +86,7 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
             })
             .ToList();
 
-        generator.WriteMemberTable(writer, allMembers);
+        generator.WriteMemberTable(writer, allMembers, getMemberName: getMemberName);
     }
 
     private static void WriteSignature(MarkdownWriter writer, Model.Type type)

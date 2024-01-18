@@ -26,6 +26,32 @@ public abstract class Function<TMethodInfo> : Member<TMethodInfo>
 
     public bool IsStatic => MemberInfo.IsStatic;
 
+    public string TitleName
+    {
+        get
+        {
+            var sb = new StringBuilder(Type.NonGenericName);
+            sb.Append('(');
+
+            var parameters = Parameters;
+            if (parameters.Count > 0)
+            {
+                foreach (var parameter in parameters)
+                {
+                    if (parameter != parameters[0])
+                    {
+                        sb.Append(", ");
+                    }
+
+                    sb.Append(parameter.Type.DisplayNameOrKeyword());
+                }
+            }
+
+            sb.Append(')');
+            return sb.ToString();
+        }
+    }
+
     public override string MemberName => memberName ??= BuildMemberName();
 
     private string BuildMemberName()

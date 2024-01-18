@@ -52,12 +52,14 @@ public abstract class MemberMarkdownGenerator<TMember, TMemberInfo> : MarkdownGe
 
     protected string PluralName => typeof(TMember).Name.Pluralize();
 
-    public void WriteMemberTable(MarkdownWriter writer, IReadOnlyList<TMember> members, string? heading = null)
+    public void WriteMemberTable(MarkdownWriter writer, IReadOnlyList<TMember> members, string? heading = null, Func<TMember, string>? getMemberName = null)
     {
         if (members.Count == 0)
         {
             return;
         }
+
+        getMemberName ??= m => m.DisplayName;
 
         writer.WriteSubHeading(heading ?? PluralName);
 
@@ -66,7 +68,7 @@ public abstract class MemberMarkdownGenerator<TMember, TMemberInfo> : MarkdownGe
         foreach (var member in members)
         {
             table.NewRow();
-            WriteMemberLink(table, member.MemberInfo);
+            WriteMemberLink(table, member.MemberInfo, getMemberName(member));
             table.NewColumn();
 
             WriteSection(table, member.Documentation?.Summary);

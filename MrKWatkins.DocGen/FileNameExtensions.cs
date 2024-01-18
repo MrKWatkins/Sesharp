@@ -19,9 +19,9 @@ public static class FileNameExtensions
     [Pure]
     private static string BuildMemberLink(string baseLink, MemberInfo memberInfo)
     {
-        if (memberInfo is MethodInfo methodInfo && methodInfo.HasPublicOrProtectedOverloads())
+        if (memberInfo is MethodBase methodBase && methodBase.HasPublicOrProtectedOverloads())
         {
-            return $"{baseLink}#{MarkdownId.FromMember(methodInfo)}";
+            return $"{baseLink}#{MarkdownId.FromMember(methodBase)}";
         }
 
         return baseLink;

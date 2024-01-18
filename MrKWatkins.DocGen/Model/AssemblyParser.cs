@@ -49,12 +49,17 @@ public static class AssemblyParser
 
     private static void AddConstructors(System.Type type, Type typeNode)
     {
-        typeNode.Children.Add(
-            new ConstructorGroup(
-                type.GetConstructors(Binding)
-                    .Where(c => IsNotCompilerGenerated(c) && c.IsPublicOrProtected())
-                    .Select(c => new Constructor(c))
-                    .OrderBy(f => f.DisplayName)));
+        var constructors =
+            type.GetConstructors(Binding)
+                .Where(c => IsNotCompilerGenerated(c) && c.IsPublicOrProtected())
+                .Select(c => new Constructor(c))
+                .OrderBy(f => f.DisplayName)
+                .ToList();
+
+        if (constructors.Any())
+        {
+            typeNode.Children.Add(new ConstructorGroup(constructors));
+        }
     }
 
     private static void AddFields(System.Type type, Type typeNode)
@@ -82,9 +87,9 @@ public static class AssemblyParser
         typeNode.Children.Add(
             type.GetMethods(Binding)
                 .Where(m => IsNotCompilerGenerated(m) && m.IsPublicOrProtected() && !IsPropertyMethod(m) && !IsOperatorMethod(m))
-                .GroupBy(m => m.Name)   // TODO: Remove generic parameters?
+                .GroupBy(m => m.Name) // TODO: Remove generic parameters?
                 .Select(g => g.Count() == 1
-                    ? (OutputNode) new Method(g.First())
+                    ? (OutputNode)new Method(g.First())
                     : new MethodGroup(g.Key, g.Select(m => new Method(m))))
                 .OrderBy(m => m.DisplayName));
     }
@@ -96,7 +101,7 @@ public static class AssemblyParser
                 .Where(m => IsNotCompilerGenerated(m) && m.IsPublicOrProtected() && IsOperatorMethod(m))
                 .GroupBy(m => m.Name)
                 .Select(g => g.Count() == 1
-                    ? (OutputNode) new Operator(g.First())
+                    ? (OutputNode)new Operator(g.First())
                     : new OperatorGroup(g.Key, g.Select(m => new Operator(m))))
                 .OrderBy(m => m.DisplayName));
     }
