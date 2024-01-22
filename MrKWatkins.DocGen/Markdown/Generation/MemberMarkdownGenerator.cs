@@ -25,22 +25,33 @@ public abstract class MemberMarkdownGenerator<TMember, TMemberInfo> : MarkdownGe
 
     public sealed override void Generate(OutputNode node)
     {
-        if (node is not TMember and not MemberGroup<TMember, TMemberInfo>)
+        switch (node)
         {
-            throw new ArgumentException($"Value must be a {typeof(TMember).Name} or a group of {typeof(TMember).Name.Pluralize()}.", nameof(node));
-        }
+            case TMember member:
+                if (!ShouldGenerate(member))
+                {
+                    break;
+                }
 
-        using var writer = CreateWriter(node);
+                using (var writer = CreateWriter(node))
+                {
+                    Generate(writer, member);
+                    break;
+                }
 
-        if (node is TMember member)
-        {
-            Generate(writer, member);
-        }
-        else
-        {
-            Generate(writer, (MemberGroup<TMember, TMemberInfo>)node);
+            case MemberGroup<TMember, TMemberInfo> memberGroup:
+                using (var writer = CreateWriter(node))
+                {
+                    Generate(writer, memberGroup);
+                    break;
+                }
+
+            default:
+                throw new ArgumentException($"Value must be a {typeof(TMember).Name} or a group of {typeof(TMember).Name.Pluralize()}.", nameof(node));
         }
     }
+
+    protected virtual bool ShouldGenerate(TMember member) => true;
 
     protected virtual void Generate(MarkdownWriter writer, TMember member) =>
         throw new NotSupportedException($"Single {typeof(TMember).Name.Pluralize()} are not supported.");

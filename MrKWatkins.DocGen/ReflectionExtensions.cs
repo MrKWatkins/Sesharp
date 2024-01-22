@@ -122,6 +122,12 @@ public static class ReflectionExtensions
         $"({string.Join(", ", method.GetParameters().Select(p => p.ParameterType.DisplayName()))})";
 
     [Pure]
+    public static bool IsConst(this FieldInfo field) => field.IsLiteral;
+
+    [Pure]
+    public static bool IsReadOnly(this FieldInfo field) => field.IsInitOnly;
+
+    [Pure]
     public static bool IsPublicOrProtected(this FieldInfo field) => field.IsPublic || field.IsProtected();
 
     [Pure]
@@ -192,6 +198,10 @@ public static class ReflectionExtensions
 
         yield return type;
     }
+
+    [Pure]
+    public static Visibility GetVisibility(this FieldInfo field) => field.IsPublic ? Visibility.Public : Visibility.Protected;
+
 
     [Pure]
     public static Visibility GetVisibility(this MethodBase method) => method.IsPublic ? Visibility.Public : Visibility.Protected;

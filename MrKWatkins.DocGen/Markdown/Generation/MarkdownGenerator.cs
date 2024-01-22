@@ -127,28 +127,54 @@ public abstract class MarkdownGenerator
         code.Write(">");
     }
 
-    // TODO: struct/class/new() etc. constraints.
     protected static void WriteSignatureTypeConstraints(ITextWriter code, IReadOnlyList<System.Type> genericArguments)
     {
         foreach (var genericArgument in genericArguments)
         {
+            var constraints = genericArgument.GetGenericParameterConstraints();
+            var attributes = genericArgument.GenericParameterAttributes;
+
+            if (constraints.Length == 0 && attributes == GenericParameterAttributes.None)
+            {
+                continue;
+            }
+
+            var hasStructConstraint = constraints.Any(c => c == typeof(ValueType));
+
             code.WriteLine();
             code.Write("   where ");
             code.Write(genericArgument.Name);
 
             var separator = " : ";
-            foreach (var constraint in genericArgument.GetGenericParameterConstraints())
+
+            void WriteConstraint(string constraint)
             {
                 code.Write(separator);
-                code.Write(constraint.DisplayName());
+                code.Write(constraint);
                 separator = ", ";
             }
 
-            var attributes = genericArgument.GenericParameterAttributes;
-            if (attributes.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint))
+            if (attributes.HasFlag(GenericParameterAttributes.ReferenceTypeConstraint))
             {
-                code.Write(separator);
-                code.Write("new()");
+                WriteConstraint("class");
+            }
+            else if (hasStructConstraint)
+            {
+                WriteConstraint("struct");
+            }
+            else if (attributes.HasFlag(GenericParameterAttributes.NotNullableValueTypeConstraint))
+            {
+                WriteConstraint("notnull");
+            }
+
+            foreach (var constraint in constraints.Where(c => c != typeof(ValueType)))
+            {
+                WriteConstraint(constraint.DisplayName());
+            }
+
+            if (!hasStructConstraint && attributes.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint))
+            {
+                WriteConstraint("new()");
             }
         }
     }

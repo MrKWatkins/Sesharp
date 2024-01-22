@@ -14,6 +14,24 @@ public class ReflectionExtensionsTests
     [TestCase(typeof(ITestCovariant<>), "ITestCovariant<out T>")]
     public void DisplayName(Type type, string expected) => type.DisplayName().Should().Be(expected);
 
+    [TestCase(nameof(TestFieldsClass.ConstField), true)]
+    [TestCase(nameof(TestFieldsClass.StaticReadonlyField), false)]
+    public void IsConst(string name, bool expected)
+    {
+        var field = typeof(TestFieldsClass).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
+                    ?? throw new InvalidOperationException($"Could not find field {name}.");
+        field.IsConst().Should().Be(expected);
+    }
+
+    [TestCase(nameof(TestFieldsClass.ConstField), false)]
+    [TestCase(nameof(TestFieldsClass.StaticReadonlyField), true)]
+    public void IsReadOnly(string name, bool expected)
+    {
+        var field = typeof(TestFieldsClass).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
+                    ?? throw new InvalidOperationException($"Could not find field {name}.");
+        field.IsReadOnly().Should().Be(expected);
+    }
+
     [TestCase("PublicField", false)]
     [TestCase("ProtectedField", true)]
     [TestCase("ProtectedInternalField", true)]
@@ -400,6 +418,13 @@ public class ReflectionExtensionsTests
     public abstract class TestParameterClass
     {
         public abstract void TestMethod(string normal, in string @in, out string @out, ref string @ref, params string[] @params);
+    }
+
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+    public static class TestFieldsClass
+    {
+        public static readonly int StaticReadonlyField = 1;
+        public const int ConstField = 1;
     }
 
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
