@@ -127,6 +127,7 @@ public abstract class MarkdownGenerator
         code.Write(">");
     }
 
+    // TODO: struct/class/new() etc. constraints.
     protected static void WriteSignatureTypeConstraints(ITextWriter code, IReadOnlyList<System.Type> genericArguments)
     {
         foreach (var genericArgument in genericArguments)

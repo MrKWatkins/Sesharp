@@ -3,7 +3,7 @@ using MrKWatkins.DocGen.Markdown.Writing;
 
 namespace MrKWatkins.DocGen;
 
-public static class FileNameExtensions
+public static class LinkExtensions
 {
     [Pure]
     public static string DocumentationFileName(this MemberInfo memberInfo) => $"{memberInfo.BuildBaseFilename()}.md";
@@ -24,6 +24,11 @@ public static class FileNameExtensions
             return $"{baseLink}#{MarkdownId.FromMember(methodBase)}";
         }
 
+        if (memberInfo is FieldInfo fieldInfo && fieldInfo.DeclaringType!.IsEnum)
+        {
+            return $"{baseLink}#fields";
+        }
+
         return baseLink;
     }
 
@@ -36,6 +41,11 @@ public static class FileNameExtensions
         }
 
         type = memberInfo.DeclaringType!;
+
+        if (type.IsEnum && memberInfo is FieldInfo)
+        {
+            return $"{type.Namespace}.{type.Name}".Replace('`', '-');
+        }
 
         var memberName = memberInfo is ConstructorInfo ? "-ctor" : memberInfo.Name;
 
