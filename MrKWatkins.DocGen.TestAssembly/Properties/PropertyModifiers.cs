@@ -1,0 +1,12 @@
+namespace MrKWatkins.DocGen.TestAssembly.Properties;
+
+[SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty")]
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+public abstract class PropertyModifiers
+{
+    public int Normal { get; set; }
+
+    public int InitSetter { get; init; }
+
+    public required int Required { get; init; }
+}

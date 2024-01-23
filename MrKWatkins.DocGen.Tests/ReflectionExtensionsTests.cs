@@ -1,4 +1,3 @@
-using System.Data;
 using System.Reflection;
 using MrKWatkins.Ast.Position;
 
@@ -6,260 +5,22 @@ namespace MrKWatkins.DocGen.Tests;
 
 public class ReflectionExtensionsTests
 {
-    [TestCase(typeof(string), "String")]
-    [TestCase(typeof(int), "Int32")]
-    [TestCase(typeof(List<string>), "List<String>")]
-    [TestCase(typeof(Dictionary<string, int>), "Dictionary<String, Int32>")]
-    [TestCase(typeof(ITestContravariant<>), "ITestContravariant<in T>")]
-    [TestCase(typeof(ITestCovariant<>), "ITestCovariant<out T>")]
-    public void DisplayName(Type type, string expected) => type.DisplayName().Should().Be(expected);
-
-    [TestCase(nameof(TestFieldsClass.ConstField), true)]
-    [TestCase(nameof(TestFieldsClass.StaticReadonlyField), false)]
-    public void IsConst(string name, bool expected)
-    {
-        var field = typeof(TestFieldsClass).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
-                    ?? throw new InvalidOperationException($"Could not find field {name}.");
-        field.IsConst().Should().Be(expected);
-    }
-
-    [TestCase(nameof(TestFieldsClass.ConstField), false)]
-    [TestCase(nameof(TestFieldsClass.StaticReadonlyField), true)]
-    public void IsReadOnly(string name, bool expected)
-    {
-        var field = typeof(TestFieldsClass).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
-                    ?? throw new InvalidOperationException($"Could not find field {name}.");
-        field.IsReadOnly().Should().Be(expected);
-    }
-
-    [TestCase("PublicField", false)]
-    [TestCase("ProtectedField", true)]
-    [TestCase("ProtectedInternalField", true)]
-    [TestCase("PrivateProtectedField", false)]
-    [TestCase("PrivateField", false)]
-    public void IsProtected_Field(string name, bool expected)
-    {
-        var field = typeof(TestVisibilityClass).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
-                    ?? throw new InvalidOperationException($"Could not find field {name}.");
-        field.IsProtected().Should().Be(expected);
-    }
-
-    [TestCase("PublicField", true)]
-    [TestCase("ProtectedField", true)]
-    [TestCase("ProtectedInternalField", true)]
-    [TestCase("PrivateProtectedField", false)]
-    [TestCase("PrivateField", false)]
-    public void IsPublicOrProtected_Field(string name, bool expected)
-    {
-        var field = typeof(TestVisibilityClass).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
-                    ?? throw new InvalidOperationException($"Could not find field {name}.");
-        field.IsPublicOrProtected().Should().Be(expected);
-    }
-
-    [TestCase(typeof(int), false)]
-    [TestCase(typeof(long), true)]
-    [TestCase(typeof(byte), true)]
-    [TestCase(typeof(decimal), false)]
-    [TestCase(typeof(string), false)]
-    public void IsProtected_Constructor(Type constructorParameterType, bool expected)
-    {
-        var constructor = typeof(TestVisibilityClass).GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, [constructorParameterType])
-                    ?? throw new InvalidOperationException($"Could not find constructor with parameter of type {constructorParameterType.DisplayName()}.");
-        constructor.IsProtected().Should().Be(expected);
-    }
-
-    [TestCase(typeof(int), true)]
-    [TestCase(typeof(long), true)]
-    [TestCase(typeof(byte), true)]
-    [TestCase(typeof(decimal), false)]
-    [TestCase(typeof(string), false)]
-    public void IsPublicOrProtected_Constructor(Type constructorParameterType, bool expected)
-    {
-        var constructor = typeof(TestVisibilityClass).GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, [constructorParameterType])
-                    ?? throw new InvalidOperationException($"Could not find constructor with parameter of type {constructorParameterType.DisplayName()}.");
-        constructor.IsPublicOrProtected().Should().Be(expected);
-    }
-
-    [TestCase("PublicGetPublicSetProperty", true)]
-    [TestCase("PublicGetProtectedSetProperty", true)]
-    [TestCase("PublicGetProtectedInternalSetProperty", true)]
-    [TestCase("PublicGetPrivateSetProperty", true)]
-    [TestCase("PublicGetNoSetProperty", true)]
-    [TestCase("ProtectedGetPublicSetProperty", true)]
-    [TestCase("ProtectedGetProtectedSetProperty", false)]
-    [TestCase("ProtectedGetProtectedInternalSetProperty", false)]
-    [TestCase("ProtectedGetPrivateSetProperty", false)]
-    [TestCase("ProtectedGetNoSetProperty", false)]
-    [TestCase("ProtectedInternalGetPublicSetProperty", true)]
-    [TestCase("ProtectedInternalGetProtectedSetProperty", false)]
-    [TestCase("ProtectedInternalGetProtectedInternalSetProperty", false)]
-    [TestCase("ProtectedInternalGetPrivateSetProperty", false)]
-    [TestCase("ProtectedInternalGetNoSetProperty", false)]
-    [TestCase("PrivateGetPublicSetProperty", true)]
-    [TestCase("PrivateGetProtectedSetProperty", false)]
-    [TestCase("PrivateGetProtectedInternalSetProperty", false)]
-    [TestCase("PrivateGetPrivateSetProperty", false)]
-    [TestCase("PrivateGetNoSetProperty", false)]
-    [TestCase("NoGetPublicSetProperty", true)]
-    [TestCase("NoGetProtectedSetProperty", false)]
-    [TestCase("NoGetProtectedInternalSetProperty", false)]
-    [TestCase("NoGetPrivateSetProperty", false)]
-    public void IsPublic_Property(string name, bool expected)
-    {
-        var property = typeof(TestVisibilityClass).GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                          ?? throw new InvalidOperationException($"Could not find property {name}.");
-        property.IsPublic().Should().Be(expected);
-    }
-
-    [TestCase("PublicGetPublicSetProperty", false)]
-    [TestCase("PublicGetProtectedSetProperty", true)]
-    [TestCase("PublicGetProtectedInternalSetProperty", true)]
-    [TestCase("PublicGetPrivateSetProperty", false)]
-    [TestCase("PublicGetNoSetProperty", false)]
-    [TestCase("ProtectedGetPublicSetProperty", true)]
-    [TestCase("ProtectedGetProtectedSetProperty", true)]
-    [TestCase("ProtectedGetProtectedInternalSetProperty", true)]
-    [TestCase("ProtectedGetPrivateSetProperty", true)]
-    [TestCase("ProtectedGetNoSetProperty", true)]
-    [TestCase("ProtectedInternalGetPublicSetProperty", true)]
-    [TestCase("ProtectedInternalGetProtectedSetProperty", true)]
-    [TestCase("ProtectedInternalGetProtectedInternalSetProperty", true)]
-    [TestCase("ProtectedInternalGetPrivateSetProperty", true)]
-    [TestCase("ProtectedInternalGetNoSetProperty", true)]
-    [TestCase("PrivateGetPublicSetProperty", false)]
-    [TestCase("PrivateGetProtectedSetProperty", true)]
-    [TestCase("PrivateGetProtectedInternalSetProperty", true)]
-    [TestCase("PrivateGetPrivateSetProperty", false)]
-    [TestCase("PrivateGetNoSetProperty", false)]
-    [TestCase("NoGetPublicSetProperty", false)]
-    [TestCase("NoGetProtectedSetProperty", true)]
-    [TestCase("NoGetProtectedInternalSetProperty", true)]
-    [TestCase("NoGetPrivateSetProperty", false)]
-    public void IsProtected_Property(string name, bool expected)
-    {
-        var property = typeof(TestVisibilityClass).GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                          ?? throw new InvalidOperationException($"Could not find property {name}.");
-        property.IsProtected().Should().Be(expected);
-    }
-
-    [TestCase("PublicGetPublicSetProperty", true)]
-    [TestCase("PublicGetProtectedSetProperty", true)]
-    [TestCase("PublicGetProtectedInternalSetProperty", true)]
-    [TestCase("PublicGetPrivateSetProperty", true)]
-    [TestCase("PublicGetNoSetProperty", true)]
-    [TestCase("ProtectedGetPublicSetProperty", true)]
-    [TestCase("ProtectedGetProtectedSetProperty", true)]
-    [TestCase("ProtectedGetProtectedInternalSetProperty", true)]
-    [TestCase("ProtectedGetPrivateSetProperty", true)]
-    [TestCase("ProtectedGetNoSetProperty", true)]
-    [TestCase("ProtectedInternalGetPublicSetProperty", true)]
-    [TestCase("ProtectedInternalGetProtectedSetProperty", true)]
-    [TestCase("ProtectedInternalGetProtectedInternalSetProperty", true)]
-    [TestCase("ProtectedInternalGetPrivateSetProperty", true)]
-    [TestCase("ProtectedInternalGetNoSetProperty", true)]
-    [TestCase("PrivateGetPublicSetProperty", true)]
-    [TestCase("PrivateGetProtectedSetProperty", true)]
-    [TestCase("PrivateGetProtectedInternalSetProperty", true)]
-    [TestCase("PrivateGetPrivateSetProperty", false)]
-    [TestCase("PrivateGetNoSetProperty", false)]
-    [TestCase("NoGetPublicSetProperty", true)]
-    [TestCase("NoGetProtectedSetProperty", true)]
-    [TestCase("NoGetProtectedInternalSetProperty", true)]
-    [TestCase("NoGetPrivateSetProperty", false)]
-    public void IsPublicOrProtected_Property(string name, bool expected)
-    {
-        var property = typeof(TestVisibilityClass).GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                          ?? throw new InvalidOperationException($"Could not find property {name}.");
-        property.IsPublicOrProtected().Should().Be(expected);
-    }
-
-    [TestCase("PublicMethod", true)]
-    [TestCase("ProtectedMethod", true)]
-    [TestCase("ProtectedInternalMethod", true)]
-    [TestCase("PrivateProtectedMethod", false)]
-    [TestCase("PrivateMethod", false)]
-    public void IsPublicOrProtected_Method(string name, bool expected)
-    {
-        var method = typeof(TestVisibilityClass).GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
-                    ?? throw new InvalidOperationException($"Could not find method {name}.");
-        method.IsPublicOrProtected().Should().Be(expected);
-    }
-
-    [TestCase("PublicEvent", true)]
-    [TestCase("ProtectedEvent", false)]
-    [TestCase("ProtectedInternalEvent", false)]
-    [TestCase("PrivateProtectedEvent", false)]
-    [TestCase("PrivateEvent", false)]
-    public void IsPublic_Event(string name, bool expected)
-    {
-        var @event = typeof(TestVisibilityClass).GetEvent(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
-                    ?? throw new InvalidOperationException($"Could not find field {name}.");
-        @event.IsPublic().Should().Be(expected);
-    }
-
-    [TestCase("PublicEvent", false)]
-    [TestCase("ProtectedEvent", true)]
-    [TestCase("ProtectedInternalEvent", true)]
-    [TestCase("PrivateProtectedEvent", false)]
-    [TestCase("PrivateEvent", false)]
-    public void IsProtected_Event(string name, bool expected)
-    {
-        var @event = typeof(TestVisibilityClass).GetEvent(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
-                    ?? throw new InvalidOperationException($"Could not find field {name}.");
-        @event.IsProtected().Should().Be(expected);
-    }
-
-    [TestCase("PublicEvent", true)]
-    [TestCase("ProtectedEvent", true)]
-    [TestCase("ProtectedInternalEvent", true)]
-    [TestCase("PrivateProtectedEvent", false)]
-    [TestCase("PrivateEvent", false)]
-    public void IsPublicOrProtected_Event(string name, bool expected)
-    {
-        var @event = typeof(TestVisibilityClass).GetEvent(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
-                    ?? throw new InvalidOperationException($"Could not find field {name}.");
-        @event.IsPublicOrProtected().Should().Be(expected);
-    }
-
-    [TestCase("PublicGetPublicInitProperty", true)]
-    [TestCase("PublicGetPublicSetProperty", false)]
-    [TestCase("PublicGetNoSetProperty", false)]
-    public void HasInitSetter(string name, bool expected)
-    {
-        var property = typeof(TestVisibilityClass).GetProperty(name) ?? throw new InvalidOperationException($"Could not find property {name}.");
-
-        property.HasInitSetter().Should().Be(expected);
-    }
-
-    [TestCase("RequiredProperty", true)]
-    [TestCase("PublicGetPublicInitProperty", false)]
-    public void IsRequired(string name, bool expected)
-    {
-        var property = typeof(TestVisibilityClass).GetProperty(name) ?? throw new InvalidOperationException($"Could not find property {name}.");
-
-        property.IsRequired().Should().Be(expected);
-    }
-
-    [TestCase(typeof(TestClass), false)]
-    [TestCase(typeof(TestRecord), true)]
-    [TestCase(typeof(int), false)]
-    public void IsRecord(Type type, bool expected) => type.IsRecord().Should().Be(expected);
-
     [TestCase(typeof(ReflectionExtensionsTests), typeof(ReflectionExtensionsTests))]
     [TestCase(typeof(NestedType), typeof(ReflectionExtensionsTests), typeof(NestedType))]
     [TestCase(typeof(NestedType.ReallyNestedType), typeof(ReflectionExtensionsTests), typeof(NestedType), typeof(NestedType.ReallyNestedType))]
-    public void EnumerateTypeAndParentTypes(Type type, params Type[] expected) => type.EnumerateNestedTypes().Should().BeEquivalentTo(expected);
+    public void EnumerateNestedTypes(Type type, params Type[] expected) => type.EnumerateNestedTypes().Should().BeEquivalentTo(expected);
 
-    [TestCase(typeof(TestSubClass), nameof(TestSubClass.TestAbstractMethod), false)]
-    [TestCase(typeof(TestSubClass), nameof(TestSubClass.TestVirtualMethod), false)]
-    [TestCase(typeof(TestSubClass), nameof(TestSubClass.TestMethod), true)]
-    [TestCase(typeof(TestSubSubClass), nameof(TestSubSubClass.TestVirtualMethod), true)]
-    [TestCase(typeof(TestSubSubClass), nameof(TestSubSubClass.TestMethod), true)]
-    public void IsNew(Type type, string method, bool expected)
+    [TestCase(0, null)]
+    [TestCase(1, ParameterKind.In)]
+    [TestCase(2, ParameterKind.Out)]
+    [TestCase(3, ParameterKind.Ref)]
+    [TestCase(4, ParameterKind.Params)]
+    public void GetKind(int parameterIndex, ParameterKind? expected)
     {
-        var methodInfo = type.GetMethod(method) ?? throw new InvalidOperationException($"Method {method} not found on type {type}.");
+        var methodInfo = typeof(TestParameterClass).GetMethod(nameof(TestParameterClass.TestMethod))
+                         ?? throw new InvalidOperationException($"Method {nameof(TestParameterClass.TestMethod)} not found on type {nameof(TestParameterClass)}.");
 
-        methodInfo.IsNew().Should().Be(expected);
+        methodInfo.GetParameters()[parameterIndex].GetKind().Should().Be(expected);
     }
 
     [TestCase(typeof(TestAbstractClass), nameof(TestAbstractClass.TestAbstractMethod), Virtuality.Abstract)]
@@ -277,28 +38,21 @@ public class ReflectionExtensionsTests
         methodInfo.GetVirtuality().Should().Be(expected);
     }
 
-    [TestCase(0, null)]
-    [TestCase(1, ParameterKind.In)]
-    [TestCase(2, ParameterKind.Out)]
-    [TestCase(3, ParameterKind.Ref)]
-    [TestCase(4, ParameterKind.Params)]
-    public void GetKind(int parameterIndex, ParameterKind? expected)
+    [TestCase(typeof(string), true)]
+    [TestCase(typeof(object), false)]
+    public void HasPublicOrProtectedOverloads_ConstructorInfo(Type type, bool expected)
     {
-        var methodInfo = typeof(TestParameterClass).GetMethod(nameof(TestParameterClass.TestMethod))
-                         ?? throw new InvalidOperationException($"Method {nameof(TestParameterClass.TestMethod)} not found on type {nameof(TestParameterClass)}.");
+        var constructors = type
+            .GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+            .ToList();
 
-        methodInfo.GetParameters()[parameterIndex].GetKind().Should().Be(expected);
-    }
+        if (constructors.Count == 0)
+        {
+            throw new InvalidOperationException("Could not find constructor.");
+        }
 
-    [TestCase(typeof(string), nameof(string.Length), false)]
-    [TestCase(typeof(List<string>), "Item", true)]
-    public void IsIndexer(Type type, string propertyName, bool expected)
-    {
-        var property = type
-            .GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            ?? throw new InvalidOperationException("Could not find property.");
-
-        property.IsIndexer().Should().Be(expected);
+        constructors[0].HasPublicOrProtectedOverloads().Should().Be(expected);
+        ((MethodBase)constructors[0]).HasPublicOrProtectedOverloads().Should().Be(expected);
     }
 
     [TestCase(typeof(int), nameof(int.ToString), true)]
@@ -321,40 +75,136 @@ public class ReflectionExtensionsTests
         ((MethodBase)methods[0]).HasPublicOrProtectedOverloads().Should().Be(expected);
     }
 
-    [TestCase(typeof(string), true)]
-    [TestCase(typeof(object), false)]
-    public void HasPublicOrProtectedOverloads_ConstructorInfo(Type type, bool expected)
+    [TestCase(nameof(TestFieldsClass.ConstField), true)]
+    [TestCase(nameof(TestFieldsClass.StaticReadonlyField), false)]
+    public void IsConst(string name, bool expected)
     {
-        var constructors = type
-            .GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
-            .ToList();
-
-        if (constructors.Count == 0)
-        {
-            throw new InvalidOperationException("Could not find constructor.");
-        }
-
-        constructors[0].HasPublicOrProtectedOverloads().Should().Be(expected);
-        ((MethodBase)constructors[0]).HasPublicOrProtectedOverloads().Should().Be(expected);
+        var field = typeof(TestFieldsClass).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
+                    ?? throw new InvalidOperationException($"Could not find field {name}.");
+        field.IsConst().Should().Be(expected);
     }
 
-    [TestCase(typeof(string), nameof(string.Length), false)]
-    [TestCase(typeof(List<string>), "Item", false)]
-    [TestCase(typeof(DataRow), "Item", true)]
-    public void HasPublicOrProtectedOverloads_PropertyInfo(Type type, string propertyName, bool expected)
+    [TestCase(typeof(TestSubClass), nameof(TestSubClass.TestAbstractMethod), false)]
+    [TestCase(typeof(TestSubClass), nameof(TestSubClass.TestVirtualMethod), false)]
+    [TestCase(typeof(TestSubClass), nameof(TestSubClass.TestMethod), true)]
+    [TestCase(typeof(TestSubSubClass), nameof(TestSubSubClass.TestVirtualMethod), true)]
+    [TestCase(typeof(TestSubSubClass), nameof(TestSubSubClass.TestMethod), true)]
+    public void IsNew(Type type, string method, bool expected)
     {
-        var properties = type
-            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
-            .Where(p => p.Name == propertyName)
-            .ToList();
+        var methodInfo = type.GetMethod(method) ?? throw new InvalidOperationException($"Method {method} not found on type {type}.");
 
-        if (properties.Count == 0)
-        {
-            throw new InvalidOperationException("Could not find property.");
-        }
-
-        properties[0].HasPublicOrProtectedOverloads().Should().Be(expected);
+        methodInfo.IsNew().Should().Be(expected);
     }
+
+    [TestCase(typeof(int), false)]
+    [TestCase(typeof(long), true)]
+    [TestCase(typeof(byte), true)]
+    [TestCase(typeof(decimal), false)]
+    [TestCase(typeof(string), false)]
+    public void IsProtected_ConstructorInfo(Type constructorParameterType, bool expected)
+    {
+        var constructor = typeof(TestVisibilityClass).GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, [constructorParameterType])
+                          ?? throw new InvalidOperationException($"Could not find constructor with parameter of type {constructorParameterType.DisplayName()}.");
+        constructor.IsProtected().Should().Be(expected);
+    }
+
+    [TestCase("PublicEvent", false)]
+    [TestCase("ProtectedEvent", true)]
+    [TestCase("ProtectedInternalEvent", true)]
+    [TestCase("PrivateProtectedEvent", false)]
+    [TestCase("PrivateEvent", false)]
+    public void IsProtected_EventInfo(string name, bool expected)
+    {
+        var @event = typeof(TestVisibilityClass).GetEvent(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
+                     ?? throw new InvalidOperationException($"Could not find field {name}.");
+        @event.IsProtected().Should().Be(expected);
+    }
+
+    [TestCase("PublicField", false)]
+    [TestCase("ProtectedField", true)]
+    [TestCase("ProtectedInternalField", true)]
+    [TestCase("PrivateProtectedField", false)]
+    [TestCase("PrivateField", false)]
+    public void IsProtected_FieldInfo(string name, bool expected)
+    {
+        var field = typeof(TestVisibilityClass).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
+                    ?? throw new InvalidOperationException($"Could not find field {name}.");
+        field.IsProtected().Should().Be(expected);
+    }
+
+    [TestCase("PublicEvent", true)]
+    [TestCase("ProtectedEvent", false)]
+    [TestCase("ProtectedInternalEvent", false)]
+    [TestCase("PrivateProtectedEvent", false)]
+    [TestCase("PrivateEvent", false)]
+    public void IsPublic_EventInfo(string name, bool expected)
+    {
+        var @event = typeof(TestVisibilityClass).GetEvent(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
+                     ?? throw new InvalidOperationException($"Could not find field {name}.");
+        @event.IsPublic().Should().Be(expected);
+    }
+
+    [TestCase(typeof(int), true)]
+    [TestCase(typeof(long), true)]
+    [TestCase(typeof(byte), true)]
+    [TestCase(typeof(decimal), false)]
+    [TestCase(typeof(string), false)]
+    public void IsPublicOrProtected_ConstructorInfo(Type constructorParameterType, bool expected)
+    {
+        var constructor = typeof(TestVisibilityClass).GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, [constructorParameterType])
+                    ?? throw new InvalidOperationException($"Could not find constructor with parameter of type {constructorParameterType.DisplayName()}.");
+        constructor.IsPublicOrProtected().Should().Be(expected);
+    }
+
+    [TestCase("PublicEvent", true)]
+    [TestCase("ProtectedEvent", true)]
+    [TestCase("ProtectedInternalEvent", true)]
+    [TestCase("PrivateProtectedEvent", false)]
+    [TestCase("PrivateEvent", false)]
+    public void IsPublicOrProtected_EventInfo(string name, bool expected)
+    {
+        var @event = typeof(TestVisibilityClass).GetEvent(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
+                     ?? throw new InvalidOperationException($"Could not find field {name}.");
+        @event.IsPublicOrProtected().Should().Be(expected);
+    }
+
+    [TestCase("PublicField", true)]
+    [TestCase("ProtectedField", true)]
+    [TestCase("ProtectedInternalField", true)]
+    [TestCase("PrivateProtectedField", false)]
+    [TestCase("PrivateField", false)]
+    public void IsPublicOrProtected_FieldInfo(string name, bool expected)
+    {
+        var field = typeof(TestVisibilityClass).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
+                    ?? throw new InvalidOperationException($"Could not find field {name}.");
+        field.IsPublicOrProtected().Should().Be(expected);
+    }
+
+    [TestCase("PublicMethod", true)]
+    [TestCase("ProtectedMethod", true)]
+    [TestCase("ProtectedInternalMethod", true)]
+    [TestCase("PrivateProtectedMethod", false)]
+    [TestCase("PrivateMethod", false)]
+    public void IsPublicOrProtected_MethodInfo(string name, bool expected)
+    {
+        var method = typeof(TestVisibilityClass).GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
+                     ?? throw new InvalidOperationException($"Could not find method {name}.");
+        method.IsPublicOrProtected().Should().Be(expected);
+    }
+
+    [TestCase(nameof(TestFieldsClass.ConstField), false)]
+    [TestCase(nameof(TestFieldsClass.StaticReadonlyField), true)]
+    public void IsReadOnly(string name, bool expected)
+    {
+        var field = typeof(TestFieldsClass).GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic)
+                    ?? throw new InvalidOperationException($"Could not find field {name}.");
+        field.IsReadOnly().Should().Be(expected);
+    }
+
+    [TestCase(typeof(TestClass), false)]
+    [TestCase(typeof(TestRecord), true)]
+    [TestCase(typeof(int), false)]
+    public void IsRecord(Type type, bool expected) => type.IsRecord().Should().Be(expected);
 
 #pragma warning disable CA1812
 #pragma warning disable CA1822
@@ -366,12 +216,6 @@ public class ReflectionExtensionsTests
     private sealed class TestClass;
 
     private sealed record TestRecord;
-
-    // ReSharper disable once UnusedTypeParameter
-    private interface ITestContravariant<in T>;
-
-    // ReSharper disable once UnusedTypeParameter
-    private interface ITestCovariant<out T>;
 
     public static class NestedType
     {
@@ -454,54 +298,6 @@ public class ReflectionExtensionsTests
 
         private TestVisibilityClass(string _)
         {
-        }
-
-        public required int RequiredProperty { get; init; }
-
-        public int PublicGetPublicInitProperty { get; init; }
-
-        public int PublicGetPublicSetProperty { get; set; }
-        public int PublicGetProtectedSetProperty { get; protected set; }
-        public int PublicGetProtectedInternalSetProperty { get; protected internal set; }
-        public int PublicGetPrivateSetProperty { get; private set; }
-        public int PublicGetNoSetProperty { get; }
-
-        public int ProtectedGetPublicSetProperty { protected get; set; }
-        protected int ProtectedGetProtectedSetProperty { get; set; }
-        protected internal int ProtectedGetProtectedInternalSetProperty { protected get; set; }
-        protected int ProtectedGetPrivateSetProperty { get; private set; }
-        protected int ProtectedGetNoSetProperty { get; }
-
-        public int ProtectedInternalGetPublicSetProperty { protected internal get; set; }
-        protected internal int ProtectedInternalGetProtectedSetProperty { get; protected set; }
-        protected internal int ProtectedInternalGetProtectedInternalSetProperty { get; set; }
-        protected internal int ProtectedInternalGetPrivateSetProperty { get; private set; }
-        protected internal int ProtectedInternalGetNoSetProperty { get; }
-
-        public int PrivateGetPublicSetProperty { private get; set; }
-        protected int PrivateGetProtectedSetProperty { private get; set; }
-        protected internal int PrivateGetProtectedInternalSetProperty { private get; set; }
-        private int PrivateGetPrivateSetProperty { get; set; }
-        private int PrivateGetNoSetProperty { get; }
-
-        public int NoGetPublicSetProperty
-        {
-            set => _ = value;
-        }
-
-        protected int NoGetProtectedSetProperty
-        {
-            set => _ = value;
-        }
-
-        protected internal int NoGetProtectedInternalSetProperty
-        {
-            set => _ = value;
-        }
-
-        private int NoGetPrivateSetProperty
-        {
-            set => _ = value;
         }
 
         public void PublicMethod()

@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.DocGen.Console", "MrKWatkins.DocGen.Console\MrKWatkins.DocGen.Console.csproj", "{6DBC9495-A19C-409C-BFDD-F50CD59D65CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.DocGen.TestAssembly", "MrKWatkins.DocGen.TestAssembly\MrKWatkins.DocGen.TestAssembly.csproj", "{72087A4F-38B8-4EF1-B2C9-8F3B39C84659}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{6DBC9495-A19C-409C-BFDD-F50CD59D65CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DBC9495-A19C-409C-BFDD-F50CD59D65CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DBC9495-A19C-409C-BFDD-F50CD59D65CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72087A4F-38B8-4EF1-B2C9-8F3B39C84659}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72087A4F-38B8-4EF1-B2C9-8F3B39C84659}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72087A4F-38B8-4EF1-B2C9-8F3B39C84659}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72087A4F-38B8-4EF1-B2C9-8F3B39C84659}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2CD5FA32-1F2F-440F-8959-92CCB344D822} = {EC54CE10-77DB-4F1D-9EA4-EFAA3497A36D}
