@@ -32,8 +32,8 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
     {
         using var code = writer.CodeBlock();
 
-        var getter = property.MemberInfo.GetGetMethod();
-        var setter = property.MemberInfo.GetSetMethod();
+        var getter = property.Getter;
+        var setter = property.Setter;
 
         code.Write(property.Visibility.ToKeyword());
         code.Write(" ");
@@ -62,8 +62,8 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
         WriteIndexerParameters(code, property);
 
         code.Write(" { ");
-        WritePropertyMethodSignature(code, property, getter, "get");
-        WritePropertyMethodSignature(code, property, setter, property.HasInitSetter ? "init" : "set");
+        WritePropertyAccessorSignature(code, property, getter, "get");
+        WritePropertyAccessorSignature(code, property, setter, property.HasInitSetter ? "init" : "set");
         code.Write("}");
     }
 
@@ -80,16 +80,17 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
         code.Write("]");
     }
 
-    private static void WritePropertyMethodSignature(ITextWriter code, Property property, MethodInfo? method, string kind)
+    private static void WritePropertyAccessorSignature(ITextWriter code, Property property, MethodInfo? accessor, string kind)
     {
-        if (method == null)
+        var accessorVisibility = accessor?.GetVisibility();
+        if (accessorVisibility == null)
         {
             return;
         }
 
-        if (method.GetVisibility() != property.Visibility)
+        if (accessorVisibility != property.Visibility)
         {
-            code.Write(method.GetVisibility().ToKeyword());
+            code.Write(accessorVisibility.Value.ToKeyword());
             code.Write(" ");
         }
 

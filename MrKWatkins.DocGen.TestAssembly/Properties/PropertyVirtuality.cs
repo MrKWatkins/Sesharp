@@ -19,4 +19,6 @@ public abstract class PropertyVirtuality
     public int NewAbstract { get; }
 
     public int NewVirtual { get; }
+
+    public int NewSubSubClass { get; }
 }

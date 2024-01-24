@@ -22,7 +22,7 @@ public abstract class Function<TMethodInfo> : Member<TMethodInfo>
 
     public IReadOnlyList<Parameter> Parameters => Children.OfType<Parameter>().ToList();    // Keep in declaration order.
 
-    public Visibility Visibility => MemberInfo.GetVisibility();
+    public Visibility Visibility => MemberInfo.GetVisibility() ?? throw new InvalidOperationException("Function is not visible.");
 
     public bool IsStatic => MemberInfo.IsStatic;
 

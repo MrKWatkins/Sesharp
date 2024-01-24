@@ -64,9 +64,15 @@ public static class ReflectionExtensions
     [Pure]
     public static Visibility GetVisibility(this FieldInfo field) => field.IsPublic ? Visibility.Public : Visibility.Protected;
 
-
     [Pure]
-    public static Visibility GetVisibility(this MethodBase method) => method.IsPublic ? Visibility.Public : Visibility.Protected;
+    public static Visibility? GetVisibility(this MethodBase method)
+    {
+        if (method.IsPublic)
+        {
+            return Visibility.Public;
+        }
+        return method.IsProtected() ? Visibility.Protected : null;
+    }
 
     [Pure]
     public static string ToKeyword(this Visibility visibility) =>

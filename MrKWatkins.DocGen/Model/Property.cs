@@ -49,31 +49,15 @@ public sealed class Property : Member<PropertyInfo>
 
     public bool IsRequired => MemberInfo.IsRequired();
 
-    public MethodInfo? Getter => MemberInfo.GetMethod;
+    public MethodInfo? Getter => MemberInfo.GetMethod?.IsPublicOrProtected() == true ? MemberInfo.GetMethod : null;
 
-    public MethodInfo? Setter => MemberInfo.SetMethod;
+    public MethodInfo? Setter => MemberInfo.SetMethod?.IsPublicOrProtected() == true ? MemberInfo.SetMethod : null;
 
     public bool HasInitSetter => MemberInfo.HasInitSetter();
 
-    public Visibility? GetterVisibility => Getter?.GetVisibility();
+    public Visibility Visibility => MemberInfo.GetVisibility() ?? throw new InvalidOperationException("Property is not visible.");
 
-    public Visibility? SetterVisibility => Setter?.GetVisibility();
+    public Virtuality? Virtuality => MemberInfo.GetVirtuality();
 
-    public Visibility Visibility
-    {
-        get
-        {
-            if (GetterVisibility == Visibility.Public ||
-                SetterVisibility == Visibility.Public)
-            {
-                return Visibility.Public;
-            }
-
-            return Visibility.Protected;
-        }
-    }
-
-    public Virtuality? Virtuality => (Getter ?? Setter!).GetVirtuality();
-
-    public bool IsStatic => (Getter ?? Setter!).IsStatic;
+    public bool IsStatic => MemberInfo.IsStatic();
 }
