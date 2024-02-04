@@ -1,3 +1,5 @@
+using MrKWatkins.Reflection;
+
 namespace MrKWatkins.DocGen.Model;
 
 public sealed class Type : DocumentableNode<System.Type>
@@ -11,7 +13,7 @@ public sealed class Type : DocumentableNode<System.Type>
         }
     }
 
-    public override string DisplayName => MemberInfo.DisplayName();
+    public override string DisplayName => MemberInfo.ToDisplayName();
 
     public string NonGenericName => MemberInfo.IsGenericType ? MemberInfo.Name[..^2] : MemberInfo.Name;
 
@@ -25,7 +27,7 @@ public sealed class Type : DocumentableNode<System.Type>
 
     public IReadOnlyList<Field> Fields => Children.OfType<Field>().ToList();
 
-    public new IReadOnlyList<Property> Properties => Children.OfType<Property>().ToList();
+    public IReadOnlyList<Property> Properties => Children.OfType<Property>().ToList();
 
     public IReadOnlyList<OutputNode> Methods => Children.Where(c => c is Method or MethodGroup).OfType<OutputNode>().ToList();
 

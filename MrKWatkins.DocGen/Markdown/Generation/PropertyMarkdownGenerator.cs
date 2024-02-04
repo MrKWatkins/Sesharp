@@ -1,6 +1,7 @@
 using System.Reflection;
 using MrKWatkins.DocGen.Markdown.Writing;
 using MrKWatkins.DocGen.Model;
+using MrKWatkins.Reflection;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
@@ -35,7 +36,7 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
         var getter = property.Getter;
         var setter = property.Setter;
 
-        code.Write(property.Visibility.ToKeyword());
+        code.Write(property.Accessibility.ToKeyword());
         code.Write(" ");
 
         if (property.IsStatic)
@@ -82,13 +83,13 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
 
     private static void WritePropertyAccessorSignature(ITextWriter code, Property property, MethodInfo? accessor, string kind)
     {
-        var accessorVisibility = accessor?.GetVisibility();
+        var accessorVisibility = accessor?.GetAccessibility();
         if (accessorVisibility == null)
         {
             return;
         }
 
-        if (accessorVisibility != property.Visibility)
+        if (accessorVisibility != property.Accessibility)
         {
             code.Write(accessorVisibility.Value.ToKeyword());
             code.Write(" ");

@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using MrKWatkins.Reflection;
 using Type = System.Type;
 
 namespace MrKWatkins.DocGen;
@@ -30,7 +31,7 @@ public sealed class XmlDocId : IEquatable<XmlDocId>
             MethodInfo method => Create(method),
             PropertyInfo property => Create(property),
             Type type => Create(type),
-            _ => throw new NotSupportedException($"Members of type {member.GetType().DisplayName()} are not supported.")
+            _ => throw new NotSupportedException($"Members of type {member.GetType().ToDisplayName()} are not supported.")
         };
 
     [Pure]

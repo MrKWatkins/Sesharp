@@ -65,7 +65,7 @@ public sealed class MarkdownIdTests
             "system-string-ctor(system-char*)");
 
         yield return new TestCaseData(
-            typeof(DataRow).GetProperty("Item", [typeof(int)])?? throw new InvalidOperationException("Indexer not found."),
+            typeof(DataRow).GetProperty("Item", [typeof(int)]) ?? throw new InvalidOperationException("Indexer not found."),
             "system-data-datarow-item(system-int32)");
     }
 

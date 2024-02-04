@@ -10,17 +10,9 @@ public sealed class AssemblyDetails : ModelNode
         Version = assembly.GetName().Version ?? throw new ArgumentException("Value has no version.", nameof(assembly));
     }
 
-    public System.Reflection.Assembly ReflectionAssembly
-    {
-        get => Properties.GetOrThrow<System.Reflection.Assembly>(nameof(ReflectionAssembly));
-        private init => Properties.Set(nameof(ReflectionAssembly), value);
-    }
+    public System.Reflection.Assembly ReflectionAssembly { get; }
 
-    public Version Version
-    {
-        get => Properties.GetOrThrow<Version>(nameof(Version));
-        private init => Properties.Set(nameof(Version), value);
-    }
+    public Version Version { get; }
 
     public IEnumerable<Namespace> Namespaces => Children.OfType<Namespace>();
 }

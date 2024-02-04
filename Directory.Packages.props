@@ -10,7 +10,8 @@
     <PackageVersion Include="Humanizer.Core" Version="2.14.1" />
     <PackageVersion Include="JetBrains.Annotations" Version="2023.3.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageVersion Include="MrKWatkins.Ast" Version="0.9.111" />
+    <PackageVersion Include="MrKWatkins.Ast" Version="0.9.113" />
+    <PackageVersion Include="MrKWatkins.Reflection" Version="0.3.0" />
     <PackageVersion Include="NUnit" Version="4.0.1" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
   </ItemGroup>

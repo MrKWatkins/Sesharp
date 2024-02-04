@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Reflection;
 using MrKWatkins.DocGen.Markdown.Writing;
 using MrKWatkins.DocGen.Model;
+using MrKWatkins.Reflection;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
@@ -36,7 +37,7 @@ public sealed class FieldMarkdownGenerator : MemberMarkdownGenerator<Field, Fiel
     {
         using var code = writer.CodeBlock();
 
-        code.Write(field.Visibility.ToKeyword());
+        code.Write(field.Accessibility.ToKeyword());
         code.Write(" ");
 
         if (field.IsConst)
@@ -87,7 +88,7 @@ public sealed class FieldMarkdownGenerator : MemberMarkdownGenerator<Field, Fiel
                 break;
 
             default:
-                throw new NotSupportedException($"Literals of type {literal.GetType().DisplayName()} are not supported.");
+                throw new NotSupportedException($"Literals of type {literal.GetType().ToDisplayName()} are not supported.");
         }
     }
 }

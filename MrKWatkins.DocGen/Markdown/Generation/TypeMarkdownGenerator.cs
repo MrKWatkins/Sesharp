@@ -2,6 +2,7 @@ using System.Reflection;
 using Humanizer;
 using MrKWatkins.DocGen.Markdown.Writing;
 using MrKWatkins.DocGen.Model;
+using MrKWatkins.Reflection;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
@@ -110,14 +111,14 @@ public sealed class TypeMarkdownGenerator : MarkdownGenerator
         if (hasBaseType)
         {
             code.Write(" : ");
-            code.Write(type.MemberInfo.BaseType!.DisplayName());
+            code.Write(type.MemberInfo.BaseType!.ToDisplayName());
         }
 
         var separator = hasBaseType ? ", " : " : ";
         foreach (var @interface in type.MemberInfo.GetInterfaces())
         {
             code.Write(separator);
-            code.Write(@interface.DisplayName());
+            code.Write(@interface.ToDisplayName());
             separator = ", ";
         }
 

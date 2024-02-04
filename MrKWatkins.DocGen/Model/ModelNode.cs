@@ -9,11 +9,7 @@ public abstract class ModelNode : Node<ModelNode>
         Name = name;
     }
 
-    public string Name
-    {
-        get => Properties.GetOrThrow<string>(nameof(Name));
-        private init => Properties.Set(nameof(Name), value);
-    }
+    public string Name { get; }
 
     public sealed override string ToString() => $"{GetType().Name} {Name}";
 }

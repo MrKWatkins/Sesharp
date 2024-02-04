@@ -2,6 +2,7 @@ using System.Reflection;
 using MrKWatkins.DocGen.Markdown.Writing;
 using MrKWatkins.DocGen.Model;
 using MrKWatkins.DocGen.XmlDocumentation;
+using MrKWatkins.Reflection;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
@@ -98,7 +99,7 @@ public abstract class MarkdownGenerator
         var type = defaultValue.GetType();
         if (type.IsEnum)
         {
-            code.Write(type.DisplayName());
+            code.Write(type.ToDisplayName());
             code.Write(".");
             code.Write(type.ToString());
             return;
@@ -169,13 +170,32 @@ public abstract class MarkdownGenerator
 
             foreach (var constraint in constraints.Where(c => c != typeof(ValueType)))
             {
-                WriteConstraint(constraint.DisplayName());
+                WriteConstraint(constraint.ToDisplayName());
             }
 
             if (!hasStructConstraint && attributes.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint))
             {
                 WriteConstraint("new()");
             }
+        }
+    }
+
+    protected static void WriteAccessibility(ITextWriter code, Accessibility accessibility)
+    {
+        switch (accessibility)
+        {
+            case Accessibility.Private:
+            case Accessibility.PrivateProtected:
+            case Accessibility.Internal:
+                throw new InvalidOperationException($"Should not generate documentation for {accessibility} members.");
+
+            case Accessibility.Protected:
+            case Accessibility.ProtectedInternal:
+                code.Write("protected");
+                break;
+            case Accessibility.Public:
+                code.Write("public");
+                break;
         }
     }
 
@@ -246,7 +266,7 @@ public abstract class MarkdownGenerator
 
     protected static void WriteMemberLink(IParagraphWriter writer, MemberInfo member, MemberLocation location, string? text = null)
     {
-        text ??= member.DisplayName();
+        text ??= member.ToDisplayName();
 
         if (member is System.Type type && (type.IsArray || type.IsByRef))
         {

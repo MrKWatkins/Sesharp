@@ -1,4 +1,5 @@
 using System.Reflection;
+using MrKWatkins.Reflection;
 
 namespace MrKWatkins.DocGen.Model;
 
@@ -9,7 +10,7 @@ public sealed class Field : Member<FieldInfo>
     {
     }
 
-    public Visibility Visibility => MemberInfo.GetVisibility();
+    public Accessibility Accessibility => MemberInfo.GetAccessibility();
 
     public bool IsConst => MemberInfo.IsConst();
 

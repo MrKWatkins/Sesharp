@@ -2,5 +2,6 @@
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" />
     <PackageReference Include="MrKWatkins.Ast" />
+    <PackageReference Include="MrKWatkins.Reflection" />
   </ItemGroup>
 </Project>

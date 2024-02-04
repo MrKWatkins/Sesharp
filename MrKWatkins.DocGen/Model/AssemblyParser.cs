@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using MrKWatkins.DocGen.XmlDocumentation;
+using MrKWatkins.Reflection;
 
 namespace MrKWatkins.DocGen.Model;
 

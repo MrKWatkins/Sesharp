@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using MrKWatkins.Reflection;
 
 namespace MrKWatkins.DocGen.Model;
 
@@ -22,7 +23,7 @@ public abstract class Function<TMethodInfo> : Member<TMethodInfo>
 
     public IReadOnlyList<Parameter> Parameters => Children.OfType<Parameter>().ToList();    // Keep in declaration order.
 
-    public Visibility Visibility => MemberInfo.GetVisibility() ?? throw new InvalidOperationException("Function is not visible.");
+    public Accessibility Accessibility => MemberInfo.GetAccessibility();
 
     public bool IsStatic => MemberInfo.IsStatic;
 

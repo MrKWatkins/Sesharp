@@ -1,6 +1,7 @@
 using System.Reflection;
 using MrKWatkins.DocGen.Markdown.Writing;
 using MrKWatkins.DocGen.Model;
+using MrKWatkins.Reflection;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
@@ -60,7 +61,7 @@ public sealed class MethodMarkdownGenerator : MemberMarkdownGenerator<Method, Me
     {
         using var code = writer.CodeBlock();
 
-        code.Write(method.Visibility.ToKeyword());
+        WriteAccessibility(code, method.Accessibility);
         code.Write(" ");
 
         if (method.IsStatic)

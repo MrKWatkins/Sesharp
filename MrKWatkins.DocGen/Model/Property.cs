@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using MrKWatkins.Reflection;
 
 namespace MrKWatkins.DocGen.Model;
 
@@ -39,7 +40,7 @@ public sealed class Property : Member<PropertyInfo>
                     sb.Append(", ");
                 }
 
-                sb.Append(parameter.Type.DisplayName());
+                sb.Append(parameter.Type.ToDisplayName());
             }
         }
 
@@ -55,7 +56,7 @@ public sealed class Property : Member<PropertyInfo>
 
     public bool HasInitSetter => MemberInfo.HasInitSetter();
 
-    public Visibility Visibility => MemberInfo.GetVisibility() ?? throw new InvalidOperationException("Property is not visible.");
+    public Accessibility Accessibility => MemberInfo.GetAccessibility();
 
     public Virtuality? Virtuality => MemberInfo.GetVirtuality();
 

@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
+using MrKWatkins.Reflection;
 using Type = System.Type;
 
 namespace MrKWatkins.DocGen.Markdown.Writing;
@@ -41,7 +42,7 @@ public sealed class MarkdownId
             ConstructorInfo constructor => FromMethod(constructor),
             MethodInfo method => FromMethod(method),
             PropertyInfo property => FromProperty(property),
-            _ => throw new NotSupportedException($"Members of type {member.GetType().DisplayName()} are not supported.")
+            _ => throw new NotSupportedException($"Members of type {member.GetType().ToDisplayName()} are not supported.")
         };
 
     [Pure]
@@ -109,7 +110,7 @@ public sealed class MarkdownId
 
         if (type.IsGenericMethodParameter)
         {
-            var index = Array.IndexOf(((MethodInfo) parameter.Member).GetGenericArguments(), type);
+            var index = Array.IndexOf(((MethodInfo)parameter.Member).GetGenericArguments(), type);
             if (index == -1)
             {
                 throw new InvalidOperationException("Could not find generic method parameter in parent method.");
