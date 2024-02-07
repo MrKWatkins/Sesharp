@@ -3,11 +3,15 @@ using MrKWatkins.DocGen.Markdown.Writing;
 using MrKWatkins.DocGen.Model;
 using MrKWatkins.DocGen.XmlDocumentation;
 using MrKWatkins.Reflection;
+using MrKWatkins.Reflection.Formatting;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
 public abstract class MarkdownGenerator
 {
+    private static readonly IReflectionFormatter MemberLinkFormatter =
+        new CachedReflectionFormatter(new DisplayNameFormatter(new DisplayNameFormatterOptions { PrefixMembersWithType = false }));
+
     protected MarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
     {
         MemberLookup = memberLookup;
@@ -266,7 +270,7 @@ public abstract class MarkdownGenerator
 
     protected static void WriteMemberLink(IParagraphWriter writer, MemberInfo member, MemberLocation location, string? text = null)
     {
-        text ??= member.ToDisplayName();
+        text ??= MemberLinkFormatter.Format(member);
 
         if (member is System.Type type && (type.IsArray || type.IsByRef))
         {
