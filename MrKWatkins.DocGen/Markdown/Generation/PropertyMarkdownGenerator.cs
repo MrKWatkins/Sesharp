@@ -36,7 +36,7 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
         var getter = property.Getter;
         var setter = property.Setter;
 
-        code.Write(property.Accessibility.ToKeyword());
+        WriteAccessibility(code, property.Accessibility);
         code.Write(" ");
 
         if (property.IsStatic)
@@ -44,9 +44,9 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
             code.Write("static ");
         }
 
-        if (property.Virtuality.HasValue)
+        if (property.Virtuality != Virtuality.Normal)
         {
-            code.Write(property.Virtuality.Value.ToKeyword());
+            code.Write(property.Virtuality.ToCSharpKeywords());
             code.Write(" ");
         }
 
@@ -55,7 +55,7 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
             code.Write("required ");
         }
 
-        code.Write(property.MemberInfo.PropertyType.DisplayNameOrKeyword());
+        WriteTypeOrKeyword(code, property.MemberInfo.PropertyType);
         code.Write(" ");
 
         code.Write(property.Name);
@@ -91,7 +91,7 @@ public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property
 
         if (accessorVisibility != property.Accessibility)
         {
-            code.Write(accessorVisibility.Value.ToKeyword());
+            code.Write(accessorVisibility.Value.ToCSharpKeywords());
             code.Write(" ");
         }
 

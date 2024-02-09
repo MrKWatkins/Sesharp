@@ -69,13 +69,14 @@ public sealed class MethodMarkdownGenerator : MemberMarkdownGenerator<Method, Me
             code.Write("static ");
         }
 
-        if (method.Virtuality.HasValue)
+        if (method.Virtuality != Virtuality.Normal)
         {
-            code.Write(method.Virtuality.Value.ToKeyword());
+            code.Write(method.Virtuality.ToCSharpKeywords());
             code.Write(" ");
         }
 
-        code.Write(method.MemberInfo.ReturnType.DisplayNameOrKeyword());
+
+        WriteTypeOrKeyword(code, method.MemberInfo.ReturnType);
         code.Write(" ");
 
         code.Write(method.Name);

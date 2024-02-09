@@ -62,7 +62,7 @@ public sealed class ConstructorMarkdownGenerator : MemberMarkdownGenerator<Const
         }
         else
         {
-            code.Write(constructor.Accessibility.ToKeyword());
+            code.Write(constructor.Accessibility.ToCSharpKeywords());
             code.Write(" ");
         }
 

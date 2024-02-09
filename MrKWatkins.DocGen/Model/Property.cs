@@ -58,7 +58,7 @@ public sealed class Property : Member<PropertyInfo>
 
     public Accessibility Accessibility => MemberInfo.GetAccessibility();
 
-    public Virtuality? Virtuality => MemberInfo.GetVirtuality();
+    public Virtuality Virtuality => MemberInfo.GetVirtuality();
 
     public bool IsStatic => MemberInfo.IsStatic();
 }

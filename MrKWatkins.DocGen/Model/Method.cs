@@ -10,5 +10,5 @@ public sealed class Method : Function<MethodInfo>
     {
     }
 
-    public Virtuality? Virtuality => MemberInfo.GetVirtuality();
+    public Virtuality Virtuality => MemberInfo.GetVirtuality();
 }

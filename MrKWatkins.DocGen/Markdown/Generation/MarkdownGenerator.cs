@@ -4,6 +4,7 @@ using MrKWatkins.DocGen.Model;
 using MrKWatkins.DocGen.XmlDocumentation;
 using MrKWatkins.Reflection;
 using MrKWatkins.Reflection.Formatting;
+using Type = System.Type;
 
 namespace MrKWatkins.DocGen.Markdown.Generation;
 
@@ -11,6 +12,8 @@ public abstract class MarkdownGenerator
 {
     private static readonly IReflectionFormatter MemberLinkFormatter =
         new CachedReflectionFormatter(new DisplayNameFormatter(new DisplayNameFormatterOptions { PrefixMembersWithType = false }));
+    private static readonly IReflectionFormatter DisplayNameOrKeywordFormatter =
+        new CachedReflectionFormatter(new DisplayNameFormatter(new DisplayNameFormatterOptions { UseCSharpKeywordsForPrimitiveTypes = true }));
 
     protected MarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
     {
@@ -63,13 +66,13 @@ public abstract class MarkdownGenerator
                 code.Write(", ");
             }
 
-            if (parameter.Kind.HasValue)
+            if (parameter.Kind != ParameterKind.Normal)
             {
-                code.Write(parameter.Kind.Value.ToKeyword());
+                code.Write(parameter.Kind.ToCSharpKeywords());
                 code.Write(" ");
             }
 
-            code.Write(parameter.Type.DisplayNameOrKeyword());
+            WriteTypeOrKeyword(code, parameter.Type);
             code.Write(" ");
 
             if (CSharp.Keywords.Contains(parameter.Name))
@@ -112,7 +115,7 @@ public abstract class MarkdownGenerator
         code.Write(defaultValue.ToString() ?? "");
     }
 
-    protected static void WriteSignatureTypeParameters(ITextWriter code, [InstantHandle] IReadOnlyList<System.Type> genericArguments)
+    protected static void WriteSignatureTypeParameters(ITextWriter code, [InstantHandle] IReadOnlyList<Type> genericArguments)
     {
         if (genericArguments.Count == 0)
         {
@@ -132,7 +135,7 @@ public abstract class MarkdownGenerator
         code.Write(">");
     }
 
-    protected static void WriteSignatureTypeConstraints(ITextWriter code, IReadOnlyList<System.Type> genericArguments)
+    protected static void WriteSignatureTypeConstraints(ITextWriter code, IReadOnlyList<Type> genericArguments)
     {
         foreach (var genericArgument in genericArguments)
         {
@@ -203,6 +206,8 @@ public abstract class MarkdownGenerator
         }
     }
 
+    protected static void WriteTypeOrKeyword(ITextWriter code, Type type) => code.Write(DisplayNameOrKeywordFormatter.Format(type));
+
     protected void WriteRemarks(MarkdownWriter writer, MemberDocumentation? documentation)
     {
         if (documentation?.Remarks == null)
@@ -272,13 +277,13 @@ public abstract class MarkdownGenerator
     {
         text ??= MemberLinkFormatter.Format(member);
 
-        if (member is System.Type type && (type.IsArray || type.IsByRef))
+        if (member is Type type && (type.IsArray || type.IsByRef))
         {
             WriteMemberLink(writer, type.GetElementType()!, location, text);
             return;
         }
 
-        if (member is System.Type { IsGenericParameter: true })
+        if (member is Type { IsGenericParameter: true })
         {
             writer.Write(text);
             return;

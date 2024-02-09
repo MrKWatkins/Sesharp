@@ -37,7 +37,7 @@ public sealed class FieldMarkdownGenerator : MemberMarkdownGenerator<Field, Fiel
     {
         using var code = writer.CodeBlock();
 
-        code.Write(field.Accessibility.ToKeyword());
+        code.Write(field.Accessibility.ToCSharpKeywords());
         code.Write(" ");
 
         if (field.IsConst)
@@ -56,7 +56,7 @@ public sealed class FieldMarkdownGenerator : MemberMarkdownGenerator<Field, Fiel
             }
         }
 
-        code.Write(field.MemberInfo.FieldType.DisplayNameOrKeyword());
+        WriteTypeOrKeyword(code, field.MemberInfo.FieldType);
         code.Write(" ");
         code.Write(field.Name);
 

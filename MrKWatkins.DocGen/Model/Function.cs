@@ -44,7 +44,7 @@ public abstract class Function<TMethodInfo> : Member<TMethodInfo>
                         sb.Append(", ");
                     }
 
-                    sb.Append(parameter.Type.DisplayNameOrKeyword());
+                    sb.Append(parameter.Type.ToDisplayName());
                 }
             }
 
@@ -88,7 +88,7 @@ public abstract class Function<TMethodInfo> : Member<TMethodInfo>
                     sb.Append(", ");
                 }
 
-                sb.Append(parameter.Type.DisplayNameOrKeyword());
+                sb.Append(parameter.Type.ToDisplayName());
             }
         }
 
