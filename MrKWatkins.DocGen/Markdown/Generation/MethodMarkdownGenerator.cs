@@ -77,6 +77,10 @@ public sealed class MethodMarkdownGenerator : MemberMarkdownGenerator<Method, Me
 
 
         WriteTypeOrKeyword(code, method.MemberInfo.ReturnType);
+        if (method.MemberInfo.IsReturnNullableReferenceType())
+        {
+            code.Write("?");
+        }
         code.Write(" ");
 
         code.Write(method.Name);

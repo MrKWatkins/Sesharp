@@ -73,6 +73,10 @@ public abstract class MarkdownGenerator
             }
 
             WriteTypeOrKeyword(code, parameter.Type);
+            if (parameter.ParameterInfo.IsNullableReferenceType())
+            {
+                code.Write("?");
+            }
             code.Write(" ");
 
             if (CSharp.Keywords.Contains(parameter.Name))
