@@ -8,4 +8,9 @@
       <ProjectReference Include="..\MrKWatkins.DocGen\MrKWatkins.DocGen.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Spectre.Console" />
+      <PackageReference Include="Spectre.Console.Cli" />
+    </ItemGroup>
+
 </Project>

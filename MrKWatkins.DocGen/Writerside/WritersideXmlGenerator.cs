@@ -8,11 +8,11 @@ namespace MrKWatkins.DocGen.Writerside;
 
 public static class WritersideXmlGenerator
 {
-    public static void UpdateWriterside(WritersideOptions options, AssemblyDetails assemblyDetails)
+    public static void UpdateWriterside(IWritersideOptions options, AssemblyDetails assemblyDetails)
     {
         var toc = GenerateToc(options, assemblyDetails);
 
-        var hiTree = XDocument.Load(options.TreeFilePath);
+        var hiTree = XDocument.Load(options.TreeFile);
 
         var existingToc = hiTree.XPathSelectElement($"//*[@id='{options.TocElementId}']")
                           ?? throw new InvalidOperationException($"Could not find element with ID {options.TocElementId}.");
@@ -24,12 +24,12 @@ public static class WritersideXmlGenerator
             Indent = true
         };
 
-        using var writer = XmlWriter.Create(options.TreeFilePath, xmlSettings);
+        using var writer = XmlWriter.Create(options.TreeFile, xmlSettings);
         hiTree.Save(writer);
     }
 
     [Pure]
-    public static XElement GenerateToc(WritersideOptions options, AssemblyDetails assemblyDetails)
+    private static XElement GenerateToc(IWritersideOptions options, AssemblyDetails assemblyDetails)
     {
         var toc = CreateTitleElement(options.TocElementTitle);
         toc.SetAttributeValue("id", options.TocElementId);
