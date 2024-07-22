@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EC54CE10-77DB-4F1D-9EA4-EFAA3497A36D}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		License.md = License.md
+		ReadMe.md = ReadMe.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2CD5FA32-1F2F-440F-8959-92CCB344D822}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{00684DA7-BE37-4859-A73B-7DD6D23B9DD8}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp", "MrKWatkins.Sesharp\MrKWatkins.Sesharp.csproj", "{3B0E76F2-2943-4AE6-B0F2-122001AE6AD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp.Console", "MrKWatkins.Sesharp.Console\MrKWatkins.Sesharp.Console.csproj", "{E2BC6425-545E-46DF-AC19-04E1FB675A08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp.TestAssembly", "MrKWatkins.Sesharp.TestAssembly\MrKWatkins.Sesharp.TestAssembly.csproj", "{6F0E2A2C-0635-495B-B282-81A5F8C6CDAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp.Tests", "MrKWatkins.Sesharp.Tests\MrKWatkins.Sesharp.Tests.csproj", "{322815B8-6FEF-47F0-87D3-D26791F8B0F3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8BDD6D37-E7BF-4BFE-A126-C8B7B4140031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BDD6D37-E7BF-4BFE-A126-C8B7B4140031}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BDD6D37-E7BF-4BFE-A126-C8B7B4140031}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BDD6D37-E7BF-4BFE-A126-C8B7B4140031}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B0E76F2-2943-4AE6-B0F2-122001AE6AD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B0E76F2-2943-4AE6-B0F2-122001AE6AD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B0E76F2-2943-4AE6-B0F2-122001AE6AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B0E76F2-2943-4AE6-B0F2-122001AE6AD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2BC6425-545E-46DF-AC19-04E1FB675A08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2BC6425-545E-46DF-AC19-04E1FB675A08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2BC6425-545E-46DF-AC19-04E1FB675A08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2BC6425-545E-46DF-AC19-04E1FB675A08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F0E2A2C-0635-495B-B282-81A5F8C6CDAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F0E2A2C-0635-495B-B282-81A5F8C6CDAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F0E2A2C-0635-495B-B282-81A5F8C6CDAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F0E2A2C-0635-495B-B282-81A5F8C6CDAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{322815B8-6FEF-47F0-87D3-D26791F8B0F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{322815B8-6FEF-47F0-87D3-D26791F8B0F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{322815B8-6FEF-47F0-87D3-D26791F8B0F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{322815B8-6FEF-47F0-87D3-D26791F8B0F3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2CD5FA32-1F2F-440F-8959-92CCB344D822} = {EC54CE10-77DB-4F1D-9EA4-EFAA3497A36D}
+		{00684DA7-BE37-4859-A73B-7DD6D23B9DD8} = {2CD5FA32-1F2F-440F-8959-92CCB344D822}
+	EndGlobalSection
+EndGlobal

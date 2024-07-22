@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\MrKWatkins.Sesharp.TestAssembly\MrKWatkins.Sesharp.TestAssembly.csproj" />
+    <ProjectReference Include="..\MrKWatkins.Sesharp\MrKWatkins.Sesharp.csproj" />
+  </ItemGroup>
+</Project>
