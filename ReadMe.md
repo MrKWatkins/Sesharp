@@ -1,5 +1,7 @@
 # Sesharp
 
+[![Build Status](https://github.com/MrKWatkins/Sesharp/actions/workflows/build.yml/badge.svg)](https://github.com/MrKWatkins/Sesharp/actions/workflows/build.yml)
+
 Tool to generate markdown files from C# XML documentation. Also supports generating content tables for [Writerside](https://www.jetbrains.com/writerside/).
 
 ## Background
