@@ -2,14 +2,9 @@ using MrKWatkins.Ast;
 
 namespace MrKWatkins.Sesharp.Model;
 
-public abstract class ModelNode : Node<ModelNode>
+public abstract class ModelNode(string name) : Node<ModelNode>
 {
-    protected ModelNode(string name)
-    {
-        Name = name;
-    }
-
-    public string Name { get; }
+    public string Name { get; } = name;
 
     public sealed override string ToString() => $"{GetType().Name} {Name}";
 }

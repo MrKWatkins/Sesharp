@@ -3,13 +3,8 @@ using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp.Model;
 
-public sealed class Field : Member<FieldInfo>
+public sealed class Field(FieldInfo fieldInfo) : Member<FieldInfo>(fieldInfo)
 {
-    public Field(FieldInfo fieldInfo)
-        : base(fieldInfo)
-    {
-    }
-
     public Accessibility Accessibility => MemberInfo.GetAccessibility();
 
     public bool IsConst => MemberInfo.IsConst();

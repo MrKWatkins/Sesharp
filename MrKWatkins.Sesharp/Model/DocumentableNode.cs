@@ -3,31 +3,19 @@ using MrKWatkins.Sesharp.XmlDocumentation;
 
 namespace MrKWatkins.Sesharp.Model;
 
-public abstract class DocumentableNode : OutputNode
+public abstract class DocumentableNode(MemberInfo memberInfo) : OutputNode(memberInfo.Name)
 {
-    protected DocumentableNode(MemberInfo memberInfo)
-        : base(memberInfo.Name)
-    {
-        MemberInfo = memberInfo;
-        XmlDocId = XmlDocId.Create(memberInfo);
-    }
+    public MemberInfo MemberInfo { get; } = memberInfo;
 
-    public MemberInfo MemberInfo { get; }
-
-    public XmlDocId XmlDocId { get; }
+    public XmlDocId XmlDocId { get; } = XmlDocId.Create(memberInfo);
 
     public override string FileName => MemberInfo.DocumentationFileName();
 
     public MemberDocumentation? Documentation { get; internal set; }
 }
 
-public abstract class DocumentableNode<TMemberInfo> : DocumentableNode
+public abstract class DocumentableNode<TMemberInfo>(TMemberInfo memberInfo) : DocumentableNode(memberInfo)
     where TMemberInfo : MemberInfo
 {
-    protected DocumentableNode(TMemberInfo memberInfo)
-        : base(memberInfo)
-    {
-    }
-
     public new TMemberInfo MemberInfo => (TMemberInfo)base.MemberInfo;
 }

@@ -2,16 +2,11 @@ using System.Web;
 
 namespace MrKWatkins.Sesharp.Markdown.Writing;
 
-public sealed partial class MarkdownWriter : IDisposable
+public sealed partial class MarkdownWriter(string path) : IDisposable
 {
-    private readonly StreamWriter writer;
+    private readonly StreamWriter writer = File.CreateText(path);
     private bool inChildBlock;
     private MarkdownId? idSuffix;
-
-    public MarkdownWriter(string path)
-    {
-        writer = File.CreateText(path);
-    }
 
     private void Write(string text, bool escape) => writer.Write(escape ? Escape(text) : text);
 

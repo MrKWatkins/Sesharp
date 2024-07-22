@@ -3,12 +3,7 @@ using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp.Model;
 
-public sealed class Method : Function<MethodInfo>
+public sealed class Method(MethodInfo method) : Function<MethodInfo>(method)
 {
-    public Method(MethodInfo method)
-        : base(method)
-    {
-    }
-
     public Virtuality Virtuality => MemberInfo.GetVirtuality();
 }

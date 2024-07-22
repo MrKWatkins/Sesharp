@@ -2,12 +2,7 @@ using System.Reflection;
 
 namespace MrKWatkins.Sesharp.Model;
 
-public sealed class Operator : Function<MethodInfo>
+public sealed class Operator(MethodInfo methodInfo) : Function<MethodInfo>(methodInfo)
 {
-    public Operator(MethodInfo methodInfo)
-        : base(methodInfo)
-    {
-    }
-
     public override string DisplayName => Name[3..];
 }

@@ -1,14 +1,8 @@
 namespace MrKWatkins.Sesharp.XmlDocumentation;
 
-public abstract class ReferenceElement : DocumentationElement
+public abstract class ReferenceElement(string name, string? text) : DocumentationElement
 {
-    protected ReferenceElement(string name, string? text)
-    {
-        Name = name;
-        Text = string.IsNullOrWhiteSpace(text) ? null : text;
-    }
+    public string Name { get; } = name;
 
-    public string Name { get; }
-
-    public string? Text { get; }
+    public string? Text { get; } = string.IsNullOrWhiteSpace(text) ? null : text;
 }

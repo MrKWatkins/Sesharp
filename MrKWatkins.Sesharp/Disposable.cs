@@ -1,13 +1,14 @@
 namespace MrKWatkins.Sesharp;
 
-public sealed class Disposable : IDisposable
+public sealed class Disposable(Action action) : IDisposable
 {
-    private readonly Action action;
+    private int disposed;
 
-    public Disposable(Action action)
+    public void Dispose()
     {
-        this.action = action;
+        if (Interlocked.CompareExchange(ref disposed, 1, 0) == 0)
+        {
+            action();
+        }
     }
-
-    public void Dispose() => action();
 }

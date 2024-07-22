@@ -2,14 +2,9 @@ using System.Reflection;
 
 namespace MrKWatkins.Sesharp.Model;
 
-public abstract class Member<TMemberInfo> : DocumentableNode<TMemberInfo>
+public abstract class Member<TMemberInfo>(TMemberInfo methodInfo) : DocumentableNode<TMemberInfo>(methodInfo)
     where TMemberInfo : MemberInfo
 {
-    protected Member(TMemberInfo methodInfo)
-        : base(methodInfo)
-    {
-    }
-
     public Type Type => Ancestors.OfType<Type>().First();
 
     public virtual string MemberName => DisplayName;

@@ -1,14 +1,8 @@
 namespace MrKWatkins.Sesharp.XmlDocumentation;
 
-public abstract class MemberReferenceElement : DocumentationElement
+public abstract class MemberReferenceElement(XmlDocId id, string? text) : DocumentationElement
 {
-    protected MemberReferenceElement(XmlDocId id, string? text)
-    {
-        Id = id;
-        Text = string.IsNullOrWhiteSpace(text) ? null : text;
-    }
+    public XmlDocId Id { get; } = id;
 
-    public XmlDocId Id { get; }
-
-    public string? Text { get; }
+    public string? Text { get; } = string.IsNullOrWhiteSpace(text) ? null : text;
 }

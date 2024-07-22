@@ -3,15 +3,9 @@ using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp.Model;
 
-public sealed class Parameter : ModelNode
+public sealed class Parameter(ParameterInfo parameter) : ModelNode(parameter.Name ?? "")
 {
-    public Parameter(ParameterInfo parameter)
-        : base(parameter.Name ?? "")
-    {
-        ParameterInfo = parameter;
-    }
-
-    public ParameterInfo ParameterInfo { get; }
+    public ParameterInfo ParameterInfo { get; } = parameter;
 
     public System.Type Type => ParameterInfo.ParameterType.IsByRef ? ParameterInfo.ParameterType.GetElementType()! : ParameterInfo.ParameterType;
 

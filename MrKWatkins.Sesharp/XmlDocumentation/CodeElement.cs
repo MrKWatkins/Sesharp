@@ -1,11 +1,6 @@
 namespace MrKWatkins.Sesharp.XmlDocumentation;
 
-public sealed class CodeElement : DocumentationElement
+public sealed class CodeElement(string code) : DocumentationElement
 {
-    public CodeElement(string code)
-    {
-        Code = code;
-    }
-
-    public string Code { get; }
+    public string Code { get; } = code;
 }

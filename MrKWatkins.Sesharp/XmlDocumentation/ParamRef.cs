@@ -1,9 +1,3 @@
 namespace MrKWatkins.Sesharp.XmlDocumentation;
 
-public sealed class ParamRef : ReferenceElement
-{
-    public ParamRef(string id, string? text)
-        : base(id, text)
-    {
-    }
-}
+public sealed class ParamRef(string id, string? text) : ReferenceElement(id, text);

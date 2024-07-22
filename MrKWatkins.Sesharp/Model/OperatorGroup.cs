@@ -2,12 +2,7 @@ using System.Reflection;
 
 namespace MrKWatkins.Sesharp.Model;
 
-public sealed class OperatorGroup : MemberGroup<Operator, MethodInfo>
+public sealed class OperatorGroup(string name, [InstantHandle] IEnumerable<Operator> operators) : MemberGroup<Operator, MethodInfo>(name, operators)
 {
-    public OperatorGroup(string name, [InstantHandle] IEnumerable<Operator> operators)
-        : base(name, operators)
-    {
-    }
-
     public override string GroupFileName => Name;
 }

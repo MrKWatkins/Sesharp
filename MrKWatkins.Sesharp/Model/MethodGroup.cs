@@ -2,12 +2,7 @@ using System.Reflection;
 
 namespace MrKWatkins.Sesharp.Model;
 
-public sealed class MethodGroup : MemberGroup<Method, MethodInfo>
+public sealed class MethodGroup(string name, [InstantHandle] IEnumerable<Method> methods) : MemberGroup<Method, MethodInfo>(name, methods)
 {
-    public MethodGroup(string name, [InstantHandle] IEnumerable<Method> methods)
-        : base(name, methods)
-    {
-    }
-
     public override string GroupFileName => Name;
 }
