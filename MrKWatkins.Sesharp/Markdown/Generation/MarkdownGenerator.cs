@@ -8,24 +8,18 @@ using Type = System.Type;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public abstract class MarkdownGenerator
+public abstract class MarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
 {
     private static readonly IReflectionFormatter MemberLinkFormatter =
         new CachedReflectionFormatter(new DisplayNameFormatter(new DisplayNameFormatterOptions { PrefixMembersWithType = false }));
     private static readonly IReflectionFormatter DisplayNameOrKeywordFormatter =
         new CachedReflectionFormatter(new DisplayNameFormatter(new DisplayNameFormatterOptions { UseCSharpKeywordsForPrimitiveTypes = true }));
 
-    protected MarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
-    {
-        MemberLookup = memberLookup;
-        OutputDirectory = outputDirectory;
-    }
-
     public abstract void Generate(OutputNode node);
 
-    protected MemberLookup MemberLookup { get; }
+    protected MemberLookup MemberLookup { get; } = memberLookup;
 
-    protected string OutputDirectory { get; }
+    protected string OutputDirectory { get; } = outputDirectory;
 
     [MustUseReturnValue]
     protected MarkdownWriter CreateWriter(OutputNode node)

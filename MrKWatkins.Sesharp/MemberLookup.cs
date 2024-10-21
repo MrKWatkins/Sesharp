@@ -65,7 +65,7 @@ public sealed class MemberLookup
     [Pure]
     private static Type GetRootType(MemberInfo member)
     {
-        var type = member is Type t ? t : member.DeclaringType!;
+        var type = member as Type ?? member.DeclaringType!;
         while (type.DeclaringType != null)
         {
             type = type.DeclaringType;

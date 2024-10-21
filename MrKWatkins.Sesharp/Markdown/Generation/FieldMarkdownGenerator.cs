@@ -6,13 +6,8 @@ using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public sealed class FieldMarkdownGenerator : MemberMarkdownGenerator<Field, FieldInfo>
+public sealed class FieldMarkdownGenerator(MemberLookup memberLookup, string outputDirectory) : MemberMarkdownGenerator<Field, FieldInfo>(memberLookup, outputDirectory)
 {
-    public FieldMarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
-        : base(memberLookup, outputDirectory)
-    {
-    }
-
     protected override bool ShouldGenerate(Field field) => !field.Type.MemberInfo.IsEnum;
 
     protected override void Generate(MarkdownWriter writer, Field field)

@@ -5,13 +5,8 @@ using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public sealed class PropertyMarkdownGenerator : MemberMarkdownGenerator<Property, PropertyInfo>
+public sealed class PropertyMarkdownGenerator(MemberLookup memberLookup, string outputDirectory) : MemberMarkdownGenerator<Property, PropertyInfo>(memberLookup, outputDirectory)
 {
-    public PropertyMarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
-        : base(memberLookup, outputDirectory)
-    {
-    }
-
     protected override void Generate(MarkdownWriter writer, Property property)
     {
         writer.WriteMainHeading($"{property.Type.DisplayName}.{property.MemberName} Property");

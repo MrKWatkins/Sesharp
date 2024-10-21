@@ -6,15 +6,10 @@ using MrKWatkins.Sesharp.Model;
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
-public abstract class MemberMarkdownGenerator<TMember, TMemberInfo> : MarkdownGenerator
+public abstract class MemberMarkdownGenerator<TMember, TMemberInfo>(MemberLookup memberLookup, string outputDirectory) : MarkdownGenerator(memberLookup, outputDirectory)
     where TMember : Member<TMemberInfo>
     where TMemberInfo : MemberInfo
 {
-    protected MemberMarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
-        : base(memberLookup, outputDirectory)
-    {
-    }
-
     public void Generate([InstantHandle] IEnumerable<OutputNode> nodes)
     {
         foreach (var node in nodes)
