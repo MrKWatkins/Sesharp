@@ -23,6 +23,16 @@ ij_editorconfig_space_before_colon = true
 ij_editorconfig_space_before_comma = false
 ij_editorconfig_spaces_around_assignment_operators = true
 
+# Verify settings
+[*.{received,verified}.{json,txt,xml}]
+charset = "utf-8-bom"
+end_of_line = lf
+indent_size = unset
+indent_style = unset
+insert_final_newline = false
+tab_width = unset
+trim_trailing_whitespace = false
+
 [{*.csproj,*.nuspec,*.xml}]
 ij_xml_align_attributes = true
 ij_xml_align_text = false
@@ -369,7 +379,7 @@ dotnet_diagnostic.CA1815.severity = none
 dotnet_diagnostic.CA1816.severity = error
 
 # CA1819: Properties should not return arrays
-dotnet_diagnostic.CA1819.severity = error
+dotnet_diagnostic.CA1819.severity = none
 
 # CA1820: Test for empty strings using string length
 dotnet_diagnostic.CA1820.severity = error

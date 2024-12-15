@@ -16,7 +16,7 @@ public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem) 
         console.MarkupLine($"[green]Loading assembly {settings.AssemblyAbsolutePath}...[/]");
         var assembly = Assembly.Load(File.ReadAllBytes(settings.AssemblyAbsolutePath));
 
-        var xmlPath = settings.Assembly.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
+        var xmlPath = settings.AssemblyAbsolutePath.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
 
         console.MarkupLine($"[green]Loading XML documentation file {xmlPath}...[/]");
         var documentation = Documentation.Load(fileSystem, xmlPath);

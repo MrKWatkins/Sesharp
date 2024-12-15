@@ -1,5 +1,8 @@
 temp/**
 
+# VerifyTests
+*.received.*
+
 # ANTLR intermediate files.
 gen/
 *.tokens
