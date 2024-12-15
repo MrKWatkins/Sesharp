@@ -2,9 +2,9 @@ using System.Web;
 
 namespace MrKWatkins.Sesharp.Markdown.Writing;
 
-public sealed partial class MarkdownWriter(string path) : IDisposable
+public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReference] string path) : IDisposable
 {
-    private readonly StreamWriter writer = File.CreateText(path);
+    private readonly StreamWriter writer = fileSystem.CreateText(path);
     private bool inChildBlock;
     private MarkdownId? idSuffix;
 

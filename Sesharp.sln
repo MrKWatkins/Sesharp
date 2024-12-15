@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp", "MrKWatkins.Sesharp\MrKWatkins.Sesharp.csproj", "{3B0E76F2-2943-4AE6-B0F2-122001AE6AD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp.Console", "MrKWatkins.Sesharp.Console\MrKWatkins.Sesharp.Console.csproj", "{E2BC6425-545E-46DF-AC19-04E1FB675A08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp.Tool", "MrKWatkins.Sesharp.Tool\MrKWatkins.Sesharp.Tool.csproj", "{E2BC6425-545E-46DF-AC19-04E1FB675A08}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp.TestAssembly", "MrKWatkins.Sesharp.TestAssembly\MrKWatkins.Sesharp.TestAssembly.csproj", "{6F0E2A2C-0635-495B-B282-81A5F8C6CDAB}"
 EndProject

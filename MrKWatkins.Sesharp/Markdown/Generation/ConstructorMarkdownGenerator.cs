@@ -5,7 +5,7 @@ using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public sealed class ConstructorMarkdownGenerator(MemberLookup memberLookup, string outputDirectory) : MemberMarkdownGenerator<Constructor, ConstructorInfo>(memberLookup, outputDirectory)
+public sealed class ConstructorMarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory) : MemberMarkdownGenerator<Constructor, ConstructorInfo>(fileSystem, memberLookup, outputDirectory)
 {
     protected override void Generate(MarkdownWriter writer, MemberGroup<Constructor, ConstructorInfo> group)
     {

@@ -4,7 +4,7 @@ using MrKWatkins.Sesharp.Model;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public sealed class EventMarkdownGenerator(MemberLookup memberLookup, string outputDirectory) : MemberMarkdownGenerator<Event, EventInfo>(memberLookup, outputDirectory)
+public sealed class EventMarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory) : MemberMarkdownGenerator<Event, EventInfo>(fileSystem, memberLookup, outputDirectory)
 {
     protected override void Generate(MarkdownWriter writer, Event @event)
     {

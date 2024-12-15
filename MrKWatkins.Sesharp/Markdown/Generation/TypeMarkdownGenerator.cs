@@ -6,7 +6,7 @@ using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public sealed class TypeMarkdownGenerator(MemberLookup memberLookup, string outputDirectory) : MarkdownGenerator(memberLookup, outputDirectory)
+public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory) : MarkdownGenerator(fileSystem, memberLookup, outputDirectory)
 {
     public override void Generate(OutputNode node)
     {
@@ -69,7 +69,7 @@ public sealed class TypeMarkdownGenerator(MemberLookup memberLookup, string outp
             return;
         }
 
-        var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), MemberLookup, OutputDirectory)!;
+        var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), FileSystem, MemberLookup, OutputDirectory)!;
 
         generator.Generate(members);
 

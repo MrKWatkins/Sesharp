@@ -2,7 +2,7 @@ using System.ComponentModel;
 using MrKWatkins.Sesharp.Writerside;
 using Spectre.Console.Cli;
 
-namespace MrKWatkins.Sesharp.Console;
+namespace MrKWatkins.Sesharp.Tool;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public sealed class DocGenSettings : CommandSettings, IWritersideOptions

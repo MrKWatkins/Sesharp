@@ -4,7 +4,7 @@ namespace MrKWatkins.Sesharp.Markdown.Generation;
 
 public static class AssemblyMarkdownGenerator
 {
-    public static void Generate(AssemblyDetails assemblyDetails, string outputDirectory)
+    public static void Generate(IFileSystem fileSystem, AssemblyDetails assemblyDetails, string outputDirectory)
     {
         var memberLookup = new MemberLookup(assemblyDetails.ReflectionAssembly);
 
@@ -14,7 +14,7 @@ public static class AssemblyMarkdownGenerator
         {
             // TODO: Namespace file.
 
-            var typeGenerator = new TypeMarkdownGenerator(memberLookup, outputDirectory);
+            var typeGenerator = new TypeMarkdownGenerator(fileSystem, memberLookup, outputDirectory);
 
             foreach (var type in @namespace.Types)
             {

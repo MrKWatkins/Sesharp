@@ -8,11 +8,11 @@ namespace MrKWatkins.Sesharp.Writerside;
 
 public static class WritersideXmlGenerator
 {
-    public static void UpdateWriterside(IWritersideOptions options, AssemblyDetails assemblyDetails)
+    public static void UpdateWriterside(IFileSystem fileSystem, IWritersideOptions options, AssemblyDetails assemblyDetails)
     {
         var toc = GenerateToc(options, assemblyDetails);
 
-        var hiTree = XDocument.Load(options.TreeFile);
+        var hiTree = LoadXml(fileSystem, options.TreeFile);
 
         var existingToc = hiTree.XPathSelectElement($"//*[@id='{options.TocElementId}']")
                           ?? throw new InvalidOperationException($"Could not find element with ID {options.TocElementId}.");
@@ -24,7 +24,8 @@ public static class WritersideXmlGenerator
             Indent = true
         };
 
-        using var writer = XmlWriter.Create(options.TreeFile, xmlSettings);
+        using var stream = fileSystem.CreateText(options.TreeFile);
+        using var writer = XmlWriter.Create(stream, xmlSettings);
         hiTree.Save(writer);
     }
 
@@ -96,9 +97,6 @@ public static class WritersideXmlGenerator
     private static XElement CreateTitleElement(string title) => CreateTocElement(title, null);
 
     [Pure]
-    private static XElement CreateTopicElement(string topic) => CreateTocElement(null, topic);
-
-    [Pure]
     private static XElement CreateMemberTocElement(OutputNode member) => CreateTocElement(member.MenuName, member.FileName);
 
     [Pure]
@@ -114,5 +112,12 @@ public static class WritersideXmlGenerator
             element.Add(new XAttribute("topic", topic));
         }
         return element;
+    }
+
+    [Pure]
+    private static XDocument LoadXml(IFileSystem fileSystem, [PathReference] string path)
+    {
+        using var stream = fileSystem.OpenRead(path);
+        return XDocument.Load(stream);
     }
 }

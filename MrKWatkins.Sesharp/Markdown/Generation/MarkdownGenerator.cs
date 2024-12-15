@@ -8,7 +8,7 @@ using Type = System.Type;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public abstract class MarkdownGenerator(MemberLookup memberLookup, string outputDirectory)
+public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory)
 {
     private static readonly IReflectionFormatter MemberLinkFormatter =
         new CachedReflectionFormatter(new DisplayNameFormatter(new DisplayNameFormatterOptions { PrefixMembersWithType = false }));
@@ -16,6 +16,8 @@ public abstract class MarkdownGenerator(MemberLookup memberLookup, string output
         new CachedReflectionFormatter(new DisplayNameFormatter(new DisplayNameFormatterOptions { UseCSharpKeywordsForPrimitiveTypes = true }));
 
     public abstract void Generate(OutputNode node);
+
+    protected IFileSystem FileSystem { get; } = fileSystem;
 
     protected MemberLookup MemberLookup { get; } = memberLookup;
 
@@ -25,7 +27,7 @@ public abstract class MarkdownGenerator(MemberLookup memberLookup, string output
     protected MarkdownWriter CreateWriter(OutputNode node)
     {
         var filePath = Path.Combine(OutputDirectory, node.FileName);
-        return new MarkdownWriter(filePath);
+        return new MarkdownWriter(FileSystem, filePath);
     }
 
     protected void WriteTypeParameters(MarkdownWriter writer, DocumentableNode member, IReadOnlyList<TypeParameter> typeParameters)

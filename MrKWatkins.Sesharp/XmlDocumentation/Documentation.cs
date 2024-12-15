@@ -16,9 +16,9 @@ public sealed class Documentation
     public MemberDocumentation? GetMemberDocumentationOrNull(XmlDocId key) => memberDocumentation.GetValueOrDefault(key);
 
     [Pure]
-    public static Documentation Load(string path)
+    public static Documentation Load(IFileSystem fileSystem, string path)
     {
-        using var file = File.OpenRead(path);
+        using var file = fileSystem.OpenRead(path);
         var xDocument = XDocument.Load(file, LoadOptions.PreserveWhitespace);
 
         return Parse(xDocument);
@@ -27,13 +27,9 @@ public sealed class Documentation
     [Pure]
     private static Documentation Parse(XDocument xml)
     {
-        var members = new Dictionary<XmlDocId, MemberDocumentation>();
-
-        foreach (var memberXml in xml.XPathSelectElements("/doc/members/member"))
-        {
-            var member = MemberDocumentation.Parse(memberXml);
-            members.Add(XmlDocId.Parse(member.Name), member);
-        }
+        var members = xml.XPathSelectElements("/doc/members/member")
+            .Select(MemberDocumentation.Parse)
+            .ToDictionary(member => XmlDocId.Parse(member.Name));
 
         return new Documentation(members);
     }

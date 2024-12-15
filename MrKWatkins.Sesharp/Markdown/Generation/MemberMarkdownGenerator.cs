@@ -6,7 +6,7 @@ using MrKWatkins.Sesharp.Model;
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
-public abstract class MemberMarkdownGenerator<TMember, TMemberInfo>(MemberLookup memberLookup, string outputDirectory) : MarkdownGenerator(memberLookup, outputDirectory)
+public abstract class MemberMarkdownGenerator<TMember, TMemberInfo>(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory) : MarkdownGenerator(fileSystem, memberLookup, outputDirectory)
     where TMember : Member<TMemberInfo>
     where TMemberInfo : MemberInfo
 {
