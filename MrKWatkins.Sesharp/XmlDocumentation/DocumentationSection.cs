@@ -53,6 +53,7 @@ public sealed class DocumentationSection
         element.Name.LocalName switch
         {
             "c" => new CodeElement(element.Value),
+            "code" => new CodeElement(element.Value),
             "paramref" => new ParamRef(element.Attribute("name")?.Value ?? throw new FormatException("<paramref> element does not have name attribute."), element.Value),
             "see" => new See(XmlDocId.Parse(element.Attribute("cref")?.Value ?? throw new FormatException("<see> element does not have cref attribute.")), element.Value),
             "typeparamref" => new TypeParamRef(element.Attribute("name")?.Value ?? throw new FormatException("<typeparamref> element does not have name attribute."), element.Value),
