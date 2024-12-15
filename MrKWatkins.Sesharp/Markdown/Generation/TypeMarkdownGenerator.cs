@@ -89,6 +89,14 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
     {
         using var code = writer.CodeBlock();
         code.Write("public ");
+
+        if (type.MemberInfo.IsEnum)
+        {
+            code.Write("enum ");
+            code.Write(type.DisplayName);
+            return;
+        }
+
         if (type.MemberInfo.IsAbstract)
         {
             code.Write("abstract ");
