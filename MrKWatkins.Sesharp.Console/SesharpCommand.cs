@@ -13,8 +13,8 @@ public sealed class DocGenCommand : Command<DocGenSettings>
 {
     public override int Execute(CommandContext context, DocGenSettings settings)
     {
-        AnsiConsole.MarkupLine($"[green]Loading assembly {settings.Assembly}...[/]");
-        var assembly = Assembly.LoadFile(settings.Assembly);
+        AnsiConsole.MarkupLine($"[green]Loading assembly {settings.AssemblyAbsolutePath}...[/]");
+        var assembly = Assembly.LoadFile(settings.AssemblyAbsolutePath);
 
         var xmlPath = settings.Assembly.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
 
@@ -26,19 +26,19 @@ public sealed class DocGenCommand : Command<DocGenSettings>
 
         if (settings.DeleteContentsOfOutputDirectory)
         {
-            AnsiConsole.MarkupLine($"[green]Deleting existing output directory {settings.OutputDirectory}...[/]");
-            Directory.Delete(settings.OutputDirectory, true);
+            AnsiConsole.MarkupLine($"[green]Deleting existing output directory {settings.OutputDirectoryAbsolutePath}...[/]");
+            Directory.Delete(settings.OutputDirectoryAbsolutePath, true);
         }
 
-        AnsiConsole.MarkupLine($"[green]Creating output directory {settings.OutputDirectory}...[/]");
-        Directory.CreateDirectory(settings.OutputDirectory);
+        AnsiConsole.MarkupLine($"[green]Creating output directory {settings.OutputDirectoryAbsolutePath}...[/]");
+        Directory.CreateDirectory(settings.OutputDirectoryAbsolutePath);
 
         AnsiConsole.MarkupLine("[green]Generating documentation...[/]");
-        AssemblyMarkdownGenerator.Generate(assemblyDetails, settings.OutputDirectory);
+        AssemblyMarkdownGenerator.Generate(assemblyDetails, settings.OutputDirectoryAbsolutePath);
 
-        if (settings.WritersideTreeFile != null)
+        if (settings.WritersideTreeFileAbsolutePath != null)
         {
-            AnsiConsole.MarkupLine($"[green]Updating Writerside tree file {settings.WritersideTreeFile}...[/]");
+            AnsiConsole.MarkupLine($"[green]Updating Writerside tree file {settings.WritersideTreeFileAbsolutePath}...[/]");
             WritersideXmlGenerator.UpdateWriterside(settings, assemblyDetails);
         }
 

@@ -1,6 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="..\MrKWatkins.Sesharp.TestAssembly\MrKWatkins.Sesharp.TestAssembly.csproj" />
-    <ProjectReference Include="..\MrKWatkins.Sesharp\MrKWatkins.Sesharp.csproj" />
-  </ItemGroup>
+    <PropertyGroup>
+        <!-- Allow underscores in test method names. -->
+        <NoWarn>CA1707</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\MrKWatkins.Sesharp.TestAssembly\MrKWatkins.Sesharp.TestAssembly.csproj" />
+        <ProjectReference Include="..\MrKWatkins.Sesharp\MrKWatkins.Sesharp.csproj" />
+    </ItemGroup>
 </Project>

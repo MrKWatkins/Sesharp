@@ -10,8 +10,12 @@ public sealed class DocGenSettings : CommandSettings, IWritersideOptions
     [CommandArgument(0, "<assembly>")]
     public string Assembly { get; init; } = null!;
 
-    [CommandArgument(1, "<assemblyPath>")]
+    public string AssemblyAbsolutePath => Path.GetFullPath(Assembly);
+
+    [CommandArgument(1, "<outputDirectory>")]
     public string OutputDirectory { get; init; } = null!;
+
+    public string OutputDirectoryAbsolutePath => Path.GetFullPath(OutputDirectory);
 
     [CommandOption("--delete-contents-of-output-directory")]
     [DefaultValue(true)]
@@ -20,7 +24,9 @@ public sealed class DocGenSettings : CommandSettings, IWritersideOptions
     [CommandOption("--writerside-tree-file")]
     public string? WritersideTreeFile { get; init; }
 
-    string IWritersideOptions.TreeFile => WritersideTreeFile!;
+    public string? WritersideTreeFileAbsolutePath => WritersideTreeFile != null ? Path.GetFullPath(WritersideTreeFile) : WritersideTreeFile;
+
+    string IWritersideOptions.TreeFile => WritersideTreeFileAbsolutePath!;
 
     [CommandOption("--writerside-toc-element-id")]
     [DefaultValue("API")]
