@@ -70,7 +70,6 @@ public sealed class MethodMarkdownGenerator(MemberLookup memberLookup, string ou
             code.Write(" ");
         }
 
-
         WriteTypeOrKeyword(code, method.MemberInfo.ReturnType);
         if (method.MemberInfo.IsReturnNullableReferenceType())
         {
