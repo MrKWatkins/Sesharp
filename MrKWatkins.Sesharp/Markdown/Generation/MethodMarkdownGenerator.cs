@@ -82,6 +82,11 @@ public sealed class MethodMarkdownGenerator(IFileSystem fileSystem, MemberLookup
         WriteSignatureTypeParameters(code, method.MemberInfo.GetGenericArguments());
 
         code.Write("(");
+        if (method.MemberInfo.IsExtensionMethod())
+        {
+            code.Write("this ");
+        }
+
         WriteSignatureParameters(code, method.Parameters);
         code.Write(")");
 

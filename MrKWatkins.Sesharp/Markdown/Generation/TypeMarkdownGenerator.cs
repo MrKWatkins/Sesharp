@@ -97,11 +97,15 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
             return;
         }
 
-        if (type.MemberInfo.IsAbstract)
+        if (type.MemberInfo.IsStatic())
+        {
+            code.Write("static ");
+        }
+        else if (type.MemberInfo.IsAbstract)
         {
             code.Write("abstract ");
         }
-        if (type.MemberInfo.IsSealed)
+        else if (type.MemberInfo.IsSealed)
         {
             code.Write("sealed ");
         }
