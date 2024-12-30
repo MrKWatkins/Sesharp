@@ -12,7 +12,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="MrKWatkins.Ast" Version="0.9.128" />
     <PackageVersion Include="MrKWatkins.Reflection" Version="1.3.1" />
-    <PackageVersion Include="NUnit" Version="4.3.1" />
+    <PackageVersion Include="NUnit" Version="4.3.2" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
     <PackageVersion Include="Spectre.Console" Version="0.49.1" />
     <PackageVersion Include="Spectre.Console.Cli" Version="0.49.1" />
