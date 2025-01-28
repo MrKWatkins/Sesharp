@@ -10,6 +10,7 @@ include:
 
 bootstrap: |
   curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- -v 9.0.101 -i /usr/share/dotnet
+  dotnet restore
 
 dotnet:
   solution: Sesharp.sln
