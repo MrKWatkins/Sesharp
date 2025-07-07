@@ -30,6 +30,22 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
         return new MarkdownWriter(FileSystem, filePath);
     }
 
+    protected void WriteSeeAlsos(MarkdownWriter writer, IReadOnlyList<SeeAlso>? seeAlsos)
+    {
+        if (seeAlsos == null || seeAlsos.Count == 0)
+        {
+            return;
+        }
+
+        writer.WriteSubHeading("See Also");
+
+        foreach (var seeAlso in seeAlsos)
+        {
+            using var paragraph = writer.Paragraph();
+            WriteSeeAlso(paragraph, seeAlso);
+        }
+    }
+
     protected void WriteTypeParameters(MarkdownWriter writer, DocumentableNode member, IReadOnlyList<TypeParameter> typeParameters)
     {
         if (typeParameters.Count == 0)
@@ -268,6 +284,19 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
     {
         var (member, location) = MemberLookup.Get(see.Id);
         WriteMemberLink(writer, member, location, see.Text);
+    }
+
+    private void WriteSeeAlso(IParagraphWriter writer, SeeAlso seeAlso)
+    {
+        if (seeAlso.Cref != null)
+        {
+            var (member, location) = MemberLookup.Get(seeAlso.Cref);
+            WriteMemberLink(writer, member, location, seeAlso.Text);
+        }
+        else
+        {
+            writer.WriteLink(seeAlso.Text ?? seeAlso.Href!, seeAlso.Href!);
+        }
     }
 
     protected void WriteMemberLink(IParagraphWriter writer, MemberInfo member, string? text = null) =>

@@ -14,7 +14,7 @@ public static class AssemblyParser
     {
         var assemblyNode = new AssemblyDetails(assembly);
 
-        foreach (var group in assembly.GetTypes().Where(t => t.IsPublic).GroupBy(t => t.Namespace ?? "global").OrderBy(g => g.Key))
+        foreach (var group in assembly.GetExportedTypes().Where(t => t.IsPublic).GroupBy(t => t.Namespace ?? "global").OrderBy(g => g.Key))
         {
             var @namespace = new Namespace(group.Key);
 

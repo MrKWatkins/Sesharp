@@ -8,7 +8,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		License.md = License.md
 		ReadMe.md = ReadMe.md
-		qodana.yaml = qodana.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2CD5FA32-1F2F-440F-8959-92CCB344D822}"
@@ -20,7 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\codeql.yml = .github\workflows\codeql.yml
-		.github\workflows\qodana.yml = .github\workflows\qodana.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp", "MrKWatkins.Sesharp\MrKWatkins.Sesharp.csproj", "{3B0E76F2-2943-4AE6-B0F2-122001AE6AD0}"

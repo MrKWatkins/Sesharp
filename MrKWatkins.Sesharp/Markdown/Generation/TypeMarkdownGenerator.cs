@@ -44,6 +44,8 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
         WriteMembers<OperatorMarkdownGenerator, Operator, MethodInfo>(writer, type.Operators);
 
         WriteMembers<EventMarkdownGenerator, Event, EventInfo>(writer, type.Events);
+
+        WriteSeeAlsos(writer, type.Documentation?.SeeAlsos);
     }
 
     private void WriteMembers<TMemberGenerator, TMember, TMemberInfo>(MarkdownWriter writer, OutputNode? member, Func<TMember, string>? getMemberName = null)

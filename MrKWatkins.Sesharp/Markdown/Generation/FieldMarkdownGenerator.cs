@@ -82,8 +82,51 @@ public sealed class FieldMarkdownGenerator(IFileSystem fileSystem, MemberLookup 
                 code.Write("\"");
                 break;
 
+            case Enum value:
+                var enumType = value.GetType();
+                if (!enumType.IsDefined(typeof(FlagsAttribute)))
+                {
+                    throw new NotSupportedException($"Only flags enums are supported. {enumType.ToDisplayName()} is not a flags enum.");
+                }
+
+                code.Write(string.Join(" | ", GetIndividualFlags(value)));
+
+                break;
+
             default:
                 throw new NotSupportedException($"Literals of type {literal.GetType().ToDisplayName()} are not supported.");
         }
     }
+
+    [Pure]
+    private static IEnumerable<string> GetIndividualFlags(Enum flagsValue)
+    {
+        var enumType = flagsValue.GetType();
+        var allValues = Enum.GetValues(enumType).Cast<Enum>().ToArray();
+
+        var numericValue = Convert.ToInt64(flagsValue, null);
+
+        if (numericValue == 0)
+        {
+            yield break;
+        }
+
+        foreach (var enumValue in allValues)
+        {
+            var enumNumericValue = Convert.ToInt64(enumValue, null);
+
+            if (enumNumericValue == 0)
+            {
+                continue;
+            }
+
+            if (IsPowerOfTwo(enumNumericValue) && (numericValue & enumNumericValue) == enumNumericValue)
+            {
+                yield return enumValue.ToString();
+            }
+        }
+    }
+
+    [Pure]
+    private static bool IsPowerOfTwo(long value) => value > 0 && (value & (value - 1)) == 0;
 }

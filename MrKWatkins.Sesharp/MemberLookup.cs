@@ -75,7 +75,7 @@ public sealed class MemberLookup
     }
 
     [Pure]
-    private static IEnumerable<Assembly> GetAllAssemblies(Assembly assembly) => GetAllAssemblies(new HashSet<Assembly>(), assembly);
+    private static IReadOnlyList<Assembly> GetAllAssemblies(Assembly assembly) => GetAllAssemblies(new HashSet<Assembly>(), assembly).ToList();
 
     [Pure]
     private static IEnumerable<Assembly> GetAllAssemblies(HashSet<Assembly> processed, Assembly assembly)
@@ -91,12 +91,34 @@ public sealed class MemberLookup
 
         foreach (var referencedAssemblyName in assembly.GetReferencedAssemblies())
         {
-            var referencedAssembly = Assembly.Load(referencedAssemblyName);
+            Assembly referencedAssembly;
+            try
+            {
+                referencedAssembly = Assembly.Load(referencedAssemblyName);
+            }
+            catch
+            {
+                var nugetAssemblyPath = FindAssemblyInNugetCache(referencedAssemblyName);
+                referencedAssembly = Assembly.LoadFrom(nugetAssemblyPath);
+            }
 
             foreach (var child in GetAllAssemblies(processed, referencedAssembly))
             {
                 yield return child;
             }
         }
+    }
+
+    [Pure]
+    private static string FindAssemblyInNugetCache(AssemblyName referencedAssemblyName)
+    {
+        var nugetCache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
+        var packageFolder = Path.Combine(nugetCache, referencedAssemblyName.Name!.ToLowerInvariant(), referencedAssemblyName.Version!.ToString(3));
+        var paths = Directory.GetFiles(packageFolder, $"{referencedAssemblyName.Name}.dll", SearchOption.AllDirectories);
+        if (paths.Length != 1)
+        {
+            throw new InvalidOperationException($"Could not find assembly {referencedAssemblyName.Name} in {packageFolder}.");
+        }
+        return paths[0];
     }
 }
