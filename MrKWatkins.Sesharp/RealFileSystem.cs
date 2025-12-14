@@ -1,4 +1,4 @@
-﻿namespace MrKWatkins.Sesharp;
+namespace MrKWatkins.Sesharp;
 
 public sealed class RealFileSystem : IFileSystem
 {

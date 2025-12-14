@@ -9,9 +9,9 @@ using Spectre.Console.Cli;
 namespace MrKWatkins.Sesharp.Tool;
 
 [UsedImplicitly]
-public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem)  : Command<DocGenSettings>
+public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem) : Command<DocGenSettings>
 {
-    public override int Execute(CommandContext context, DocGenSettings settings)
+    public override int Execute(CommandContext context, DocGenSettings settings, CancellationToken cancellationToken)
     {
         console.MarkupLine($"[green]Loading assembly {settings.AssemblyAbsolutePath}...[/]");
         var assembly = Assembly.Load(File.ReadAllBytes(settings.AssemblyAbsolutePath));
