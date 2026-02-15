@@ -55,7 +55,7 @@ public sealed class DocumentationSection
             "c" => new CodeElement(element.Value),
             "code" => new CodeElement(element.Value),
             "paramref" => new ParamRef(element.Attribute("name")?.Value ?? throw new FormatException("<paramref> element does not have name attribute."), element.Value),
-            "see" => new See(XmlDocId.Parse(element.Attribute("cref")?.Value ?? throw new FormatException("<see> element does not have cref attribute.")), element.Value),
+            "see" => ParseSee(element),
             "typeparamref" => new TypeParamRef(element.Attribute("name")?.Value ?? throw new FormatException("<typeparamref> element does not have name attribute."), element.Value),
             "br" => new BrElement(),
             _ => throw new NotSupportedException($"Elements of name {element.Name} are not supported.")
@@ -77,5 +77,23 @@ public sealed class DocumentationSection
         }
 
         return text.Length > 0 ? new TextElement(text) : null;
+    }
+
+    [Pure]
+    private static DocumentationElement ParseSee(XElement element)
+    {
+        var langword = element.Attribute("langword")?.Value;
+        if (langword != null)
+        {
+            return new CodeElement(langword);
+        }
+
+        var cref = element.Attribute("cref")?.Value;
+        if (cref != null)
+        {
+            return new See(XmlDocId.Parse(cref), element.Value);
+        }
+
+        throw new FormatException("<see> element must have either a cref or a langword attribute.");
     }
 }

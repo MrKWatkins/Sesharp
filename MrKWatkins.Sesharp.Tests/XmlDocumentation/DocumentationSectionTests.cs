@@ -47,6 +47,10 @@ public sealed class DocumentationSectionTests
             new TextElement(" "),
             new See(XmlDocId.Parse("P:MrKWatkins.Ast.Message.Text"), null),
             new TextElement("."));
+
+        yield return CreateTestCase(
+            "<see langword=\"null\"/>",
+            new CodeElement("null"));
     }
 
     [Pure]
