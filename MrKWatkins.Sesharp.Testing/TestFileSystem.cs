@@ -32,7 +32,6 @@ public sealed class TestFileSystem : IFileSystem
 
     public void CreateDirectory(string path)
     {
-        throw new NotImplementedException();
     }
 
     public sealed class CreatedFile(MemoryStream stream)

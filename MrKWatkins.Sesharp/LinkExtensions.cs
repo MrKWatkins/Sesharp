@@ -10,19 +10,41 @@ public static class LinkExtensions
     public static string DocumentationFileName(this MemberInfo memberInfo) => $"{memberInfo.BuildBaseFilename()}.md";
 
     [Pure]
-    public static string DocumentationLink(this MemberInfo memberInfo) =>
-        BuildMemberLink($"{memberInfo.DocumentationFileName()}", memberInfo);
+    public static string DocumentationLink(this MemberInfo memberInfo, string? sourceFile = null)
+    {
+        var link = BuildMemberLink(memberInfo.DocumentationFileName(), memberInfo);
+        if (sourceFile == null)
+        {
+            return link;
+        }
+
+        // Split off any fragment before computing the relative path.
+        var hashIndex = link.IndexOf('#');
+        var targetFile = hashIndex >= 0 ? link[..hashIndex] : link;
+        var fragment = hashIndex >= 0 ? link[hashIndex..] : string.Empty;
+
+        // Same file: just use the fragment (or empty if no fragment).
+        if (string.Equals(targetFile, sourceFile, StringComparison.OrdinalIgnoreCase))
+        {
+            return fragment;
+        }
+
+        var sourceDirectory = Path.GetDirectoryName(sourceFile)!;
+        var relativePath = Path.GetRelativePath(sourceDirectory, targetFile).Replace('\\', '/');
+        return $"{relativePath}{fragment}";
+    }
 
     [Pure]
     public static string MicrosoftLink(this MemberInfo memberInfo, string baseUrl = "https://learn.microsoft.com/en-gb/dotnet/api/") =>
-        BuildMemberLink($"{baseUrl}{memberInfo.BuildBaseFilename()}", memberInfo);
+        BuildMemberLink($"{baseUrl}{memberInfo.BuildMicrosoftFilename()}", memberInfo);
 
     [Pure]
     private static string BuildMemberLink(string baseLink, MemberInfo memberInfo)
     {
         if (memberInfo is MethodBase methodBase && methodBase.HasPublicOrProtectedOverloads())
         {
-            return $"{baseLink}#{MarkdownId.FromMember(methodBase)}";
+            var id = MarkdownId.FromMember(methodBase);
+            return $"{baseLink}#{id.MkDocsId}";
         }
 
         if (memberInfo is FieldInfo fieldInfo && fieldInfo.DeclaringType!.IsEnum)
@@ -38,18 +60,42 @@ public static class LinkExtensions
     {
         if (memberInfo is Type type)
         {
-            return $"{type.Namespace}.{type.Name.Replace('`', '-')}";
+            return $"{type.BuildTypeDirectory()}/index";
         }
 
-        type = memberInfo.DeclaringType!;
+        var declaringType = memberInfo.DeclaringType!;
 
-        if (type.IsEnum && memberInfo is FieldInfo)
+        if (declaringType.IsEnum && memberInfo is FieldInfo)
         {
-            return $"{type.Namespace}.{type.Name}".Replace('`', '-');
+            return $"{declaringType.BuildTypeDirectory()}/index";
         }
 
         var memberName = memberInfo is ConstructorInfo ? "-ctor" : memberInfo.Name;
 
-        return $"{type.Namespace}.{type.Name}.{memberName}".Replace('`', '-');
+        return $"{declaringType.BuildTypeDirectory()}/{memberName}";
+    }
+
+    [Pure]
+    public static string BuildTypeDirectory(this Type type) => $"{type.Namespace}/{type.Name.Replace('`', '-')}";
+
+    // Used only for Microsoft docs links which use the old flat format.
+    [Pure]
+    private static string BuildMicrosoftFilename(this MemberInfo memberInfo)
+    {
+        if (memberInfo is Type type)
+        {
+            return $"{type.Namespace}.{type.Name.Replace('`', '-')}";
+        }
+
+        var type2 = memberInfo.DeclaringType!;
+
+        if (type2.IsEnum && memberInfo is FieldInfo)
+        {
+            return $"{type2.Namespace}.{type2.Name}".Replace('`', '-');
+        }
+
+        var memberName = memberInfo is ConstructorInfo ? "-ctor" : memberInfo.Name;
+
+        return $"{type2.Namespace}.{type2.Name}.{memberName}".Replace('`', '-');
     }
 }

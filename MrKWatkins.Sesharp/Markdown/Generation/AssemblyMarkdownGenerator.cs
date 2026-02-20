@@ -1,3 +1,4 @@
+using MrKWatkins.Sesharp;
 using MrKWatkins.Sesharp.Model;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
@@ -8,7 +9,7 @@ public static class AssemblyMarkdownGenerator
     {
         var memberLookup = new MemberLookup(assemblyDetails.ReflectionAssembly);
 
-        Directory.CreateDirectory(outputDirectory);
+        fileSystem.CreateDirectory(outputDirectory);
 
         foreach (var @namespace in assemblyDetails.Namespaces)
         {
@@ -18,6 +19,9 @@ public static class AssemblyMarkdownGenerator
 
             foreach (var type in @namespace.Types)
             {
+                var typeDir = Path.Combine(outputDirectory, type.MemberInfo.BuildTypeDirectory());
+                fileSystem.CreateDirectory(typeDir);
+
                 typeGenerator.Generate(type);
             }
         }

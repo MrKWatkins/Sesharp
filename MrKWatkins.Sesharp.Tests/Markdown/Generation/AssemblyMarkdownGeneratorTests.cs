@@ -16,7 +16,7 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         var fileSystem = new TestFileSystem();
         AssemblyMarkdownGenerator.Generate(fileSystem, assemblyDetails, "/");
 
-        var file = fileSystem.CreatedFiles["/MrKWatkins.Sesharp.TestAssembly.Properties.PropertyIndexer.md"];
+        var file = fileSystem.CreatedFiles["/MrKWatkins.Sesharp.TestAssembly.Properties/PropertyIndexer/index.md"];
 
         await Verify(file);
     }

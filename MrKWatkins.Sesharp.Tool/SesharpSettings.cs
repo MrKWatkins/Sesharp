@@ -1,11 +1,10 @@
 using System.ComponentModel;
-using MrKWatkins.Sesharp.Writerside;
 using Spectre.Console.Cli;
 
 namespace MrKWatkins.Sesharp.Tool;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-public sealed class DocGenSettings : CommandSettings, IWritersideOptions
+public sealed class DocGenSettings : CommandSettings
 {
     [CommandArgument(0, "<assembly>")]
     public string Assembly { get; init; } = null!;
@@ -20,23 +19,4 @@ public sealed class DocGenSettings : CommandSettings, IWritersideOptions
     [CommandOption("--delete-contents-of-output-directory")]
     [DefaultValue(true)]
     public bool DeleteContentsOfOutputDirectory { get; init; }
-
-    [CommandOption("--writerside-tree-file")]
-    public string? WritersideTreeFile { get; init; }
-
-    public string? WritersideTreeFileAbsolutePath => WritersideTreeFile != null ? Path.GetFullPath(WritersideTreeFile) : WritersideTreeFile;
-
-    string IWritersideOptions.TreeFile => WritersideTreeFileAbsolutePath!;
-
-    [CommandOption("--writerside-toc-element-id")]
-    [DefaultValue("API")]
-    public string WritersideTocElementId { get; init; } = null!;
-
-    string IWritersideOptions.TocElementId => WritersideTocElementId;
-
-    [CommandOption("--writerside-toc-element-title")]
-    [DefaultValue("API")]
-    public string WritersideTocElementTitle { get; init; } = null!;
-
-    string IWritersideOptions.TocElementTitle => WritersideTocElementTitle;
 }

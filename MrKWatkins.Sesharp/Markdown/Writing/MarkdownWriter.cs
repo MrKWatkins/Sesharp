@@ -58,7 +58,7 @@ public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReferenc
 
         if (id != null)
         {
-            Write($" {{id=\"{id}\"}}", false);
+            Write($" {{: #{id.MkDocsId} }}", false);
         }
 
         WriteLine();

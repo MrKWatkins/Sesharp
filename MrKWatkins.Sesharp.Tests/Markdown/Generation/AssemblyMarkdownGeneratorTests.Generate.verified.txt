@@ -1,5 +1,5 @@
 ﻿{
-  Bytes: IyBQcm9wZXJ0eUluZGV4ZXIgQ2xhc3MKIyMgRGVmaW5pdGlvbgoKYGBgYyMKcHVibGljIHNlYWxlZCBjbGFzcyBQcm9wZXJ0eUluZGV4ZXIKYGBgCgojIyBDb25zdHJ1Y3RvcnMKCnwgTmFtZSB8IERlc2NyaXB0aW9uIHwKfCAtLS0tIHwgLS0tLS0tLS0tLS0gfAp8IFtQcm9wZXJ0eUluZGV4ZXIoKV0oTXJLV2F0a2lucy5TZXNoYXJwLlRlc3RBc3NlbWJseS5Qcm9wZXJ0aWVzLlByb3BlcnR5SW5kZXhlci4tY3Rvci5tZCkgfCAgfAoKIyMgUHJvcGVydGllcwoKfCBOYW1lIHwgRGVzY3JpcHRpb24gfAp8IC0tLS0gfCAtLS0tLS0tLS0tLSB8CnwgW0l0ZW1bSW50MzJdXShNcktXYXRraW5zLlNlc2hhcnAuVGVzdEFzc2VtYmx5LlByb3BlcnRpZXMuUHJvcGVydHlJbmRleGVyLkl0ZW0ubWQpIHwgIHwKfCBbTm9ybWFsXShNcktXYXRraW5zLlNlc2hhcnAuVGVzdEFzc2VtYmx5LlByb3BlcnRpZXMuUHJvcGVydHlJbmRleGVyLk5vcm1hbC5tZCkgfCAgfAoK,
+  Bytes: IyBQcm9wZXJ0eUluZGV4ZXIgQ2xhc3MKIyMgRGVmaW5pdGlvbgoKYGBgYyMKcHVibGljIHNlYWxlZCBjbGFzcyBQcm9wZXJ0eUluZGV4ZXIKYGBgCgojIyBDb25zdHJ1Y3RvcnMKCnwgTmFtZSB8IERlc2NyaXB0aW9uIHwKfCAtLS0tIHwgLS0tLS0tLS0tLS0gfAp8IFtQcm9wZXJ0eUluZGV4ZXIoKV0oLWN0b3IubWQpIHwgIHwKCiMjIFByb3BlcnRpZXMKCnwgTmFtZSB8IERlc2NyaXB0aW9uIHwKfCAtLS0tIHwgLS0tLS0tLS0tLS0gfAp8IFtJdGVtW0ludDMyXV0oSXRlbS5tZCkgfCAgfAp8IFtOb3JtYWxdKE5vcm1hbC5tZCkgfCAgfAoK,
   Text:
 # PropertyIndexer Class
 ## Definition
@@ -12,14 +12,14 @@ public sealed class PropertyIndexer
 
 | Name | Description |
 | ---- | ----------- |
-| [PropertyIndexer()](MrKWatkins.Sesharp.TestAssembly.Properties.PropertyIndexer.-ctor.md) |  |
+| [PropertyIndexer()](-ctor.md) |  |
 
 ## Properties
 
 | Name | Description |
 | ---- | ----------- |
-| [Item[Int32]](MrKWatkins.Sesharp.TestAssembly.Properties.PropertyIndexer.Item.md) |  |
-| [Normal](MrKWatkins.Sesharp.TestAssembly.Properties.PropertyIndexer.Normal.md) |  |
+| [Item[Int32]](Item.md) |  |
+| [Normal](Normal.md) |  |
 
 
 }

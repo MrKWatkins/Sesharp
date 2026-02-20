@@ -84,6 +84,9 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
             })
             .ToList();
 
+        // Restore the type page's file so WriteMemberTable generates links relative to it.
+        generator.CurrentNodeFile = CurrentNodeFile;
+
         generator.WriteMemberTable(writer, allMembers, getMemberName: getMemberName);
     }
 
