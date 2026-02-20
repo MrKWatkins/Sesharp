@@ -7,7 +7,7 @@ public sealed class MemberLookupTests
     private readonly MemberLookup lookup = new(typeof(MemberLookup).Assembly);
 
     [TestCaseSource(nameof(GetTestCases))]
-    public void Get(XmlDocId id, MemberInfo expectedMember, MemberLocation expectedLocation) => lookup.Get(id).Should().Be((expectedMember, expectedLocation));
+    public void Get(XmlDocId id, MemberInfo expectedMember, MemberLocation expectedLocation) => lookup.Get(id).Should().Equal((expectedMember, expectedLocation));
 
     [Pure]
     public static IEnumerable<TestCaseData> GetTestCases()

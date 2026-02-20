@@ -2,15 +2,34 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <IsPackable>true</IsPackable>
+        <Title>$(MSBuildProjectName)</Title>
+        <Authors>Kevin Watkins</Authors>
+        <Copyright>Kevin Watkins 2026</Copyright>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/MrKWatkins/Sesharp</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/MrKWatkins/Sesharp</RepositoryUrl>
+        <PackageIcon>Icon.png</PackageIcon>
+        <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>sesharp</ToolCommandName>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MrKWatkins.Sesharp\MrKWatkins.Sesharp.csproj" />
-    </ItemGroup>
+        <ProjectReference Include="..\MrKWatkins.Sesharp\MrKWatkins.Sesharp.csproj"/>
 
-    <ItemGroup>
-      <PackageReference Include="Spectre.Console" />
-      <PackageReference Include="Spectre.Console.Cli" />
+        <PackageReference Include="Spectre.Console"/>
+        <PackageReference Include="Spectre.Console.Cli"/>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
+
+        <Content Include="..\Icon.png" Pack="true" PackagePath="\">
+            <Link>Icon.png</Link>
+        </Content>
+        <Content Include="..\ReadMe.md" Pack="true" PackagePath="\">
+            <Link>ReadMe.md</Link>
+        </Content>
     </ItemGroup>
 
 </Project>

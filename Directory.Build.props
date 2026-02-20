@@ -26,22 +26,25 @@
         </AssemblyAttribute>
     </ItemGroup>
 
-    <ItemGroup Condition="$(MSBuildProjectName.EndsWith('Tests'))">
-        <PackageReference Include="FluentAssertions"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
-        <PackageReference Include="NUnit"/>
-        <PackageReference Include="NUnit3TestAdapter"/>
-        <PackageReference Include="coverlet.collector">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-
-        <Using Include="FluentAssertions"/>
-        <Using Include="NUnit.Framework"/>
-    </ItemGroup>
-
     <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('Tests'))">
         <!-- Allow underscores in test method names. -->
-        <NoWarn>CA1707</NoWarn>
+        <!-- ConfigureAwait is not needed in test projects. -->
+        <NoWarn>CA1707;CA2007</NoWarn>
+        <IsTestProject>true</IsTestProject>
+        <EnableNUnitRunner>true</EnableNUnitRunner>
+        <OutputType>Exe</OutputType>
+        <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+        <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
     </PropertyGroup>
+
+    <ItemGroup Condition="$(MSBuildProjectName.EndsWith('Tests'))">
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+        <PackageReference Include="MrKWatkins.Assertions"/>
+        <PackageReference Include="NUnit"/>
+        <PackageReference Include="NUnit3TestAdapter"/>
+
+        <Using Include="MrKWatkins.Assertions"/>
+        <Using Include="NUnit.Framework"/>
+    </ItemGroup>
 </Project>

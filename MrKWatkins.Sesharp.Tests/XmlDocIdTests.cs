@@ -8,12 +8,12 @@ public sealed class XmlDocIdTests : EqualityTestFixture
     public void Create()
     {
         var id = XmlDocId.Create(typeof(Dictionary<,>));
-        id.ToString().Should().Be("T:System.Collections.Generic.Dictionary`2");
-        id.Id.Should().Be("T:System.Collections.Generic.Dictionary`2");
+        id.ToString().Should().Equal("T:System.Collections.Generic.Dictionary`2");
+        id.Id.Should().Equal("T:System.Collections.Generic.Dictionary`2");
     }
 
     [Test]
-    public void Create_UnsupportedMemberInfoThrows() => FluentActions.Invoking(() => XmlDocId.Create(new InvalidMemberInfo())).Should().Throw<NotSupportedException>();
+    public void Create_UnsupportedMemberInfoThrows() => AssertThat.Invoking(() => XmlDocId.Create(new InvalidMemberInfo())).Should().Throw<NotSupportedException>();
 
     [TestCaseSource(nameof(EqualityTestCases))]
     public void Equality(XmlDocId x, object? y, bool expected) => AssertEqual(x, y, expected);

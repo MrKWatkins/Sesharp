@@ -18,12 +18,12 @@ public sealed class DisposableTests
     {
         var executed = 0;
         var disposable = new Disposable(() => executed++);
-        executed.Should().Be(0);
+        executed.Should().Equal(0);
 
         disposable.Dispose();
-        executed.Should().Be(1);
+        executed.Should().Equal(1);
 
         disposable.Dispose();
-        executed.Should().Be(1);
+        executed.Should().Equal(1);
     }
 }

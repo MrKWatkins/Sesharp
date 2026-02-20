@@ -9,7 +9,7 @@ public sealed class DocumentationSectionTests
     public void Parse(XElement documentation, params DocumentationElement[] expected)
     {
         var section = DocumentationSection.Parse(documentation);
-        section.Elements.Should().BeEquivalentTo(expected, c => c.WithStrictOrdering().RespectingRuntimeTypes());
+        section.Elements.Select(e => e.ToString()).Should().SequenceEqual(expected.Select(e => e.ToString()));
     }
 
     [Pure]

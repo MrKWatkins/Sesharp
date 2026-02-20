@@ -7,7 +7,7 @@ namespace MrKWatkins.Sesharp.Tests.Markdown.Writing;
 public sealed class MarkdownIdTests
 {
     [TestCaseSource(nameof(FromTextTestCases))]
-    public void FromText(string title, string expectedId) => MarkdownId.FromText(title).Id.Should().Be(expectedId);
+    public void FromText(string title, string expectedId) => MarkdownId.FromText(title).Id.Should().Equal(expectedId);
 
     [Pure]
     public static IEnumerable<TestCaseData> FromTextTestCases()
@@ -17,7 +17,7 @@ public sealed class MarkdownIdTests
     }
 
     [TestCaseSource(nameof(FromMemberTestCases))]
-    public void FromMember(MemberInfo member, string expectedId) => MarkdownId.FromMember(member).Id.Should().Be(expectedId);
+    public void FromMember(MemberInfo member, string expectedId) => MarkdownId.FromMember(member).Id.Should().Equal(expectedId);
 
     [Pure]
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
@@ -76,6 +76,6 @@ public sealed class MarkdownIdTests
         var suffix = MarkdownId.FromText("suffix-id");
 
         var added = prefix + suffix;
-        added.Id.Should().Be("prefix-id-suffix-id");
+        added.Id.Should().Equal("prefix-id-suffix-id");
     }
 }
