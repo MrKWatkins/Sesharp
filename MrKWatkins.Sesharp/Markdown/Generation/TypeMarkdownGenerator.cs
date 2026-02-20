@@ -1,12 +1,13 @@
 using System.Reflection;
 using Humanizer;
+using MrKWatkins.Sesharp.Markdown;
 using MrKWatkins.Sesharp.Markdown.Writing;
 using MrKWatkins.Sesharp.Model;
 using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory) : MarkdownGenerator(fileSystem, memberLookup, outputDirectory)
+public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory, IMarkdownOptions options) : MarkdownGenerator(fileSystem, memberLookup, outputDirectory, options)
 {
     public override void Generate(OutputNode node)
     {
@@ -71,7 +72,7 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
             return;
         }
 
-        var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), FileSystem, MemberLookup, OutputDirectory)!;
+        var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), FileSystem, MemberLookup, OutputDirectory, Options)!;
 
         generator.Generate(members);
 

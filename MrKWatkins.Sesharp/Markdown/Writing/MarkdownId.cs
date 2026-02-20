@@ -10,6 +10,7 @@ public sealed class MarkdownId
     private const string Separator = "-";
     private static readonly Regex ReplaceCharacters = new($"[^a-z0-9()*@{Separator}]", RegexOptions.Compiled);
     private static readonly Regex MultipleSeparators = new($"{Separator}{Separator}+", RegexOptions.Compiled);
+    private static readonly Regex MkDocsReplaceCharacters = new(@"[()*@]", RegexOptions.Compiled);
 
     private MarkdownId(string id)
     {
@@ -17,6 +18,16 @@ public sealed class MarkdownId
     }
 
     public string Id { get; }
+
+    public string MkDocsId
+    {
+        get
+        {
+            var id = MkDocsReplaceCharacters.Replace(Id, "_");
+            id = MultipleSeparators.Replace(id, Separator);
+            return id.Trim('-');
+        }
+    }
 
     public override string ToString() => Id;
 

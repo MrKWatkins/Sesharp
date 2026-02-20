@@ -34,7 +34,7 @@ public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem) 
         fileSystem.CreateDirectory(settings.OutputDirectoryAbsolutePath);
 
         console.MarkupLine("[green]Generating documentation...[/]");
-        AssemblyMarkdownGenerator.Generate(fileSystem, assemblyDetails, settings.OutputDirectoryAbsolutePath);
+        AssemblyMarkdownGenerator.Generate(fileSystem, assemblyDetails, settings.OutputDirectoryAbsolutePath, settings);
 
         if (settings.WritersideTreeFileAbsolutePath != null)
         {

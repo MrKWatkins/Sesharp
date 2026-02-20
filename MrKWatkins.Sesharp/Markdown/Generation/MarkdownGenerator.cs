@@ -1,4 +1,5 @@
 using System.Reflection;
+using MrKWatkins.Sesharp.Markdown;
 using MrKWatkins.Sesharp.Markdown.Writing;
 using MrKWatkins.Sesharp.Model;
 using MrKWatkins.Sesharp.XmlDocumentation;
@@ -8,7 +9,7 @@ using Type = System.Type;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory)
+public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory, IMarkdownOptions options)
 {
     private static readonly IReflectionFormatter MemberLinkFormatter =
         new CachedReflectionFormatter(new DisplayNameFormatter(new DisplayNameFormatterOptions { PrefixMembersWithType = false }));
@@ -23,11 +24,13 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
 
     protected string OutputDirectory { get; } = outputDirectory;
 
+    protected IMarkdownOptions Options { get; } = options;
+
     [MustUseReturnValue]
     protected MarkdownWriter CreateWriter(OutputNode node)
     {
         var filePath = Path.Combine(OutputDirectory, node.FileName);
-        return new MarkdownWriter(FileSystem, filePath);
+        return new MarkdownWriter(FileSystem, filePath, Options.IdFormat);
     }
 
     protected void WriteSeeAlsos(MarkdownWriter writer, IReadOnlyList<SeeAlso>? seeAlsos)
@@ -300,15 +303,18 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
     }
 
     protected void WriteMemberLink(IParagraphWriter writer, MemberInfo member, string? text = null) =>
-        WriteMemberLink(writer, member, MemberLookup.GetLocation(member), text);
+        WriteMemberLink(writer, member, MemberLookup.GetLocation(member), Options.IdFormat, text);
 
-    protected static void WriteMemberLink(IParagraphWriter writer, MemberInfo member, MemberLocation location, string? text = null)
+    protected static void WriteMemberLink(IParagraphWriter writer, MemberInfo member, MemberLocation location, string? text = null) =>
+        WriteMemberLink(writer, member, location, MarkdownIdFormat.MkDocs, text);
+
+    private static void WriteMemberLink(IParagraphWriter writer, MemberInfo member, MemberLocation location, MarkdownIdFormat idFormat, string? text = null)
     {
         text ??= MemberLinkFormatter.Format(member);
 
         if (member is Type type && (type.IsArray || type.IsByRef))
         {
-            WriteMemberLink(writer, type.GetElementType()!, location, text);
+            WriteMemberLink(writer, type.GetElementType()!, location, idFormat, text);
             return;
         }
 
@@ -321,10 +327,10 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
         switch (location)
         {
             case MemberLocation.DocumentAssembly:
-                writer.WriteLink(text, member.DocumentationLink());
+                writer.WriteLink(text, member.DocumentationLink(idFormat));
                 break;
             case MemberLocation.System:
-                writer.WriteLink(text, member.MicrosoftLink());
+                writer.WriteLink(text, member.MicrosoftLink(idFormat: idFormat));
                 break;
             default:
                 writer.Write(text);

@@ -1,8 +1,9 @@
 using System.Web;
+using MrKWatkins.Sesharp.Markdown;
 
 namespace MrKWatkins.Sesharp.Markdown.Writing;
 
-public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReference] string path) : IDisposable
+public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReference] string path, MarkdownIdFormat idFormat = MarkdownIdFormat.MkDocs) : IDisposable
 {
     private readonly StreamWriter writer = fileSystem.CreateText(path);
     private bool inChildBlock;
@@ -58,7 +59,10 @@ public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReferenc
 
         if (id != null)
         {
-            Write($" {{id=\"{id}\"}}", false);
+            var idText = idFormat == MarkdownIdFormat.Writerside
+                ? $" {{id=\"{id.Id}\"}}"
+                : $" {{: #{id.MkDocsId} }}";
+            Write(idText, false);
         }
 
         WriteLine();

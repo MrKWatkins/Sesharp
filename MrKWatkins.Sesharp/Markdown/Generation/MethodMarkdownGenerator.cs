@@ -1,11 +1,12 @@
 using System.Reflection;
+using MrKWatkins.Sesharp.Markdown;
 using MrKWatkins.Sesharp.Markdown.Writing;
 using MrKWatkins.Sesharp.Model;
 using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public sealed class MethodMarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory) : MemberMarkdownGenerator<Method, MethodInfo>(fileSystem, memberLookup, outputDirectory)
+public sealed class MethodMarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory, IMarkdownOptions options) : MemberMarkdownGenerator<Method, MethodInfo>(fileSystem, memberLookup, outputDirectory, options)
 {
     protected override void Generate(MarkdownWriter writer, Method method)
     {

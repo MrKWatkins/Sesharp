@@ -1,12 +1,13 @@
 using System.Reflection;
 using Humanizer;
+using MrKWatkins.Sesharp.Markdown;
 using MrKWatkins.Sesharp.Markdown.Writing;
 using MrKWatkins.Sesharp.Model;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors)]
-public abstract class MemberMarkdownGenerator<TMember, TMemberInfo>(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory) : MarkdownGenerator(fileSystem, memberLookup, outputDirectory)
+public abstract class MemberMarkdownGenerator<TMember, TMemberInfo>(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory, IMarkdownOptions options) : MarkdownGenerator(fileSystem, memberLookup, outputDirectory, options)
     where TMember : Member<TMemberInfo>
     where TMemberInfo : MemberInfo
 {

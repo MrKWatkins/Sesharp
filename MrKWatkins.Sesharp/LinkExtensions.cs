@@ -1,4 +1,5 @@
 using System.Reflection;
+using MrKWatkins.Sesharp.Markdown;
 using MrKWatkins.Sesharp.Markdown.Writing;
 using MrKWatkins.Reflection;
 
@@ -10,19 +11,21 @@ public static class LinkExtensions
     public static string DocumentationFileName(this MemberInfo memberInfo) => $"{memberInfo.BuildBaseFilename()}.md";
 
     [Pure]
-    public static string DocumentationLink(this MemberInfo memberInfo) =>
-        BuildMemberLink($"{memberInfo.DocumentationFileName()}", memberInfo);
+    public static string DocumentationLink(this MemberInfo memberInfo, MarkdownIdFormat idFormat = MarkdownIdFormat.MkDocs) =>
+        BuildMemberLink($"{memberInfo.DocumentationFileName()}", memberInfo, idFormat);
 
     [Pure]
-    public static string MicrosoftLink(this MemberInfo memberInfo, string baseUrl = "https://learn.microsoft.com/en-gb/dotnet/api/") =>
-        BuildMemberLink($"{baseUrl}{memberInfo.BuildBaseFilename()}", memberInfo);
+    public static string MicrosoftLink(this MemberInfo memberInfo, string baseUrl = "https://learn.microsoft.com/en-gb/dotnet/api/", MarkdownIdFormat idFormat = MarkdownIdFormat.MkDocs) =>
+        BuildMemberLink($"{baseUrl}{memberInfo.BuildBaseFilename()}", memberInfo, idFormat);
 
     [Pure]
-    private static string BuildMemberLink(string baseLink, MemberInfo memberInfo)
+    private static string BuildMemberLink(string baseLink, MemberInfo memberInfo, MarkdownIdFormat idFormat)
     {
         if (memberInfo is MethodBase methodBase && methodBase.HasPublicOrProtectedOverloads())
         {
-            return $"{baseLink}#{MarkdownId.FromMember(methodBase)}";
+            var id = MarkdownId.FromMember(methodBase);
+            var fragment = idFormat == MarkdownIdFormat.Writerside ? id.Id : id.MkDocsId;
+            return $"{baseLink}#{fragment}";
         }
 
         if (memberInfo is FieldInfo fieldInfo && fieldInfo.DeclaringType!.IsEnum)

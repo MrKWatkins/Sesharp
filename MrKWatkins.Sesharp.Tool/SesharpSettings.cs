@@ -1,11 +1,12 @@
 using System.ComponentModel;
+using MrKWatkins.Sesharp.Markdown;
 using MrKWatkins.Sesharp.Writerside;
 using Spectre.Console.Cli;
 
 namespace MrKWatkins.Sesharp.Tool;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-public sealed class DocGenSettings : CommandSettings, IWritersideOptions
+public sealed class DocGenSettings : CommandSettings, IWritersideOptions, IMarkdownOptions
 {
     [CommandArgument(0, "<assembly>")]
     public string Assembly { get; init; } = null!;
@@ -20,6 +21,10 @@ public sealed class DocGenSettings : CommandSettings, IWritersideOptions
     [CommandOption("--delete-contents-of-output-directory")]
     [DefaultValue(true)]
     public bool DeleteContentsOfOutputDirectory { get; init; }
+
+    [CommandOption("--id-format")]
+    [DefaultValue(MarkdownIdFormat.MkDocs)]
+    public MarkdownIdFormat IdFormat { get; init; }
 
     [CommandOption("--writerside-tree-file")]
     public string? WritersideTreeFile { get; init; }

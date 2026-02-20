@@ -1,12 +1,13 @@
 using System.Globalization;
 using System.Reflection;
+using MrKWatkins.Sesharp.Markdown;
 using MrKWatkins.Sesharp.Markdown.Writing;
 using MrKWatkins.Sesharp.Model;
 using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp.Markdown.Generation;
 
-public sealed class FieldMarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory) : MemberMarkdownGenerator<Field, FieldInfo>(fileSystem, memberLookup, outputDirectory)
+public sealed class FieldMarkdownGenerator(IFileSystem fileSystem, MemberLookup memberLookup, string outputDirectory, IMarkdownOptions options) : MemberMarkdownGenerator<Field, FieldInfo>(fileSystem, memberLookup, outputDirectory, options)
 {
     protected override bool ShouldGenerate(Field field) => !field.Type.MemberInfo.IsEnum;
 

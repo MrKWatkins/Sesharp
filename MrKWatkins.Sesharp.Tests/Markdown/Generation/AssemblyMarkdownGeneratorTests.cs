@@ -1,3 +1,4 @@
+using MrKWatkins.Sesharp.Markdown;
 using MrKWatkins.Sesharp.Markdown.Generation;
 using MrKWatkins.Sesharp.Model;
 using MrKWatkins.Sesharp.Testing;
@@ -14,7 +15,7 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         var assemblyDetails = AssemblyParser.Parse(TestAssembly, documentation);
 
         var fileSystem = new TestFileSystem();
-        AssemblyMarkdownGenerator.Generate(fileSystem, assemblyDetails, "/");
+        AssemblyMarkdownGenerator.Generate(fileSystem, assemblyDetails, "/", new MarkdownOptions());
 
         var file = fileSystem.CreatedFiles["/MrKWatkins.Sesharp.TestAssembly.Properties.PropertyIndexer.md"];
 
