@@ -17,6 +17,8 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
 
         using var writer = CreateWriter(node);
 
+        writer.WriteFrontMatter(type.DisplayName);
+
         // TODO: Namespace.
         // TODO: Assembly.
         // TODO: Source code links.

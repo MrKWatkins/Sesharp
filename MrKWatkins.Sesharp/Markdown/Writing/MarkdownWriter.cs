@@ -34,6 +34,18 @@ public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReferenc
         return new Disposable(() => idSuffix = null);
     }
 
+    public void WriteFrontMatter(string title)
+    {
+        ValidateNotInChildState();
+
+        writer.WriteLine("---");
+        writer.Write("title: \"");
+        writer.Write(title);
+        writer.WriteLine("\"");
+        writer.WriteLine("---");
+        writer.WriteLine();
+    }
+
     public void WriteMainHeading(string text, MarkdownId? id = null) => WriteHeading(text, 1, id);
 
     public void WriteSubHeading(string text, MarkdownId? id = null) => WriteHeading(text, 2, id);

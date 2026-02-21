@@ -76,7 +76,21 @@ public static class LinkExtensions
     }
 
     [Pure]
-    public static string BuildTypeDirectory(this Type type) => $"{type.Namespace}/{type.Name.Replace('`', '-')}";
+    public static string BuildTypeDirectory(this Type type)
+    {
+        if (!type.IsGenericType)
+        {
+            return $"{type.Namespace}/{type.Name}";
+        }
+
+        // Always use the generic type definition so that constructed types
+        // (e.g. IntegerAssertions<Byte>) resolve to the same directory as
+        // the definition (IntegerAssertions<T>).
+        var definition = type.IsGenericTypeDefinition ? type : type.GetGenericTypeDefinition();
+        var baseName = definition.Name[..definition.Name.IndexOf('`')];
+        var typeParams = string.Join("-", definition.GetGenericArguments().Select(t => t.Name));
+        return $"{definition.Namespace}/{baseName}-{typeParams}";
+    }
 
     // Used only for Microsoft docs links which use the old flat format.
     [Pure]
