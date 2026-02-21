@@ -42,7 +42,7 @@ public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem) 
         catch (Exception exception)
         {
             console.MarkupLine("[red]Exception generating documentation![/]");
-            console.MarkupLine($"[red]{exception}[/]");
+            console.MarkupLine($"[red]{exception.ToString().EscapeMarkup()}[/]");
             return -1;
         }
     }
