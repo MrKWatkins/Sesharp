@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using MrKWatkins.Reflection;
+using MrKWatkins.Sesharp.SourceLink;
 using MrKWatkins.Sesharp.XmlDocumentation;
 
 namespace MrKWatkins.Sesharp.Model;
@@ -10,7 +11,7 @@ public static class AssemblyParser
     private const BindingFlags Binding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
     [Pure]
-    public static AssemblyDetails Parse(Assembly assembly, Documentation documentation)
+    public static AssemblyDetails Parse(Assembly assembly, Documentation documentation, string? assemblyPath = null)
     {
         var assemblyNode = new AssemblyDetails(assembly);
 
@@ -25,6 +26,14 @@ public static class AssemblyParser
 
         new DocumentationListener().Listen(documentation, assemblyNode);
         new InheritDocListener().Listen(new InheritDocResolver(assembly, documentation), assemblyNode);
+
+        var pdbPath = assemblyPath ?? (string.IsNullOrEmpty(assembly.Location) ? null : assembly.Location);
+        if (pdbPath != null)
+        {
+            using var pdbReader = PortablePdbReader.TryOpen(pdbPath);
+            if (pdbReader != null)
+                new SourceLocationListener().Listen(pdbReader, assemblyNode);
+        }
 
         return assemblyNode;
     }

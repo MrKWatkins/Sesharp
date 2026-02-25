@@ -39,6 +39,7 @@ public sealed class ConstructorMarkdownGenerator(IFileSystem fileSystem, MemberL
         WriteSection(writer, constructor.Documentation?.Summary);
 
         WriteSignature(writer, constructor);
+        WriteSourceLink(writer, constructor);
 
         WriteTypeParameters(writer, constructor, constructor.TypeParameters);
 

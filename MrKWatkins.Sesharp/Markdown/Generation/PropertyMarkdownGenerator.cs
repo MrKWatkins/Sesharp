@@ -16,6 +16,7 @@ public sealed class PropertyMarkdownGenerator(IFileSystem fileSystem, MemberLook
         WriteSection(writer, property.Documentation?.Summary);
 
         WriteSignature(writer, property);
+        WriteSourceLink(writer, property);
 
         WriteParameters(writer, property, property.IndexParameters);
 

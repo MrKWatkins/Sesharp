@@ -34,6 +34,18 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
 
     internal string? CurrentNodeDirectory => currentNodeFile != null ? Path.GetDirectoryName(currentNodeFile)!.Replace('\\', '/') : null;
 
+    internal string? RepositoryUrl { get; set; }
+
+    protected void WriteSourceLink(MarkdownWriter writer, DocumentableNode node)
+    {
+        if (RepositoryUrl == null || node.SourceLocation == null)
+            return;
+
+        var url = $"{RepositoryUrl.TrimEnd('/')}/blob/main/{node.SourceLocation.RelativePath}#L{node.SourceLocation.Line}";
+        using var p = writer.Paragraph();
+        p.WriteLink("View source", url);
+    }
+
     [MustUseReturnValue]
     protected MarkdownWriter CreateWriter(OutputNode node)
     {

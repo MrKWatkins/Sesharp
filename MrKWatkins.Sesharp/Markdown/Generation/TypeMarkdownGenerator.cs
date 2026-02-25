@@ -21,7 +21,6 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
 
         // TODO: Namespace.
         // TODO: Assembly.
-        // TODO: Source code links.
 
         writer.WriteMainHeading($"{type.DisplayName} {type.Kind.Capitalize()}");
 
@@ -30,6 +29,7 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
         WriteSection(writer, type.Documentation?.Summary);
 
         WriteSignature(writer, type);
+        WriteSourceLink(writer, type);
 
         WriteTypeParameters(writer, type, type.TypeParameters);
 
@@ -74,6 +74,7 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
         }
 
         var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), FileSystem, MemberLookup, OutputDirectory)!;
+        generator.RepositoryUrl = RepositoryUrl;
 
         generator.Generate(members);
 

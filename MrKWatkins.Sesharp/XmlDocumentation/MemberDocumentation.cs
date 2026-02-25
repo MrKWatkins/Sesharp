@@ -106,7 +106,7 @@ public sealed class MemberDocumentation
 
         var returns = DocumentationSection.ParseOrNull(memberXml.Element("returns"));
 
-        var seeAlso = memberXml.Elements("seealso").Select(XmlDocumentation.SeeAlso.Parse).ToList();
+        var seeAlso = memberXml.Elements("seealso").Select(SeeAlso.Parse).ToList();
 
         return new MemberDocumentation(name, hasInheritDoc, inheritDocCref, summary, remarks, typeParameters, parameters, returns, seeAlso);
     }

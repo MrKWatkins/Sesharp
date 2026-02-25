@@ -22,6 +22,7 @@ public sealed class FieldMarkdownGenerator(IFileSystem fileSystem, MemberLookup 
         WriteSection(writer, field.Documentation?.Summary);
 
         WriteSignature(writer, field);
+        WriteSourceLink(writer, field);
 
         WriteReturns(writer, field, field.MemberInfo.FieldType);
 

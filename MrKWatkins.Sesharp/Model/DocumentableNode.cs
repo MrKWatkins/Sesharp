@@ -12,6 +12,8 @@ public abstract class DocumentableNode(MemberInfo memberInfo) : OutputNode(membe
     public override string FileName => MemberInfo.DocumentationFileName();
 
     public MemberDocumentation? Documentation { get; internal set; }
+
+    public SourceLocation? SourceLocation { get; internal set; }
 }
 
 public abstract class DocumentableNode<TMemberInfo>(TMemberInfo memberInfo) : DocumentableNode(memberInfo)

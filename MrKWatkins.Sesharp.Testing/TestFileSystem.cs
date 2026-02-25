@@ -25,6 +25,8 @@ public sealed class TestFileSystem : IFileSystem
         typeof(TestFileSystem).Assembly.GetManifestResourceStream(typeof(TestFileSystem), $"Resources.{path}")
         ?? throw new IOException($"File {path} not found.");
 
+    public bool DirectoryExists(string path) => false;
+
     public void DeleteDirectory(string path, bool recursive)
     {
         throw new NotImplementedException();

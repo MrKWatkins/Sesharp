@@ -42,6 +42,7 @@ public sealed class OperatorMarkdownGenerator(IFileSystem fileSystem, MemberLook
         WriteSection(writer, @operator.Documentation?.Summary);
 
         WriteSignature(writer, @operator);
+        WriteSourceLink(writer, @operator);
 
         WriteParameters(writer, @operator, @operator.Parameters);
 

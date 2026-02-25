@@ -21,6 +21,7 @@ public sealed class MethodMarkdownGenerator(IFileSystem fileSystem, MemberLookup
         WriteSection(writer, method.Documentation?.Summary);
 
         WriteSignature(writer, method);
+        WriteSourceLink(writer, method);
 
         WriteTypeParameters(writer, method, method.TypeParameters);
 

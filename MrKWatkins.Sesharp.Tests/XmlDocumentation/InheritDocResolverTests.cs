@@ -1,4 +1,3 @@
-using System.Reflection;
 using MrKWatkins.Sesharp.Testing;
 using MrKWatkins.Sesharp.TestAssembly.InheritDoc;
 using MrKWatkins.Sesharp.XmlDocumentation;
@@ -104,10 +103,10 @@ public sealed class InheritDocResolverTests : TestFixture
     {
         // Use a member with no XML doc at all.
         var resolver = CreateResolver();
-        var method = typeof(object).GetMethod(nameof(object.ToString))!;
+        var method = typeof(object).GetMethod(nameof(ToString))!;
 
         // object.ToString has no docs in our assembly - should return null or system docs.
         // The important thing is it doesn't throw.
-        Assert.DoesNotThrow(() => resolver.Resolve(method));
+        Assert.DoesNotThrow(() => _ = resolver.Resolve(method));
     }
 }

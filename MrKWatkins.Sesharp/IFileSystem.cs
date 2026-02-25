@@ -8,6 +8,8 @@ public interface IFileSystem
     [MustDisposeResource]
     Stream OpenRead([PathReference] string path);
 
+    bool DirectoryExists([PathReference] string path);
+
     void DeleteDirectory([PathReference] string path, bool recursive);
 
     void CreateDirectory([PathReference] string path);

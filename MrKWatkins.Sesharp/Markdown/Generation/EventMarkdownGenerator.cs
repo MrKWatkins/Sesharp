@@ -9,5 +9,6 @@ public sealed class EventMarkdownGenerator(IFileSystem fileSystem, MemberLookup 
     protected override void Generate(MarkdownWriter writer, Event @event)
     {
         writer.WriteMainHeading($"{@event.Type.DisplayName}.{@event.DisplayName} Event");
+        WriteSourceLink(writer, @event);
     }
 }

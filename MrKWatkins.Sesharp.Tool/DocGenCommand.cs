@@ -23,19 +23,18 @@ public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem) 
             var documentation = Documentation.Load(fileSystem, xmlPath);
 
             console.MarkupLine("[green]Parsing...[/]");
-            var assemblyDetails = AssemblyParser.Parse(assembly, documentation);
+            var assemblyDetails = AssemblyParser.Parse(assembly, documentation, settings.AssemblyAbsolutePath);
 
-            if (settings.DeleteContentsOfOutputDirectory)
+            if (settings.DeleteContentsOfOutputDirectory && fileSystem.DirectoryExists(settings.OutputDirectoryAbsolutePath))
             {
                 console.MarkupLine($"[green]Deleting existing output directory {settings.OutputDirectoryAbsolutePath}...[/]");
                 fileSystem.DeleteDirectory(settings.OutputDirectoryAbsolutePath, true);
             }
 
-            console.MarkupLine($"[green]Creating output directory {settings.OutputDirectoryAbsolutePath}...[/]");
             fileSystem.CreateDirectory(settings.OutputDirectoryAbsolutePath);
 
             console.MarkupLine("[green]Generating documentation...[/]");
-            AssemblyMarkdownGenerator.Generate(fileSystem, assemblyDetails, settings.OutputDirectoryAbsolutePath);
+            AssemblyMarkdownGenerator.Generate(fileSystem, assemblyDetails, settings.OutputDirectoryAbsolutePath, settings.Repository);
 
             return 0;
         }

@@ -19,4 +19,7 @@ public sealed class DocGenSettings : CommandSettings
     [CommandOption("--delete-contents-of-output-directory")]
     [DefaultValue(true)]
     public bool DeleteContentsOfOutputDirectory { get; init; }
+
+    [CommandOption("--repository")]
+    public string? Repository { get; init; }
 }
