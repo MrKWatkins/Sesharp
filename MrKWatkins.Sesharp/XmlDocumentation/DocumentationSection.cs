@@ -49,7 +49,7 @@ public sealed class DocumentationSection
     }
 
     [Pure]
-    private static DocumentationElement ParseElement(XElement element) =>
+    private static DocumentationElement? ParseElement(XElement element) =>
         element.Name.LocalName switch
         {
             "c" => new CodeElement(element.Value),
@@ -58,7 +58,7 @@ public sealed class DocumentationSection
             "see" => ParseSee(element),
             "typeparamref" => new TypeParamRef(element.Attribute("name")?.Value ?? throw new FormatException("<typeparamref> element does not have name attribute."), element.Value),
             "br" => new BrElement(),
-            _ => throw new NotSupportedException($"Elements of name {element.Name} are not supported.")
+            _ => null  // Silently ignore unsupported elements (e.g. <list>, <para> in BCL XML).
         };
 
     [Pure]

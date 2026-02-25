@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using MrKWatkins.Sesharp.XmlDocumentation;
 using MrKWatkins.Reflection;
+using MrKWatkins.Sesharp.XmlDocumentation;
 
 namespace MrKWatkins.Sesharp.Model;
 
@@ -24,6 +24,7 @@ public static class AssemblyParser
         }
 
         new DocumentationListener().Listen(documentation, assemblyNode);
+        new InheritDocListener().Listen(new InheritDocResolver(assembly, documentation), assemblyNode);
 
         return assemblyNode;
     }

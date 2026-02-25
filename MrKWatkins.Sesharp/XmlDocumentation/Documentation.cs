@@ -25,6 +25,15 @@ public sealed class Documentation
     }
 
     [Pure]
+    internal static Documentation Load(string path)
+    {
+        using var file = File.OpenRead(path);
+        var xDocument = XDocument.Load(file, LoadOptions.PreserveWhitespace);
+
+        return Parse(xDocument);
+    }
+
+    [Pure]
     private static Documentation Parse(XDocument xml)
     {
         var members = xml.XPathSelectElements("/doc/members/member")

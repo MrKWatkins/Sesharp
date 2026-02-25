@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="..\MrKWatkins.Sesharp.TestAssembly\MrKWatkins.Sesharp.TestAssembly.csproj" />
+        <ProjectReference Include="..\MrKWatkins.Sesharp.Testing\MrKWatkins.Sesharp.Testing.csproj" />
+        <ProjectReference Include="..\MrKWatkins.Sesharp\MrKWatkins.Sesharp.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Verify.NUnit" />
+    </ItemGroup>
+</Project>
