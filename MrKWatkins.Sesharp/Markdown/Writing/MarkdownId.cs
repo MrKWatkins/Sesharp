@@ -11,6 +11,7 @@ public sealed class MarkdownId
     private static readonly Regex ReplaceCharacters = new($"[^a-z0-9()*@{Separator}]", RegexOptions.Compiled);
     private static readonly Regex MultipleSeparators = new($"{Separator}{Separator}+", RegexOptions.Compiled);
     private static readonly Regex MkDocsReplaceCharacters = new(@"[()*@]", RegexOptions.Compiled);
+    private static readonly Regex MultipleUnderscores = new("_{3,}", RegexOptions.Compiled);
 
     private MarkdownId(string id)
     {
@@ -25,6 +26,7 @@ public sealed class MarkdownId
         {
             var id = MkDocsReplaceCharacters.Replace(Id, "_");
             id = MultipleSeparators.Replace(id, Separator);
+            id = MultipleUnderscores.Replace(id, "__");
             return id.Trim('-');
         }
     }

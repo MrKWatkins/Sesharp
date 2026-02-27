@@ -5,15 +5,14 @@ namespace MrKWatkins.Sesharp;
 
 public sealed class MemberLookup
 {
-    private readonly Assembly documentAssembly;
+    private readonly IReadOnlySet<Assembly> documentAssemblies;
     private readonly IReadOnlyDictionary<XmlDocId, MemberInfo> lookup;
 
-    public MemberLookup(Assembly documentAssembly)
+    public MemberLookup(IEnumerable<Assembly> documentAssemblies)
     {
-        this.documentAssembly = documentAssembly;
+        this.documentAssemblies = documentAssemblies.ToFrozenSet();
 
-        var types = GetAllAssemblies(documentAssembly)
-            .Distinct()
+        var types = AssemblyDependencyLoader.LoadWithDependencies(this.documentAssemblies)
             .SelectMany(a => a.GetExportedTypes())
             .Where(t => t.Namespace != null)
             .ToList();
@@ -27,6 +26,11 @@ public sealed class MemberLookup
         lookup = members.Concat(types)
             .Select(m => new KeyValuePair<XmlDocId, MemberInfo>(XmlDocId.Create(m), m))
             .ToFrozenDictionary();
+    }
+
+    public MemberLookup(Assembly documentAssembly)
+        : this([documentAssembly])
+    {
     }
 
     [Pure]
@@ -49,7 +53,7 @@ public sealed class MemberLookup
     public MemberLocation GetLocation(MemberInfo member)
     {
         var rootType = GetRootType(member);
-        if (rootType.Assembly == documentAssembly)
+        if (documentAssemblies.Contains(rootType.Assembly))
         {
             return MemberLocation.DocumentAssembly;
         }
@@ -72,53 +76,5 @@ public sealed class MemberLookup
         }
 
         return type;
-    }
-
-    [Pure]
-    private static IReadOnlyList<Assembly> GetAllAssemblies(Assembly assembly) => GetAllAssemblies(new HashSet<Assembly>(), assembly).ToList();
-
-    [Pure]
-    private static IEnumerable<Assembly> GetAllAssemblies(HashSet<Assembly> processed, Assembly assembly)
-    {
-        if (processed.Contains(assembly))
-        {
-            yield break;
-        }
-
-        yield return assembly;
-
-        processed.Add(assembly);
-
-        foreach (var referencedAssemblyName in assembly.GetReferencedAssemblies())
-        {
-            Assembly referencedAssembly;
-            try
-            {
-                referencedAssembly = Assembly.Load(referencedAssemblyName);
-            }
-            catch
-            {
-                var nugetAssemblyPath = FindAssemblyInNugetCache(referencedAssemblyName);
-                referencedAssembly = Assembly.LoadFrom(nugetAssemblyPath);
-            }
-
-            foreach (var child in GetAllAssemblies(processed, referencedAssembly))
-            {
-                yield return child;
-            }
-        }
-    }
-
-    [Pure]
-    private static string FindAssemblyInNugetCache(AssemblyName referencedAssemblyName)
-    {
-        var nugetCache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
-        var packageFolder = Path.Combine(nugetCache, referencedAssemblyName.Name!.ToLowerInvariant(), referencedAssemblyName.Version!.ToString(3));
-        var paths = Directory.GetFiles(packageFolder, $"{referencedAssemblyName.Name}.dll", SearchOption.AllDirectories);
-        if (paths.Length != 1)
-        {
-            throw new InvalidOperationException($"Could not find assembly {referencedAssemblyName.Name} in {packageFolder}.");
-        }
-        return paths[0];
     }
 }

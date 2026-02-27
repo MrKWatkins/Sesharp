@@ -77,6 +77,18 @@ public sealed class FieldMarkdownGenerator(IFileSystem fileSystem, MemberLookup 
                 code.Write(value.ToString(DateTimeFormatInfo.InvariantInfo));
                 break;
 
+            case uint value:
+                code.Write(value.ToString(DateTimeFormatInfo.InvariantInfo));
+                break;
+
+            case long value:
+                code.Write(value.ToString(DateTimeFormatInfo.InvariantInfo));
+                break;
+
+            case ulong value:
+                code.Write(value.ToString(DateTimeFormatInfo.InvariantInfo));
+                break;
+
             case string value:
                 code.Write("\"");
                 code.Write(value);

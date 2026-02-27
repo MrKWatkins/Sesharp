@@ -13,6 +13,8 @@ public static class AssemblyParser
     [Pure]
     public static AssemblyDetails Parse(Assembly assembly, Documentation documentation, string? assemblyPath = null)
     {
+        AssemblyDependencyLoader.LoadWithDependencies(assembly);
+
         var assemblyNode = new AssemblyDetails(assembly);
 
         foreach (var group in assembly.GetExportedTypes().Where(t => t.IsPublic).GroupBy(t => t.Namespace ?? "global").OrderBy(g => g.Key))
