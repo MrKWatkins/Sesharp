@@ -1,6 +1,5 @@
-using System.Diagnostics;
-using System.Text;
-using System.Text.RegularExpressions;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
 using MrKWatkins.Sesharp.Markdown.Generation;
 using MrKWatkins.Sesharp.Model;
 using MrKWatkins.Sesharp.Testing;
@@ -8,105 +7,98 @@ using MrKWatkins.Sesharp.XmlDocumentation;
 
 namespace MrKWatkins.Sesharp.IntegrationTests;
 
-public sealed partial class MkDocsIntegrationTests : TestFixture
+public sealed class MkDocsIntegrationTests : TestFixture
 {
-    [Test]
-    public async Task Generated_Html_Has_No_Warnings_And_Correct_Navigation()
-    {
-        using var tempDir = new TempDirectory();
+    private static string? siteDirectory;
+    private static TempDirectory? tempDirectory;
 
-        // Generate markdown documentation from the test assembly.
+    [OneTimeSetUp]
+    public async Task OneTimeSetUp()
+    {
+        tempDirectory = new TempDirectory();
+        var tempPath = tempDirectory.Path;
+
+        // Generate Markdown documentation from the test assembly.
         var documentation = Documentation.Load(new RealFileSystem(), TestAssemblyXmlPath);
         var assemblyDetails = AssemblyParser.Parse(TestAssembly, documentation);
 
-        var docsDir = Path.Combine(tempDir.Path, "docs");
+        var docsDir = Path.Combine(tempPath, "docs");
         var apiDir = Path.Combine(docsDir, "API");
         Directory.CreateDirectory(apiDir);
 
         AssemblyMarkdownGenerator.Generate(new RealFileSystem(), assemblyDetails, apiDir);
 
-        // Create a minimal index.md so MkDocs has a landing page.
         await File.WriteAllTextAsync(Path.Combine(docsDir, "index.md"), "# Test\n");
+        await File.WriteAllTextAsync(Path.Combine(tempPath, "hooks.py"), HooksPy);
+        await File.WriteAllTextAsync(Path.Combine(tempPath, "global_state.py"), GlobalStatePy);
+        await File.WriteAllTextAsync(Path.Combine(tempPath, "mkdocs.yml"), MkDocsYml);
 
-        // Write the hooks.py file.
-        await File.WriteAllTextAsync(Path.Combine(tempDir.Path, "hooks.py"), HooksPy);
+        // Build the Docker image from the Dockerfile in this project.
+        await using var image = new ImageFromDockerfileBuilder()
+            .WithDockerfileDirectory(CommonDirectoryPath.GetCallerFileDirectory(), string.Empty)
+            .WithDeleteIfExists(false)
+            .Build();
 
-        // Write the global_state.py file required by hooks.
-        await File.WriteAllTextAsync(Path.Combine(tempDir.Path, "global_state.py"), GlobalStatePy);
+        await image.CreateAsync();
 
-        // Write a minimal mkdocs.yml.
-        await File.WriteAllTextAsync(Path.Combine(tempDir.Path, "mkdocs.yml"), MkDocsYml);
+        // Run MKDocs build inside the container with the temp dir bind-mounted.
+        await using var container = new ContainerBuilder(image)
+            .WithBindMount(tempPath, "/docs", AccessMode.ReadWrite)
+            .WithWorkingDirectory("/docs")
+            .WithCommand("build", "--strict")
+            .Build();
 
-        // Run mkdocs build.
-        var (exitCode, stdout, stderr) = await RunMkDocsBuild(tempDir.Path);
+        await container.StartAsync();
 
-        // Collect warnings from stderr.
-        var warnings = stderr
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
-            .Where(line => line.Contains("WARNING", StringComparison.OrdinalIgnoreCase))
-            .ToList();
+        var exitCode = await container.GetExitCodeAsync();
+        if (exitCode != 0)
+        {
+            var (stdout, stderr) = await container.GetLogsAsync();
+            throw new InvalidOperationException($"mkdocs build failed (exit code {exitCode}):\n{stderr}\n{stdout}");
+        }
 
-        exitCode.Should().Equal(0);
-        warnings.Should().BeEmpty();
-
-        // Read the built index.html to verify navigation entries.
-        var siteDir = Path.Combine(tempDir.Path, "site");
-        var indexHtml = await File.ReadAllTextAsync(Path.Combine(siteDir, "index.html"));
-
-        // Extract navigation entries from the HTML.
-        var navEntries = ExtractNavEntries(indexHtml);
-
-        await Verify(navEntries);
+        siteDirectory = Path.Combine(tempPath, "site");
     }
 
-    private static List<string> ExtractNavEntries(string html)
+    [OneTimeTearDown]
+    public void OneTimeTearDown() => tempDirectory?.Dispose();
+
+    [Test]
+    public Task MkDocsClass_Page() =>
+        VerifyPage("API/MrKWatkins.Sesharp.TestAssembly.MkDocs/MkDocsClass/index.html");
+
+    [Test]
+    public Task MkDocsClass_Constructors_Page() =>
+        VerifyPage("API/MrKWatkins.Sesharp.TestAssembly.MkDocs/MkDocsClass/-ctor/index.html");
+
+    [Test]
+    public Task MkDocsClass_ToStruct_Page() =>
+        VerifyPage("API/MrKWatkins.Sesharp.TestAssembly.MkDocs/MkDocsClass/ToStruct/index.html");
+
+    [Test]
+    public Task MkDocsClass_GetValue_Page() =>
+        VerifyPage("API/MrKWatkins.Sesharp.TestAssembly.MkDocs/MkDocsClass/GetValue/index.html");
+
+    [Test]
+    public Task MkDocsGenericClass_Page() =>
+        VerifyPage("API/MrKWatkins.Sesharp.TestAssembly.MkDocs/MkDocsGenericClass-T/index.html");
+
+    [Test]
+    public Task MkDocsGenericClass_Process_Page() =>
+        VerifyPage("API/MrKWatkins.Sesharp.TestAssembly.MkDocs/MkDocsGenericClass-T/Process/index.html");
+
+    [Test]
+    public Task IMkDocsInterface_Page() =>
+        VerifyPage("API/MrKWatkins.Sesharp.TestAssembly.MkDocs/IMkDocsInterface/index.html");
+
+    [Test]
+    public Task MkDocsStruct_Page() =>
+        VerifyPage("API/MrKWatkins.Sesharp.TestAssembly.MkDocs/MkDocsStruct/index.html");
+
+    private static async Task VerifyPage(string relativePath)
     {
-        // MkDocs Material renders nav entries inside <span class="md-ellipsis">...</span>.
-        var matches = NavEntryRegex().Matches(html);
-        return matches
-            .Select(m => m.Groups[1].Value.Trim())
-            .Where(entry => !string.IsNullOrWhiteSpace(entry))
-            .Distinct()
-            .Order()
-            .ToList();
-    }
-
-    [GeneratedRegex("""<span class="md-ellipsis">\s*([^<]+?)\s*</span>""")]
-    private static partial Regex NavEntryRegex();
-
-    private static async Task<(int ExitCode, string Stdout, string Stderr)> RunMkDocsBuild(string workingDirectory)
-    {
-        var psi = new ProcessStartInfo
-        {
-            FileName = "mkdocs",
-            Arguments = "build",
-            WorkingDirectory = workingDirectory,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-
-        using var process = Process.Start(psi) ?? throw new InvalidOperationException("Failed to start mkdocs.");
-
-        var stdoutBuilder = new StringBuilder();
-        var stderrBuilder = new StringBuilder();
-
-        process.OutputDataReceived += (_, e) =>
-        {
-            if (e.Data != null) stdoutBuilder.AppendLine(e.Data);
-        };
-        process.ErrorDataReceived += (_, e) =>
-        {
-            if (e.Data != null) stderrBuilder.AppendLine(e.Data);
-        };
-
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-
-        await process.WaitForExitAsync();
-
-        return (process.ExitCode, stdoutBuilder.ToString(), stderrBuilder.ToString());
+        var html = await File.ReadAllTextAsync(Path.Combine(siteDirectory!, relativePath));
+        await Verify(html).UseMethodName(TestContext.CurrentContext.Test.MethodName!);
     }
 
     private sealed class TempDirectory : IDisposable
@@ -146,6 +138,8 @@ public sealed partial class MkDocsIntegrationTests : TestFixture
               hooks:
                 on_nav: "hooks:on_nav"
                 on_page_context: "hooks:on_page_context"
+        markdown_extensions:
+          - attr_list
         """;
 
     private const string HooksPy =

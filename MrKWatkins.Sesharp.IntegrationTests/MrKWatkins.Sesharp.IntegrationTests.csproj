@@ -6,6 +6,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Testcontainers" />
         <PackageReference Include="Verify.NUnit" />
     </ItemGroup>
 </Project>

@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp.Testing", "MrKWatkins.Sesharp.Testing\MrKWatkins.Sesharp.Testing.csproj", "{432D8308-FA53-4B95-812E-5E1EC23E8D2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrKWatkins.Sesharp.IntegrationTests", "MrKWatkins.Sesharp.IntegrationTests\MrKWatkins.Sesharp.IntegrationTests.csproj", "{18D73C33-8389-455A-8413-28637CCBAA00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{432D8308-FA53-4B95-812E-5E1EC23E8D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{432D8308-FA53-4B95-812E-5E1EC23E8D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{432D8308-FA53-4B95-812E-5E1EC23E8D2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18D73C33-8389-455A-8413-28637CCBAA00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18D73C33-8389-455A-8413-28637CCBAA00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18D73C33-8389-455A-8413-28637CCBAA00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18D73C33-8389-455A-8413-28637CCBAA00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2CD5FA32-1F2F-440F-8959-92CCB344D822} = {EC54CE10-77DB-4F1D-9EA4-EFAA3497A36D}
