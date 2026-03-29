@@ -13,7 +13,7 @@ public static class AssemblyParser
     [Pure]
     public static AssemblyDetails Parse(Assembly assembly, Documentation documentation, string? assemblyPath = null)
     {
-        AssemblyDependencyLoader.LoadWithDependencies(assembly);
+        AssemblyDependencyLoader.LoadWithDependencies(assembly, assemblyPath);
 
         var assemblyNode = new AssemblyDetails(assembly);
 
