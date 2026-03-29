@@ -56,12 +56,33 @@ internal static class AssemblyDependencyLoader
     private static string FindAssemblyInNugetCache(AssemblyName referencedAssemblyName)
     {
         var nugetCache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
-        var packageFolder = Path.Combine(nugetCache, referencedAssemblyName.Name!.ToLowerInvariant(), referencedAssemblyName.Version!.ToString(3));
-        var paths = Directory.GetFiles(packageFolder, $"{referencedAssemblyName.Name}.dll", SearchOption.AllDirectories);
-        if (paths.Length != 1)
+        var packageName = referencedAssemblyName.Name!.ToLowerInvariant();
+        var packageFolder = Path.Combine(nugetCache, packageName);
+
+        // Try the exact assembly version first.
+        var exactVersionFolder = Path.Combine(packageFolder, referencedAssemblyName.Version!.ToString(3));
+        if (Directory.Exists(exactVersionFolder))
         {
-            throw new InvalidOperationException($"Could not find assembly {referencedAssemblyName.Name} in {packageFolder}.");
+            var exactPaths = Directory.GetFiles(exactVersionFolder, $"{referencedAssemblyName.Name}.dll", SearchOption.AllDirectories);
+            if (exactPaths.Length == 1)
+            {
+                return exactPaths[0];
+            }
         }
-        return paths[0];
+
+        // Assembly version doesn't always match NuGet package version; search all available versions.
+        if (Directory.Exists(packageFolder))
+        {
+            foreach (var versionFolder in Directory.GetDirectories(packageFolder))
+            {
+                var paths = Directory.GetFiles(versionFolder, $"{referencedAssemblyName.Name}.dll", SearchOption.AllDirectories);
+                if (paths.Length == 1)
+                {
+                    return paths[0];
+                }
+            }
+        }
+
+        throw new InvalidOperationException($"Could not find assembly {referencedAssemblyName.Name} in NuGet cache at {packageFolder}.");
     }
 }
