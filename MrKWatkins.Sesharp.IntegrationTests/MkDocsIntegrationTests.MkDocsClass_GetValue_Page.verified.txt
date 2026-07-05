@@ -5053,11 +5053,11 @@
 
 <h1 id="mkdocsclassgetvalue-method">MkDocsClass.GetValue Method</h1>
 <h2 id="definition">Definition</h2>
-<p>Gets a value. Returns a <a href="../">MkDocsClass</a> instance.</p>
+<p>Gets a value. Returns a <a href="../"><code>MkDocsClass</code></a> instance.</p>
 <pre><code class="language-c#">public MkDocsClass GetValue();
 </code></pre>
 <h2 id="returns">Returns</h2>
-<p><a href="../">MkDocsClass</a></p>
+<p><a href="../"><code>MkDocsClass</code></a></p>
 
 
 

@@ -1,5 +1,5 @@
 ﻿{
-  Bytes: LS0tCnRpdGxlOiAiUHJvcGVydHlJbmRleGVyIgotLS0KCiMgUHJvcGVydHlJbmRleGVyIENsYXNzCiMjIERlZmluaXRpb24KCmBgYGMjCnB1YmxpYyBzZWFsZWQgY2xhc3MgUHJvcGVydHlJbmRleGVyCmBgYAoKIyMgQ29uc3RydWN0b3JzCgp8IE5hbWUgfCBEZXNjcmlwdGlvbiB8CnwgLS0tLSB8IC0tLS0tLS0tLS0tIHwKfCBbUHJvcGVydHlJbmRleGVyKCldKC1jdG9yLm1kKSB8ICB8CgojIyBQcm9wZXJ0aWVzCgp8IE5hbWUgfCBEZXNjcmlwdGlvbiB8CnwgLS0tLSB8IC0tLS0tLS0tLS0tIHwKfCBbSXRlbVtJbnQzMl1dKEl0ZW0ubWQpIHwgIHwKfCBbTm9ybWFsXShOb3JtYWwubWQpIHwgIHwKCg==,
+  Bytes: LS0tCnRpdGxlOiAiUHJvcGVydHlJbmRleGVyIgotLS0KCiMgUHJvcGVydHlJbmRleGVyIENsYXNzCiMjIERlZmluaXRpb24KCmBgYGMjCnB1YmxpYyBzZWFsZWQgY2xhc3MgUHJvcGVydHlJbmRleGVyCmBgYAoKIyMgQ29uc3RydWN0b3JzCgp8IE5hbWUgfCBEZXNjcmlwdGlvbiB8CnwgLS0tLSB8IC0tLS0tLS0tLS0tIHwKfCBbYFByb3BlcnR5SW5kZXhlcigpYF0oLWN0b3IubWQpIHwgIHwKCiMjIFByb3BlcnRpZXMKCnwgTmFtZSB8IERlc2NyaXB0aW9uIHwKfCAtLS0tIHwgLS0tLS0tLS0tLS0gfAp8IFtgSXRlbVtJbnQzMl1gXShJdGVtLm1kKSB8ICB8CnwgW2BOb3JtYWxgXShOb3JtYWwubWQpIHwgIHwKCg==,
   Text:
 ---
 title: "PropertyIndexer"
@@ -16,14 +16,14 @@ public sealed class PropertyIndexer
 
 | Name | Description |
 | ---- | ----------- |
-| [PropertyIndexer()](-ctor.md) |  |
+| [`PropertyIndexer()`](-ctor.md) |  |
 
 ## Properties
 
 | Name | Description |
 | ---- | ----------- |
-| [Item[Int32]](Item.md) |  |
-| [Normal](Normal.md) |  |
+| [`Item[Int32]`](Item.md) |  |
+| [`Normal`](Normal.md) |  |
 
 
 }

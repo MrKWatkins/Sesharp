@@ -5006,7 +5006,7 @@
 
 <h1 id="mkdocsstruct-struct">MkDocsStruct Struct</h1>
 <h2 id="definition">Definition</h2>
-<p>A struct for testing MkDocs documentation generation. Created from a <a href="../MkDocsClass/">MkDocsClass</a>.</p>
+<p>A struct for testing MkDocs documentation generation. Created from a <a href="../MkDocsClass/"><code>MkDocsClass</code></a>.</p>
 <pre><code class="language-c#">public sealed struct MkDocsStruct
 </code></pre>
 <h2 id="constructors">Constructors</h2>
@@ -5019,8 +5019,8 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="-ctor/">MkDocsStruct(Int32)</a></td>
-<td>Initializes a new instance of the <a href="">MkDocsStruct</a> struct.</td>
+<td><a href="-ctor/"><code>MkDocsStruct(Int32)</code></a></td>
+<td>Initializes a new instance of the <a href=""><code>MkDocsStruct</code></a> struct.</td>
 </tr>
 </tbody>
 </table>
@@ -5034,7 +5034,7 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="Value/">Value</a></td>
+<td><a href="Value/"><code>Value</code></a></td>
 <td>The integer value.</td>
 </tr>
 </tbody>
@@ -5049,8 +5049,8 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="ToClass/">ToClass()</a></td>
-<td>Converts this struct back to a <a href="../MkDocsClass/">MkDocsClass</a>.</td>
+<td><a href="ToClass/"><code>ToClass()</code></a></td>
+<td>Converts this struct back to a <a href="../MkDocsClass/"><code>MkDocsClass</code></a>.</td>
 </tr>
 </tbody>
 </table>

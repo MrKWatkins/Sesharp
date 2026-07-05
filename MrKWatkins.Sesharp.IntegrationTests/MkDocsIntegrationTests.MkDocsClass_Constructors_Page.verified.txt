@@ -5030,7 +5030,7 @@
 
 
 <h1 id="mkdocsclass-constructors">MkDocsClass Constructors</h1>
-<p>Initializes a new instance of the <a href="../">MkDocsClass</a> class.</p>
+<p>Initializes a new instance of the <a href="../"><code>MkDocsClass</code></a> class.</p>
 <pre><code class="language-c#">public MkDocsClass(int value);
 </code></pre>
 <h2 id="parameters">Parameters</h2>
@@ -5044,9 +5044,9 @@
 </thead>
 <tbody>
 <tr>
-<td>value</td>
-<td><a href="https://learn.microsoft.com/en-gb/dotnet/api/System.Int32">Int32</a></td>
-<td>The value. Used by <a href="../../MkDocsGenericClass-T/">MkDocsGenericClass&lt;T&gt;</a>.</td>
+<td><code>value</code></td>
+<td><a href="https://learn.microsoft.com/en-gb/dotnet/api/System.Int32"><code>Int32</code></a></td>
+<td>The value. Used by <a href="../../MkDocsGenericClass-T/"><code>MkDocsGenericClass&lt;T&gt;</code></a>.</td>
 </tr>
 </tbody>
 </table>

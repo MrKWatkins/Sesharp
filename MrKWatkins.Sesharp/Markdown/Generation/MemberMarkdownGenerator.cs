@@ -96,7 +96,7 @@ public abstract class MemberMarkdownGenerator<TMember, TMemberInfo>(IFileSystem 
         foreach (var parameter in parameters)
         {
             table.NewRow();
-            table.Write(parameter.Name);
+            table.WriteCode(parameter.Name);
             table.NewColumn();
             WriteMemberLink(table, parameter.Type);
             table.NewColumn();

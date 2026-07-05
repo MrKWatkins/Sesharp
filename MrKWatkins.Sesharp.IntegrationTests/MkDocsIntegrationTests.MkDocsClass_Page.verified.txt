@@ -5006,7 +5006,7 @@
 
 <h1 id="mkdocsclass-class">MkDocsClass Class</h1>
 <h2 id="definition">Definition</h2>
-<p>A class for testing MkDocs documentation generation. Implements <a href="../IMkDocsInterface/">IMkDocsInterface</a>.</p>
+<p>A class for testing MkDocs documentation generation. Implements <a href="../IMkDocsInterface/"><code>IMkDocsInterface</code></a>.</p>
 <pre><code class="language-c#">public sealed class MkDocsClass : IMkDocsInterface
 </code></pre>
 <h2 id="constructors">Constructors</h2>
@@ -5019,8 +5019,8 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="-ctor/">MkDocsClass(Int32)</a></td>
-<td>Initializes a new instance of the <a href="">MkDocsClass</a> class.</td>
+<td><a href="-ctor/"><code>MkDocsClass(Int32)</code></a></td>
+<td>Initializes a new instance of the <a href=""><code>MkDocsClass</code></a> class.</td>
 </tr>
 </tbody>
 </table>
@@ -5034,11 +5034,11 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="Generic/">Generic</a></td>
-<td>A generic property of type <a href="../MkDocsGenericClass-T/">MkDocsGenericClass&lt;T&gt;</a>.</td>
+<td><a href="Generic/"><code>Generic</code></a></td>
+<td>A generic property of type <a href="../MkDocsGenericClass-T/"><code>MkDocsGenericClass&lt;T&gt;</code></a>.</td>
 </tr>
 <tr>
-<td><a href="Number/">Number</a></td>
+<td><a href="Number/"><code>Number</code></a></td>
 <td>The integer value.</td>
 </tr>
 </tbody>
@@ -5053,12 +5053,12 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="GetValue/">GetValue()</a></td>
-<td>Gets a value. Returns a <a href="">MkDocsClass</a> instance.</td>
+<td><a href="GetValue/"><code>GetValue()</code></a></td>
+<td>Gets a value. Returns a <a href=""><code>MkDocsClass</code></a> instance.</td>
 </tr>
 <tr>
-<td><a href="ToStruct/">ToStruct()</a></td>
-<td>Creates a <a href="../MkDocsStruct/">MkDocsStruct</a> from this instance.</td>
+<td><a href="ToStruct/"><code>ToStruct()</code></a></td>
+<td>Creates a <a href="../MkDocsStruct/"><code>MkDocsStruct</code></a> from this instance.</td>
 </tr>
 </tbody>
 </table>

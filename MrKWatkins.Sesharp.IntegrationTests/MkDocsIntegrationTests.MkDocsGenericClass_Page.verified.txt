@@ -5023,7 +5023,7 @@
 
 <h1 id="mkdocsgenericclasst-class">MkDocsGenericClass&lt;T&gt; Class</h1>
 <h2 id="definition">Definition</h2>
-<p>A generic class for testing MkDocs documentation generation. Works with <a href="../MkDocsClass/">MkDocsClass</a>.</p>
+<p>A generic class for testing MkDocs documentation generation. Works with <a href="../MkDocsClass/"><code>MkDocsClass</code></a>.</p>
 <pre><code class="language-c#">public sealed class MkDocsGenericClass&lt;T&gt;
 </code></pre>
 <h3 id="type-parameters">Type Parameters</h3>
@@ -5036,7 +5036,7 @@
 </thead>
 <tbody>
 <tr>
-<td>T</td>
+<td><code>T</code></td>
 <td>The type parameter.</td>
 </tr>
 </tbody>
@@ -5051,8 +5051,8 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="-ctor/">MkDocsGenericClass(MkDocsClass)</a></td>
-<td>Initializes a new instance of the <a href="">MkDocsGenericClass&lt;T&gt;</a> class.</td>
+<td><a href="-ctor/"><code>MkDocsGenericClass(MkDocsClass)</code></a></td>
+<td>Initializes a new instance of the <a href=""><code>MkDocsGenericClass&lt;T&gt;</code></a> class.</td>
 </tr>
 </tbody>
 </table>
@@ -5066,8 +5066,8 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="Source/">Source</a></td>
-<td>The source <a href="../MkDocsClass/">MkDocsClass</a>.</td>
+<td><a href="Source/"><code>Source</code></a></td>
+<td>The source <a href="../MkDocsClass/"><code>MkDocsClass</code></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -5081,8 +5081,8 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="Process/">Process(MkDocsClass)</a></td>
-<td>Processes a <a href="../MkDocsClass/">MkDocsClass</a> and returns a <a href="../MkDocsStruct/">MkDocsStruct</a>.</td>
+<td><a href="Process/"><code>Process(MkDocsClass)</code></a></td>
+<td>Processes a <a href="../MkDocsClass/"><code>MkDocsClass</code></a> and returns a <a href="../MkDocsStruct/"><code>MkDocsStruct</code></a>.</td>
 </tr>
 </tbody>
 </table>

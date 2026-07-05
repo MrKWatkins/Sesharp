@@ -84,7 +84,7 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
         foreach (var typeParameter in typeParameters)
         {
             table.NewRow();
-            table.Write(typeParameter.Name);
+            table.WriteCode(typeParameter.Name);
             table.NewColumn();
             if (member.Documentation?.TypeParameters.TryGetValue(typeParameter.Name, out var summary) == true)
             {
@@ -341,20 +341,20 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
 
         if (member is Type { IsGenericParameter: true })
         {
-            writer.Write(text);
+            writer.WriteCode(text);
             return;
         }
 
         switch (location)
         {
             case MemberLocation.DocumentAssembly:
-                writer.WriteLink(text, member.DocumentationLink(sourceFile));
+                writer.WriteCode(text, member.DocumentationLink(sourceFile));
                 break;
             case MemberLocation.System:
-                writer.WriteLink(text, member.MicrosoftLink());
+                writer.WriteCode(text, member.MicrosoftLink());
                 break;
             default:
-                writer.Write(text);
+                writer.WriteCode(text);
                 break;
         }
     }

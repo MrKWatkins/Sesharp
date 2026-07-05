@@ -25,8 +25,10 @@ public static class AssemblyMarkdownGenerator
         {
             // TODO: Namespace file.
 
-            var typeGenerator = new TypeMarkdownGenerator(fileSystem, memberLookup, outputDirectory);
-            typeGenerator.RepositoryUrl = repositoryUrl;
+            var typeGenerator = new TypeMarkdownGenerator(fileSystem, memberLookup, outputDirectory)
+            {
+                RepositoryUrl = repositoryUrl
+            };
 
             foreach (var type in @namespace.Types)
             {

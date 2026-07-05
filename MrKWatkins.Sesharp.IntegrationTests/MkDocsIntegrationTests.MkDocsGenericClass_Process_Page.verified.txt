@@ -5075,7 +5075,7 @@
 
 <h1 id="mkdocsgenericclasstprocess-method">MkDocsGenericClass&lt;T&gt;.Process Method</h1>
 <h2 id="definition">Definition</h2>
-<p>Processes a <a href="../../MkDocsClass/">MkDocsClass</a> and returns a <a href="../../MkDocsStruct/">MkDocsStruct</a>.</p>
+<p>Processes a <a href="../../MkDocsClass/"><code>MkDocsClass</code></a> and returns a <a href="../../MkDocsStruct/"><code>MkDocsStruct</code></a>.</p>
 <pre><code class="language-c#">public MkDocsStruct Process(MkDocsClass input);
 </code></pre>
 <h2 id="parameters">Parameters</h2>
@@ -5089,15 +5089,15 @@
 </thead>
 <tbody>
 <tr>
-<td>input</td>
-<td><a href="../../MkDocsClass/">MkDocsClass</a></td>
-<td>The <a href="../../MkDocsClass/">MkDocsClass</a> to process.</td>
+<td><code>input</code></td>
+<td><a href="../../MkDocsClass/"><code>MkDocsClass</code></a></td>
+<td>The <a href="../../MkDocsClass/"><code>MkDocsClass</code></a> to process.</td>
 </tr>
 </tbody>
 </table>
 <h2 id="returns">Returns</h2>
-<p><a href="../../MkDocsStruct/">MkDocsStruct</a></p>
-<p>A <a href="../../MkDocsStruct/">MkDocsStruct</a> result.</p>
+<p><a href="../../MkDocsStruct/"><code>MkDocsStruct</code></a></p>
+<p>A <a href="../../MkDocsStruct/"><code>MkDocsStruct</code></a> result.</p>
 
 
 

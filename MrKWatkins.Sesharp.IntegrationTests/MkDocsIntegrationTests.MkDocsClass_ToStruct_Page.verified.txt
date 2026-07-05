@@ -5053,12 +5053,12 @@
 
 <h1 id="mkdocsclasstostruct-method">MkDocsClass.ToStruct Method</h1>
 <h2 id="definition">Definition</h2>
-<p>Creates a <a href="../../MkDocsStruct/">MkDocsStruct</a> from this instance.</p>
+<p>Creates a <a href="../../MkDocsStruct/"><code>MkDocsStruct</code></a> from this instance.</p>
 <pre><code class="language-c#">public MkDocsStruct ToStruct();
 </code></pre>
 <h2 id="returns">Returns</h2>
-<p><a href="../../MkDocsStruct/">MkDocsStruct</a></p>
-<p>A new <a href="../../MkDocsStruct/">MkDocsStruct</a>.</p>
+<p><a href="../../MkDocsStruct/"><code>MkDocsStruct</code></a></p>
+<p>A new <a href="../../MkDocsStruct/"><code>MkDocsStruct</code></a>.</p>
 
 
 

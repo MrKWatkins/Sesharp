@@ -4984,7 +4984,7 @@
 
 <h1 id="imkdocsinterface-interface">IMkDocsInterface Interface</h1>
 <h2 id="definition">Definition</h2>
-<p>An interface for testing MkDocs documentation generation. Implemented by <a href="../MkDocsClass/">MkDocsClass</a>.</p>
+<p>An interface for testing MkDocs documentation generation. Implemented by <a href="../MkDocsClass/"><code>MkDocsClass</code></a>.</p>
 <pre><code class="language-c#">public abstract interface IMkDocsInterface
 </code></pre>
 <h2 id="methods">Methods</h2>
@@ -4997,8 +4997,8 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="GetValue/">GetValue()</a></td>
-<td>Gets a value. Returns a <a href="../MkDocsClass/">MkDocsClass</a> instance.</td>
+<td><a href="GetValue/"><code>GetValue()</code></a></td>
+<td>Gets a value. Returns a <a href="../MkDocsClass/"><code>MkDocsClass</code></a> instance.</td>
 </tr>
 </tbody>
 </table>
