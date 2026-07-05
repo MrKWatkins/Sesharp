@@ -10,7 +10,7 @@ namespace MrKWatkins.Sesharp.Tool;
 [UsedImplicitly]
 public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem) : Command<DocGenSettings>
 {
-    public override int Execute(CommandContext context, DocGenSettings settings, CancellationToken cancellationToken)
+    protected override int Execute(CommandContext context, DocGenSettings settings, CancellationToken cancellationToken)
     {
         // Assemblies loaded from bytes aren't registered by name in the default load context.
         // This handler resolves them when another assembly references them by name.
