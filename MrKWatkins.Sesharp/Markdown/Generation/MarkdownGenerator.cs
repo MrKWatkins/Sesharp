@@ -329,7 +329,7 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
     protected static void WriteMemberLink(IParagraphWriter writer, MemberInfo member, MemberLocation location, string? text = null) =>
         WriteMemberLink(writer, member, location, null, text);
 
-    private static void WriteMemberLink(IParagraphWriter writer, MemberInfo member, MemberLocation location, string? sourceFile, string? text = null)
+    private static void WriteMemberLink(IParagraphWriter writer, MemberInfo member, MemberLocation location, string? sourceFile, string? text)
     {
         text ??= MemberLinkFormatter.Format(member);
 

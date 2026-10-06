@@ -7,8 +7,6 @@ namespace MrKWatkins.Sesharp.Model;
 public abstract class Function<TMethodInfo> : Member<TMethodInfo>
     where TMethodInfo : MethodBase
 {
-    private string? memberName;
-
     protected Function(TMethodInfo method)
         : base(method)
     {
@@ -53,7 +51,7 @@ public abstract class Function<TMethodInfo> : Member<TMethodInfo>
         }
     }
 
-    public override string MemberName => memberName ??= BuildMemberName();
+    public override string MemberName => field ??= BuildMemberName();
 
     private string BuildMemberName()
     {

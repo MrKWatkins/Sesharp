@@ -6,8 +6,6 @@ namespace MrKWatkins.Sesharp.Model;
 
 public sealed class Property : Member<PropertyInfo>
 {
-    private string? memberName;
-
     public Property(PropertyInfo propertyInfo)
         : base(propertyInfo)
     {
@@ -18,7 +16,7 @@ public sealed class Property : Member<PropertyInfo>
 
     public override string MenuName => IndexParameters.Any() ? $"{Name}[]" : Name;
 
-    public override string MemberName => memberName ??= BuildMemberName();
+    public override string MemberName => field ??= BuildMemberName();
 
     private string BuildMemberName()
     {
