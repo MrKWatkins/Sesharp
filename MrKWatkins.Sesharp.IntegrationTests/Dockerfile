@@ -1,3 +1,4 @@
-FROM squidfunk/mkdocs-material:9.7.3
+FROM node:24-bookworm-slim
 
-RUN pip install mkdocs-simple-hooks pyyaml
+WORKDIR /app
+RUN npm init -y && npm install --save-exact vitepress@1.6.4 && npm cache clean --force

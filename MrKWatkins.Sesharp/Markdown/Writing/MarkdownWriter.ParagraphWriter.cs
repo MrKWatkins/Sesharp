@@ -25,7 +25,7 @@ public sealed partial class MarkdownWriter
 
         public void WriteLine(string text) => Writer.WriteLine(text, true);
 
-        public void WriteCode(string code)
+        public virtual void WriteCode(string code)
         {
             Writer.Write("`", false);
             Writer.Write(code, false);
@@ -41,7 +41,7 @@ public sealed partial class MarkdownWriter
             Writer.Write(")", false);
         }
 
-        public void WriteCode(string code, string url)
+        public virtual void WriteCode(string code, string url)
         {
             Writer.Write("[`", false);
             Writer.Write(code, false);

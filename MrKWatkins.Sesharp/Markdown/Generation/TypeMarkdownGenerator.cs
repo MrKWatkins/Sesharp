@@ -17,8 +17,6 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
 
         using var writer = CreateWriter(node);
 
-        writer.WriteFrontMatter(type.DisplayName);
-
         // TODO: Namespace.
         // TODO: Assembly.
 
@@ -75,6 +73,9 @@ public sealed class TypeMarkdownGenerator(IFileSystem fileSystem, MemberLookup m
 
         var generator = (TMemberGenerator)Activator.CreateInstance(typeof(TMemberGenerator), FileSystem, MemberLookup, OutputDirectory)!;
         generator.RepositoryUrl = RepositoryUrl;
+        generator.SourceRef = SourceRef;
+        generator.Dialect = Dialect;
+        generator.Navigation = Navigation;
 
         generator.Generate(members);
 

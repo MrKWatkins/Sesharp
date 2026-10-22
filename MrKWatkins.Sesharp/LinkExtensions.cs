@@ -41,9 +41,10 @@ public static class LinkExtensions
     [Pure]
     private static string BuildMemberLink(string baseLink, MemberInfo memberInfo)
     {
-        if (memberInfo is MethodBase methodBase && methodBase.HasPublicOrProtectedOverloads())
+        if (memberInfo is MethodBase methodBase && methodBase.HasPublicOrProtectedOverloads() ||
+            memberInfo is PropertyInfo property && property.GetIndexParameters().Length > 0 && property.HasPublicOrProtectedOverloads())
         {
-            var id = MarkdownId.FromMember(methodBase);
+            var id = MarkdownId.FromMember(memberInfo);
             return $"{baseLink}#{id.MkDocsId}";
         }
 
@@ -78,18 +79,20 @@ public static class LinkExtensions
     [Pure]
     public static string BuildTypeDirectory(this Type type)
     {
+        var parent = type.DeclaringType != null ? type.DeclaringType.BuildTypeDirectory() : type.Namespace ?? "global";
         if (!type.IsGenericType)
         {
-            return $"{type.Namespace}/{type.Name}";
+            return $"{parent}/{type.Name}";
         }
 
         // Always use the generic type definition so that constructed types
         // (e.g. IntegerAssertions<Byte>) resolve to the same directory as
         // the definition (IntegerAssertions<T>).
         var definition = type.IsGenericTypeDefinition ? type : type.GetGenericTypeDefinition();
-        var baseName = definition.Name[..definition.Name.IndexOf('`')];
+        var tick = definition.Name.IndexOf('`');
+        var baseName = tick >= 0 ? definition.Name[..tick] : definition.Name;
         var typeParams = string.Join("-", definition.GetGenericArguments().Select(t => t.Name));
-        return $"{definition.Namespace}/{baseName}-{typeParams}";
+        return $"{parent}/{baseName}-{typeParams}";
     }
 
     // Used only for Microsoft docs links which use the old flat format.

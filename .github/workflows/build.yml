@@ -2,18 +2,18 @@ name: Build
 
 on:
   push:
+    branches: [main]
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   BuildAndTest:
     name: Build and Test
-    permissions: write-all
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v7
-
-      - name: Build
-        uses: MrKWatkins/dotnet-build@main
+      - uses: MrKWatkins/build/dotnet/build@main
         with:
-          name: MrKWatkins.Sesharp
+          directory: .

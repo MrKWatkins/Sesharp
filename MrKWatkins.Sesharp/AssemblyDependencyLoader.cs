@@ -14,7 +14,7 @@ internal static class AssemblyDependencyLoader
         {
             Load(processed, assembly, depsLookup);
         }
-        return [..processed];
+        return [.. processed];
     }
 
     internal static IReadOnlyList<Assembly> LoadWithDependencies(Assembly assembly, string? assemblyPath = null)

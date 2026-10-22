@@ -37,6 +37,10 @@ public sealed partial class MarkdownWriter
 
         public void NewColumn() => Writer.Write(" | ", false);
 
+        public override void WriteCode(string code) => base.WriteCode(code.Replace("|", @"\|"));
+
+        public override void WriteCode(string code, string url) => base.WriteCode(code.Replace("|", @"\|"), url);
+
         public void NewRow()
         {
             if (inRow)

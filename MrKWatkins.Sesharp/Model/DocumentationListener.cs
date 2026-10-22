@@ -3,7 +3,7 @@ using MrKWatkins.Sesharp.XmlDocumentation;
 
 namespace MrKWatkins.Sesharp.Model;
 
-public sealed class DocumentationListener : Listener<Documentation, ModelNode, DocumentableNode>
+public sealed class DocumentationListener : NodeListener<Documentation, ModelNode, DocumentableNode>
 {
     protected override void ListenToNode(Documentation context, DocumentableNode node)
     {

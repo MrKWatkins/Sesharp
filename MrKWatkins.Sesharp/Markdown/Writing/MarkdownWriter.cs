@@ -1,8 +1,9 @@
 using System.Web;
+using System.Text.Json;
 
 namespace MrKWatkins.Sesharp.Markdown.Writing;
 
-public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReference] string path) : IDisposable
+public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReference] string path, MarkdownDialect dialect = MarkdownDialect.VitePress) : IDisposable
 {
     private readonly StreamWriter writer = fileSystem.CreateText(path);
     private bool inChildBlock;
@@ -17,7 +18,11 @@ public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReferenc
     }
 
     [Pure]
-    private static string Escape(string text) => HttpUtility.HtmlEncode(text).Replace("[]", @"\[\]");
+    private static string Escape(string text) => HttpUtility.HtmlEncode(text)
+        .Replace("[]", @"\[\]")
+        .Replace("{", "&#123;")
+        .Replace("}", "&#125;")
+        .Replace("|", "&#124;");
 
     private void WriteLine() => writer.WriteLine();
 
@@ -34,14 +39,24 @@ public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReferenc
         return new Disposable(() => idSuffix = null);
     }
 
-    public void WriteFrontMatter(string title)
+    public void WriteFrontMatter(string? title = null)
     {
         ValidateNotInChildState();
+        if (title == null && dialect == MarkdownDialect.MkDocs)
+        {
+            return;
+        }
 
         writer.WriteLine("---");
-        writer.Write("title: \"");
-        writer.Write(title);
-        writer.WriteLine("\"");
+        if (title != null)
+        {
+            writer.Write("title: ");
+            writer.WriteLine(JsonSerializer.Serialize(title));
+        }
+        if (dialect == MarkdownDialect.VitePress)
+        {
+            writer.WriteLine("editLink: false");
+        }
         writer.WriteLine("---");
         writer.WriteLine();
     }
@@ -70,7 +85,7 @@ public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReferenc
 
         if (id != null)
         {
-            Write($" {{: #{id.MkDocsId} }}", false);
+            Write(dialect == MarkdownDialect.MkDocs ? $" {{: #{id.MkDocsId} }}" : $" {{#{id.MkDocsId}}}", false);
         }
 
         WriteLine();

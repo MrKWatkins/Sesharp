@@ -36,12 +36,19 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
 
     internal string? RepositoryUrl { get; set; }
 
+    internal string SourceRef { get; set; } = "main";
+
+    internal MarkdownDialect Dialect { get; set; } = MarkdownDialect.VitePress;
+
+    internal List<NavigationEntry>? Navigation { get; set; }
+
     protected void WriteSourceLink(MarkdownWriter writer, DocumentableNode node)
     {
         if (RepositoryUrl == null || node.SourceLocation == null)
             return;
 
-        var url = $"{RepositoryUrl.TrimEnd('/')}/blob/main/{node.SourceLocation.RelativePath}#L{node.SourceLocation.Line}";
+        var path = string.Join('/', node.SourceLocation.RelativePath.Split('/').Select(Uri.EscapeDataString));
+        var url = $"{RepositoryUrl.TrimEnd('/')}/blob/{Uri.EscapeDataString(SourceRef)}/{path}#L{node.SourceLocation.Line}";
         using var p = writer.Paragraph();
         p.WriteLink("View source", url);
     }
@@ -51,7 +58,10 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
     {
         var filePath = Path.Combine(OutputDirectory, node.FileName);
         currentNodeFile = node.FileName;
-        return new MarkdownWriter(FileSystem, filePath);
+        Navigation?.Add(NavigationEntry.FromNode(node));
+        var writer = new MarkdownWriter(FileSystem, filePath, Dialect);
+        writer.WriteFrontMatter(node is Model.Type ? node.DisplayName : null);
+        return writer;
     }
 
     protected void WriteSeeAlsos(MarkdownWriter writer, IReadOnlyList<SeeAlso>? seeAlsos)

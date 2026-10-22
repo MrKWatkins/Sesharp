@@ -91,7 +91,9 @@ public sealed class MarkdownId
     }
 
     [Pure]
-    private static string GetTypeId(Type type) => $"{type.Namespace}{Separator}{type.Name}";
+    private static string GetTypeId(Type type) => type.DeclaringType != null
+        ? $"{GetTypeId(type.DeclaringType)}{Separator}{type.Name}"
+        : $"{type.Namespace}{Separator}{type.Name}";
 
     [Pure]
     private static string GetParameterTypeId(ParameterInfo parameter) => GetParameterTypeId(parameter, parameter.ParameterType);

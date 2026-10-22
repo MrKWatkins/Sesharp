@@ -17,7 +17,7 @@ public static class AssemblyParser
 
         var assemblyNode = new AssemblyDetails(assembly);
 
-        foreach (var group in assembly.GetExportedTypes().Where(t => t.IsPublic).GroupBy(t => t.Namespace ?? "global").OrderBy(g => g.Key))
+        foreach (var group in assembly.GetExportedTypes().Where(t => t.IsVisible).GroupBy(t => t.Namespace ?? "global").OrderBy(g => g.Key))
         {
             var @namespace = new Namespace(group.Key);
 
@@ -91,7 +91,10 @@ public static class AssemblyParser
         typeNode.Children.Add(
             type.GetProperties(Binding)
                 .Where(p => IsNotCompilerGenerated(p) && p.IsPublicOrProtected())
-                .Select(p => new Property(p))
+                .GroupBy(p => p.Name)
+                .Select(g => g.Count() == 1
+                    ? (OutputNode)new Property(g.First())
+                    : new PropertyGroup(g.Key, g.Select(p => new Property(p))))
                 .OrderBy(p => p.DisplayName));
     }
 

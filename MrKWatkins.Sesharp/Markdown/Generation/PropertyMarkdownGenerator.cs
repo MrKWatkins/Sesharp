@@ -13,6 +13,27 @@ public sealed class PropertyMarkdownGenerator(IFileSystem fileSystem, MemberLook
 
         writer.WriteSubHeading("Definition");
 
+        WriteProperty(writer, property);
+    }
+
+    protected override void Generate(MarkdownWriter writer, MemberGroup<Property, PropertyInfo> group)
+    {
+        writer.WriteMainHeading($"{group.Type.DisplayName}.{group.DisplayName} Property");
+        WriteMemberTable(writer, group.Members, "Overloads");
+        foreach (var property in group.Members)
+        {
+            var id = MarkdownId.FromMember(property.MemberInfo);
+            writer.WriteSubHeading(property.MemberName, id);
+            // The scope only resets the heading suffix; it does not own the writer.
+#pragma warning disable CA2000
+            using var scope = writer.WithIdSuffix(id);
+#pragma warning restore CA2000
+            WriteProperty(writer, property);
+        }
+    }
+
+    private void WriteProperty(MarkdownWriter writer, Property property)
+    {
         WriteSection(writer, property.Documentation?.Summary);
 
         WriteSignature(writer, property);

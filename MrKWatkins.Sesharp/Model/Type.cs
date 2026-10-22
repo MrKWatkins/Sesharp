@@ -27,7 +27,7 @@ public sealed class Type : DocumentableNode<System.Type>
 
     public IReadOnlyList<Field> Fields => Children.OfType<Field>().ToList();
 
-    public IReadOnlyList<Property> Properties => Children.OfType<Property>().ToList();
+    public IReadOnlyList<OutputNode> Properties => Children.Where(c => c is Property or PropertyGroup).OfType<OutputNode>().ToList();
 
     public IReadOnlyList<OutputNode> Methods => Children.Where(c => c is Method or MethodGroup).OfType<OutputNode>().ToList();
 
