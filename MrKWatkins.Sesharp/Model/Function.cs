@@ -55,7 +55,7 @@ public abstract class Function<TMethodInfo> : Member<TMethodInfo>
 
     private string BuildMemberName()
     {
-        var sb = new StringBuilder(Name);
+        var sb = new StringBuilder(DisplayName);
 
         var typeParameters = TypeParameters;
         if (typeParameters.Count > 0)

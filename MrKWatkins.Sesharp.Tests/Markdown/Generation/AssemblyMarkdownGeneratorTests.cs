@@ -33,10 +33,10 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         {
             var text = files.CreatedFiles[$"/MrKWatkins.Sesharp.TestAssembly.VitePress/{name}"].Text;
             var links = Regex.Matches(text, @"\]\(#([^)]+)\)");
-            Assert.That(links.Count, Is.GreaterThanOrEqualTo(2), name);
+            links.Count.Should().BeGreaterThanOrEqualTo(2);
             foreach (Match link in links)
             {
-                Assert.That(text, Does.Contain(prefix + link.Groups[1].Value + suffix), name);
+                text.Should().Contain(prefix + link.Groups[1].Value + suffix);
             }
         }
     }
@@ -46,13 +46,13 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
     {
         var files = GenerateFiles();
         var type = files.CreatedFiles["/MrKWatkins.Sesharp.TestAssembly.VitePress/VitePressClass-T/index.md"].Text;
-        Assert.That(type, Does.Contain("# VitePressClass&lt;T&gt; Class"));
-        Assert.That(type, Does.Contain("&lt;tag&gt; &amp; &#123;&#123;literal&#125;&#125; &#123;value&#125; &#124; text"));
-        Assert.That(type, Does.Contain("`a\\|b`"));
-        Assert.That(type, Does.Contain("editLink: false"));
+        type.Should().Contain("# VitePressClass&lt;T&gt; Class");
+        type.Should().Contain("&lt;tag&gt; &amp; &#123;&#123;literal&#125;&#125; &#123;value&#125; &#124; text");
+        type.Should().Contain("`a\\|b`");
+        type.Should().Contain("editLink: false");
         var methods = files.CreatedFiles["/MrKWatkins.Sesharp.TestAssembly.VitePress/VitePressClass-T/Read.md"].Text;
-        Assert.That(methods, Does.StartWith("---\neditLink: false\n---\n"));
-        Assert.That(methods, Does.Contain("string? Read(string? value)"));
+        methods.Should().StartWith("---\neditLink: false\n---\n");
+        methods.Should().Contain("string? Read(string? value)");
     }
 
     [Test]
@@ -61,14 +61,42 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         var files = GenerateFiles();
         const string prefix = "/MrKWatkins.Sesharp.TestAssembly.Properties/PropertyPublicOverloadedIndexer/";
         var text = files.CreatedFiles[prefix + "Item.md"].Text;
-        Assert.That(text, Does.Contain("Item[Int32]").And.Contain("Item[String]"));
+        text.Should().Contain("Item[Int32]").And.Contain("Item[String]");
         var links = Regex.Matches(text, @"\]\(#([^)]+)\)");
-        Assert.That(links.Count, Is.EqualTo(2));
+        links.Count.Should().Equal(2);
         foreach (Match link in links)
         {
-            Assert.That(text, Does.Contain("{#" + link.Groups[1].Value + "}"));
-            Assert.That(files.CreatedFiles[prefix + "index.md"].Text, Does.Contain("Item.md#" + link.Groups[1].Value));
+            text.Should().Contain("{#" + link.Groups[1].Value + "}");
+            files.CreatedFiles[prefix + "index.md"].Text.Should().Contain("Item.md#" + link.Groups[1].Value);
         }
+    }
+
+    [TestCase(MarkdownDialect.VitePress)]
+    [TestCase(MarkdownDialect.MkDocs)]
+    public void Generate_OperatorDisplayNames(MarkdownDialect dialect)
+    {
+        var files = GenerateFiles(dialect);
+        const string prefix = "/MrKWatkins.Sesharp.TestAssembly.VitePress/";
+        var type = files.CreatedFiles[prefix + "VitePressValue/index.md"].Text;
+        type.Should().Contain("[`BitwiseOr(VitePressValue, VitePressValue)`](op_BitwiseOr.md#");
+        type.Should().Contain("[`BitwiseOr(VitePressValue, Int32)`](op_BitwiseOr.md#");
+        type.Should().NotContain("[`op_");
+
+        var overloads = files.CreatedFiles[prefix + "VitePressValue/op_BitwiseOr.md"].Text;
+        overloads.Should().Contain("# VitePressValue.BitwiseOr Operator");
+        overloads.Should().Contain("[`BitwiseOr(VitePressValue, Int32)`](#");
+        overloads.Should().Contain("## BitwiseOr(VitePressValue, Int32)");
+        overloads.Should().NotContain("[`op_");
+
+        var conversions = files.CreatedFiles[prefix + "ConversionValue/index.md"].Text;
+        conversions.Should().Contain("[`CheckedExplicit(ConversionValue)`](op_CheckedExplicit.md)");
+        conversions.Should().NotContain("[`op_");
+
+        using var json = JsonDocument.Parse(files.CreatedFiles["/navigation.json"].Text);
+        var entries = json.RootElement.GetProperty("entries").EnumerateArray().ToArray();
+        var group = entries.Single(e => e.GetProperty("path").GetString() == prefix[1..] + "VitePressValue/op_BitwiseOr.md");
+        group.GetProperty("title").GetString().Should().Equal("BitwiseOr");
+        group.GetProperty("id").GetString().Should().Equal("G:" + prefix[1..] + "VitePressValue/op_BitwiseOr.md");
     }
 
     [Test]
@@ -76,22 +104,22 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
     {
         var files = GenerateFiles();
         using var json = JsonDocument.Parse(files.CreatedFiles["/navigation.json"].Text);
-        Assert.That(json.RootElement.GetProperty("schemaVersion").GetInt32(), Is.EqualTo(1));
+        json.RootElement.GetProperty("schemaVersion").GetInt32().Should().Equal(1);
         var entries = json.RootElement.GetProperty("entries").EnumerateArray().ToArray();
-        Assert.That(entries.Select(e => e.GetProperty("kind").GetString()).Distinct(), Is.EquivalentTo(new[] { "namespace", "type", "member" }));
+        entries.Select(e => e.GetProperty("kind").GetString()).ToHashSet().Should().SetEquals("namespace", "type", "member");
         var generic = entries.Single(e => e.GetProperty("path").GetString() == "MrKWatkins.Sesharp.TestAssembly.VitePress/VitePressClass-T/index.md");
-        Assert.That(generic.GetProperty("title").GetString(), Is.EqualTo("VitePressClass<T>"));
-        Assert.That(generic.GetProperty("parent").GetString(), Is.EqualTo("N:MrKWatkins.Sesharp.TestAssembly.VitePress"));
+        generic.GetProperty("title").GetString().Should().Equal("VitePressClass<T>");
+        generic.GetProperty("parent").GetString().Should().Equal("N:MrKWatkins.Sesharp.TestAssembly.VitePress");
         foreach (var entry in entries)
         {
-            Assert.That(files.CreatedFiles.ContainsKey("/" + entry.GetProperty("path").GetString()), Is.True, entry.ToString());
+            files.CreatedFiles.Should().ContainKey("/" + entry.GetProperty("path").GetString());
             if (entry.GetProperty("parent").GetString() is { } parent)
             {
-                Assert.That(entries.Any(e => e.GetProperty("id").GetString() == parent), Is.True, parent);
+                entries.Select(e => e.GetProperty("id").GetString()).Should().Contain(parent);
             }
         }
-        Assert.That(entries.Select(e => e.GetProperty("id").GetString()).Distinct().Count(), Is.EqualTo(entries.Length));
-        Assert.That(entries.Select(e => e.GetProperty("path").GetString()).Distinct().Count(), Is.EqualTo(entries.Length));
+        entries.Select(e => e.GetProperty("id").GetString()).Distinct().Count().Should().Equal(entries.Length);
+        entries.Select(e => e.GetProperty("path").GetString()).Distinct().Count().Should().Equal(entries.Length);
     }
 
     [Test]
@@ -99,12 +127,12 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
     {
         var files = GenerateFiles();
         const string prefix = "/MrKWatkins.Sesharp.TestAssembly.VitePress/";
-        Assert.That(files.CreatedFiles.ContainsKey(prefix + "VitePressClass-T/Nested-T/index.md"), Is.True);
-        Assert.That(files.CreatedFiles.ContainsKey(prefix + "AnotherClass/Nested/index.md"), Is.True);
+        files.CreatedFiles.Should().ContainKey(prefix + "VitePressClass-T/Nested-T/index.md");
+        files.CreatedFiles.Should().ContainKey(prefix + "AnotherClass/Nested/index.md");
         using var json = JsonDocument.Parse(files.CreatedFiles["/navigation.json"].Text);
         var entries = json.RootElement.GetProperty("entries").EnumerateArray().ToArray();
         var nested = entries.Single(e => e.GetProperty("path").GetString() == prefix[1..] + "VitePressClass-T/Nested-T/index.md");
-        Assert.That(nested.GetProperty("parent").GetString(), Is.EqualTo("T:MrKWatkins.Sesharp.TestAssembly.VitePress.VitePressClass`1"));
+        nested.GetProperty("parent").GetString().Should().Equal("T:MrKWatkins.Sesharp.TestAssembly.VitePress.VitePressClass`1");
     }
 
     [Test]
@@ -116,9 +144,8 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         type.SourceLocation = new SourceLocation("src/My File.cs", 42);
         var files = new TestFileSystem();
         AssemblyMarkdownGenerator.Generate(files, assembly, "/", "https://github.com/example/library/", sourceRef: "release/1.2.3");
-        Assert.That(files.CreatedFiles["/" + type.FileName].Text,
-            Does.Contain("https://github.com/example/library/blob/release%2F1.2.3/src/My%20File.cs#L42"));
-        Assert.That(string.Join('\n', files.CreatedFiles.Values.Select(f => f.Text)), Does.Not.Contain("/blob/main/"));
+        files.CreatedFiles["/" + type.FileName].Text.Should().Contain("https://github.com/example/library/blob/release%2F1.2.3/src/My%20File.cs#L42");
+        string.Join('\n', files.CreatedFiles.Values.Select(f => f.Text)).Should().NotContain("/blob/main/");
     }
 
     [Test]
@@ -137,10 +164,10 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         var second = new TestFileSystem();
         AssemblyMarkdownGenerator.Generate(first, assemblies, "/");
         AssemblyMarkdownGenerator.Generate(second, assemblies.Reverse().ToArray(), "/");
-        Assert.That(first.CreatedFiles["/navigation.json"].Text, Is.EqualTo(second.CreatedFiles["/navigation.json"].Text));
-        Assert.That(first.CreatedFiles["/System/index.md"].Text, Does.Contain("String/index.md").And.Contain("Uri/index.md"));
+        first.CreatedFiles["/navigation.json"].Text.Should().Equal(second.CreatedFiles["/navigation.json"].Text);
+        first.CreatedFiles["/System/index.md"].Text.Should().Contain("String/index.md").And.Contain("Uri/index.md");
         using var json = JsonDocument.Parse(first.CreatedFiles["/navigation.json"].Text);
-        Assert.That(json.RootElement.GetProperty("entries").EnumerateArray().Count(e => e.GetProperty("kind").GetString() == "namespace"), Is.EqualTo(1));
+        json.RootElement.GetProperty("entries").EnumerateArray().Count(e => e.GetProperty("kind").GetString() == "namespace").Should().Equal(1);
     }
 
     private static TestFileSystem GenerateFiles(MarkdownDialect dialect = MarkdownDialect.VitePress)

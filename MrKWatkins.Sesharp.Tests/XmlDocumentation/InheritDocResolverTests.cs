@@ -107,6 +107,6 @@ public sealed class InheritDocResolverTests : TestFixture
 
         // object.ToString has no docs in our assembly - should return null or system docs.
         // The important thing is it doesn't throw.
-        Assert.DoesNotThrow(() => _ = resolver.Resolve(method));
+        AssertThat.Invoking(() => resolver.Resolve(method)).Should().NotThrow();
     }
 }

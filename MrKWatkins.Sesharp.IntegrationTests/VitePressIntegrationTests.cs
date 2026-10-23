@@ -57,30 +57,28 @@ public sealed class VitePressIntegrationTests : TestFixture
     }
 
     [Test]
-    public void GenericHeading() => Assert.That(pages[FixturePath + "VitePressClass-T/index.html"], Does.Contain("VitePressClass&lt;T&gt; Class"));
+    public void GenericHeading() => pages[FixturePath + "VitePressClass-T/index.html"].Should().Contain("VitePressClass&lt;T&gt; Class");
 
     [Test]
     public void LiteralText()
     {
         var html = pages[FixturePath + "VitePressClass-T/index.html"];
-        Assert.That(HttpUtility.HtmlDecode(html), Does.Contain("Literal <tag> & {{literal}} {value} | text."));
-        Assert.That(html, Does.Contain("<code>a|b</code>"));
+        HttpUtility.HtmlDecode(html).Should().Contain("Literal <tag> & {{literal}} {value} | text.");
+        html.Should().Contain("<code>a|b</code>");
     }
 
     [Test]
     public void NestedTypes()
     {
-        Assert.That(pages[FixturePath + "VitePressClass-T/Nested-T/index.html"], Does.Contain("Nested"));
-        Assert.That(pages[FixturePath + "AnotherClass/Nested/index.html"], Does.Contain("Nested"));
+        pages[FixturePath + "VitePressClass-T/Nested-T/index.html"].Should().Contain("Nested");
+        pages[FixturePath + "AnotherClass/Nested/index.html"].Should().Contain("Nested");
     }
 
     [Test]
-    public void SourceRef() => Assert.That(pages[FixturePath + "VitePressClass-T/index.html"], Does.Contain("/blob/v1.2.3/"));
+    public void SourceRef() => pages[FixturePath + "VitePressClass-T/index.html"].Should().Contain("/blob/v1.2.3/");
 
     [Test]
-    public void InheritedFrameworkDocumentation() => Assert.That(
-        pages["API/MrKWatkins.Sesharp.TestAssembly.InheritDoc/InheritDocBclStruct/Parse.html"],
-        Does.Contain("Parses a string into a value."));
+    public void InheritedFrameworkDocumentation() => pages["API/MrKWatkins.Sesharp.TestAssembly.InheritDoc/InheritDocBclStruct/Parse.html"].Should().Contain("Parses a string into a value.");
 
     [Test]
     public void EveryInternalAnchorExists()
@@ -95,7 +93,7 @@ public sealed class VitePressIntegrationTests : TestFixture
                 {
                     continue;
                 }
-                Assert.That(target.AbsolutePath, Does.StartWith(Base), path);
+                target.AbsolutePath.Should().StartWith(Base);
                 var targetPath = Uri.UnescapeDataString(target.AbsolutePath[Base.Length..]);
                 if (targetPath.EndsWith('/'))
                 {
@@ -105,10 +103,11 @@ public sealed class VitePressIntegrationTests : TestFixture
                 {
                     targetPath += ".html";
                 }
-                Assert.That(pages.TryGetValue(targetPath, out var targetHtml), Is.True, $"{path} -> {target}");
+                pages.Should().ContainKey(targetPath);
+                var targetHtml = pages[targetPath];
                 var anchor = Uri.UnescapeDataString(target.Fragment[1..]);
-                var ids = Regex.Matches(targetHtml!, "id=\"([^\"]+)\"").Select(m => HttpUtility.HtmlDecode(m.Groups[1].Value));
-                Assert.That(ids, Does.Contain(anchor), $"{path} -> {target}");
+                var ids = Regex.Matches(targetHtml, "id=\"([^\"]+)\"").Select(m => HttpUtility.HtmlDecode(m.Groups[1].Value));
+                ids.Should().Contain(anchor);
             }
         }
     }
