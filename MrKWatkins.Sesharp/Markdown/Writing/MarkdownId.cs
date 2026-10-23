@@ -71,9 +71,16 @@ public sealed class MarkdownId
 
         var parameters = method.GetParameters();
 
-        return FromText(parameters.Any()
+        id = parameters.Any()
             ? $"{id}({string.Join(Separator, parameters.Select(GetParameterTypeId))})"
-            : id);
+            : id;
+
+        if (method is MethodInfo { Name: "op_Implicit" or "op_Explicit" or "op_CheckedImplicit" or "op_CheckedExplicit" } conversion)
+        {
+            id = $"{id}{Separator}{GetParameterTypeId(conversion.ReturnParameter)}";
+        }
+
+        return FromText(id);
     }
 
     [Pure]

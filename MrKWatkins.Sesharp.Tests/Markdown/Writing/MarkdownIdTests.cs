@@ -69,6 +69,17 @@ public sealed class MarkdownIdTests
             "system-data-datarow-item(system-int32)");
     }
 
+    [TestCase(typeof(int), "system-int32")]
+    [TestCase(typeof(long), "system-int64")]
+    public void ConversionOperator(Type returnType, string expectedReturnTypeId)
+    {
+        var conversion = typeof(decimal).GetMethods().Single(method =>
+            method.Name == "op_Explicit" && method.ReturnType == returnType &&
+            method.GetParameters() is [{ ParameterType: var parameterType }] && parameterType == typeof(decimal));
+
+        MarkdownId.FromMember(conversion).Id.Should().Equal($"system-decimal-op-explicit(system-decimal)-{expectedReturnTypeId}");
+    }
+
     [Test]
     public void Addition()
     {

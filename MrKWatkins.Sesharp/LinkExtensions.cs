@@ -23,10 +23,10 @@ public static class LinkExtensions
         var targetFile = hashIndex >= 0 ? link[..hashIndex] : link;
         var fragment = hashIndex >= 0 ? link[hashIndex..] : string.Empty;
 
-        // Same file: just use the fragment (or empty if no fragment).
+        // Same file: use the fragment, or an explicit filename for a link to the whole page.
         if (string.Equals(targetFile, sourceFile, StringComparison.OrdinalIgnoreCase))
         {
-            return fragment;
+            return fragment.Length != 0 ? fragment : Path.GetFileName(targetFile);
         }
 
         var sourceDirectory = Path.GetDirectoryName(sourceFile)!;

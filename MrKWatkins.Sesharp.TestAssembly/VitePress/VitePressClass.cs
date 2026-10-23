@@ -1,7 +1,7 @@
 namespace MrKWatkins.Sesharp.TestAssembly.VitePress;
 
 /// <summary>
-/// Literal &lt;tag&gt; &amp; {{literal}} {value} | text. Links to <see cref="Nested"/>.
+/// Literal &lt;tag&gt; &amp; {{literal}} {value} | text. Links to <see cref="Nested"/> and <see cref="VitePressClass{T}"/>.
 /// </summary>
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public sealed class VitePressClass<T>
@@ -22,6 +22,9 @@ public sealed class VitePressClass<T>
     /// <param name="values">The values.</param>
     /// <returns>The first value.</returns>
     public T? Read(IEnumerable<T> values) => values.FirstOrDefault();
+
+    /// <summary>Refreshes this instance. See <see cref="Refresh"/>.</summary>
+    public void Refresh() { }
 
     /// <summary>A nested type in a generic type.</summary>
     public sealed class Nested;
