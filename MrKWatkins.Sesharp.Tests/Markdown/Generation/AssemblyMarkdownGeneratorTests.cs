@@ -99,6 +99,16 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         group.GetProperty("id").GetString().Should().Equal("G:" + prefix[1..] + "VitePressValue/op_BitwiseOr.md");
     }
 
+    [TestCase(MarkdownDialect.VitePress)]
+    [TestCase(MarkdownDialect.MkDocs)]
+    public void Generate_ReservedIndexMember(MarkdownDialect dialect)
+    {
+        var files = GenerateFiles(dialect);
+        const string prefix = "/MrKWatkins.Sesharp.TestAssembly.VitePress/VitePressClass-T/";
+        files.CreatedFiles[prefix + "index.md"].Text.Should().Contain("](member-Index.md)");
+        files.CreatedFiles[prefix + "member-Index.md"].Text.Should().Contain(".Index Property");
+    }
+
     [Test]
     public void Generate_Navigation()
     {
@@ -119,7 +129,7 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
             }
         }
         entries.Select(e => e.GetProperty("id").GetString()).Distinct().Count().Should().Equal(entries.Length);
-        entries.Select(e => e.GetProperty("path").GetString()).Distinct().Count().Should().Equal(entries.Length);
+        entries.Select(e => e.GetProperty("path").GetString()).Distinct(StringComparer.OrdinalIgnoreCase).Count().Should().Equal(entries.Length);
     }
 
     [Test]

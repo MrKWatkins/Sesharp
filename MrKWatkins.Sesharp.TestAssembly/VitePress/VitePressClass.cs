@@ -23,6 +23,9 @@ public sealed class VitePressClass<T>
     /// <returns>The first value.</returns>
     public T? Read(IEnumerable<T> values) => values.FirstOrDefault();
 
+    /// <summary>The position. See <see cref="Index"/>.</summary>
+    public int Index => 0;
+
     /// <summary>Refreshes this instance. See <see cref="Refresh"/>.</summary>
     public void Refresh() { }
 

@@ -2,6 +2,13 @@ namespace MrKWatkins.Sesharp.Tests;
 
 public sealed class LinkExtensionsTests
 {
+    [TestCase("index", "member-index")]
+    [TestCase("Index", "member-Index")]
+    [TestCase("INDEX", "member-INDEX")]
+    [TestCase("IndexOf", "IndexOf")]
+    public void BuildMemberBaseFilename(string name, string expected) =>
+        LinkExtensions.BuildMemberBaseFilename(name).Should().Equal(expected);
+
     [Test]
     public void DocumentationLink_SameType()
     {

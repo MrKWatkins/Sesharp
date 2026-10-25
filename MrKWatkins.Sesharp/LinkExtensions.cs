@@ -73,8 +73,13 @@ public static class LinkExtensions
 
         var memberName = memberInfo is ConstructorInfo ? "-ctor" : memberInfo.Name;
 
-        return $"{declaringType.BuildTypeDirectory()}/{memberName}";
+        return $"{declaringType.BuildTypeDirectory()}/{BuildMemberBaseFilename(memberName)}";
     }
+
+    // Keep member pages distinct from the type index on case-insensitive file systems and in VitePress bundles.
+    [Pure]
+    internal static string BuildMemberBaseFilename(string name) =>
+        name.Equals("index", StringComparison.OrdinalIgnoreCase) ? $"member-{name}" : name;
 
     [Pure]
     public static string BuildTypeDirectory(this Type type)
