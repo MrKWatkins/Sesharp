@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.Loader;
 using MrKWatkins.Sesharp.Markdown.Generation;
 using MrKWatkins.Sesharp.Model;
 using MrKWatkins.Sesharp.XmlDocumentation;
@@ -12,9 +13,8 @@ public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem) 
 {
     public override int Execute(CommandContext context, DocGenSettings settings, CancellationToken cancellationToken)
     {
-        // Assemblies loaded from bytes aren't registered by name in the default load context.
-        // This handler resolves them when another assembly references them by name.
-        AppDomain.CurrentDomain.AssemblyResolve += ResolveFromLoaded;
+        // Documented dependencies can use different versions from Sesharp's own packages.
+        var loadContext = new DocumentationLoadContext(settings.AssemblyAbsolutePaths);
 
         try
         {
@@ -23,7 +23,7 @@ public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem) 
             foreach (var assemblyPath in settings.AssemblyAbsolutePaths)
             {
                 console.MarkupLine($"[green]Loading assembly {assemblyPath}...[/]");
-                var assembly = Assembly.Load(File.ReadAllBytes(assemblyPath));
+                var assembly = loadContext.LoadFromAssemblyPath(assemblyPath);
 
                 var xmlPath = assemblyPath.Replace(".dll", ".xml", StringComparison.OrdinalIgnoreCase);
 
@@ -55,14 +55,28 @@ public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem) 
         }
         finally
         {
-            AppDomain.CurrentDomain.AssemblyResolve -= ResolveFromLoaded;
+            loadContext.Unload();
         }
     }
 
-    private static Assembly? ResolveFromLoaded(object? sender, ResolveEventArgs args)
+    private sealed class DocumentationLoadContext(IEnumerable<string> assemblyPaths)
+        : AssemblyLoadContext(nameof(DocumentationLoadContext), isCollectible: true)
     {
-        var name = new AssemblyName(args.Name);
-        return AppDomain.CurrentDomain.GetAssemblies()
-            .FirstOrDefault(a => AssemblyName.ReferenceMatchesDefinition(name, a.GetName()));
+        private readonly string[] directories = assemblyPaths.Select(path => Path.GetDirectoryName(path)!).Distinct().ToArray();
+
+        protected override Assembly? Load(AssemblyName assemblyName)
+        {
+            foreach (var directory in directories)
+            {
+                var path = Path.Combine(directory, $"{assemblyName.Name}.dll");
+                if (File.Exists(path))
+                {
+                    return LoadFromAssemblyPath(path);
+                }
+            }
+
+            // Framework assemblies remain shared with the runtime.
+            return null;
+        }
     }
 }

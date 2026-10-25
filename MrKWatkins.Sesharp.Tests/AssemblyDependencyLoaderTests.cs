@@ -1,9 +1,32 @@
 using System.Reflection;
+using System.Runtime.Loader;
 
 namespace MrKWatkins.Sesharp.Tests;
 
 public sealed class AssemblyDependencyLoaderTests
 {
+    [Test]
+    public void LoadWithDependencies_UsesDocumentedAssemblyContext()
+    {
+        var hostAst = Assembly.Load("MrKWatkins.Ast");
+        var context = new AssemblyLoadContext(nameof(LoadWithDependencies_UsesDocumentedAssemblyContext), isCollectible: true);
+        try
+        {
+            var isolatedAst = context.LoadFromAssemblyPath(hostAst.Location);
+            var documentAssembly = context.LoadFromAssemblyPath(typeof(MemberLookup).Assembly.Location);
+
+            var result = AssemblyDependencyLoader.LoadWithDependencies(documentAssembly, documentAssembly.Location);
+
+            result.Should().Contain(isolatedAst);
+            result.Should().NotContain(hostAst);
+            result.Should().Contain(typeof(object).Assembly);
+        }
+        finally
+        {
+            context.Unload();
+        }
+    }
+
     [TestCase(true)]
     [TestCase(false)]
     public void FindAssembly_UsesAdjacentAssembly(bool hasDepsFile)

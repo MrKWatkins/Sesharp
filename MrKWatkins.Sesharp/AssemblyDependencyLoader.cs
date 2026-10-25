@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text.Json;
 
 namespace MrKWatkins.Sesharp;
@@ -28,17 +29,18 @@ internal static class AssemblyDependencyLoader
             return;
         }
 
+        var loadContext = AssemblyLoadContext.GetLoadContext(assembly)!;
         foreach (var referencedAssemblyName in assembly.GetReferencedAssemblies())
         {
             Assembly referencedAssembly;
             try
             {
-                referencedAssembly = Assembly.Load(referencedAssemblyName);
+                referencedAssembly = loadContext.LoadFromAssemblyName(referencedAssemblyName);
             }
             catch
             {
-                // Assembly.Load(name) won't find assemblies loaded from bytes; check the AppDomain first.
-                var alreadyLoaded = AppDomain.CurrentDomain.GetAssemblies()
+                // Keep dependency identities inside the documented assembly's load context.
+                var alreadyLoaded = loadContext.Assemblies
                     .FirstOrDefault(a => AssemblyName.ReferenceMatchesDefinition(referencedAssemblyName, a.GetName()));
 
                 if (alreadyLoaded != null)
@@ -48,7 +50,7 @@ internal static class AssemblyDependencyLoader
                 else
                 {
                     var assemblyFilePath = FindAssembly(referencedAssemblyName, depsLookup, assemblyDirectory);
-                    referencedAssembly = Assembly.LoadFrom(assemblyFilePath);
+                    referencedAssembly = loadContext.LoadFromAssemblyPath(assemblyFilePath);
                 }
             }
 
