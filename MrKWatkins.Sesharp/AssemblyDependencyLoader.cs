@@ -8,11 +8,12 @@ internal static class AssemblyDependencyLoader
     internal static IReadOnlyList<Assembly> LoadWithDependencies(IEnumerable<Assembly> assemblies, string? assemblyPath = null)
     {
         var depsLookup = assemblyPath != null ? DepsJsonLookup.TryLoad(assemblyPath) : null;
+        var assemblyDirectory = assemblyPath != null ? Path.GetDirectoryName(Path.GetFullPath(assemblyPath)) : null;
 
         var processed = new HashSet<Assembly>();
         foreach (var assembly in assemblies)
         {
-            Load(processed, assembly, depsLookup);
+            Load(processed, assembly, depsLookup, assemblyDirectory);
         }
         return [.. processed];
     }
@@ -20,7 +21,7 @@ internal static class AssemblyDependencyLoader
     internal static IReadOnlyList<Assembly> LoadWithDependencies(Assembly assembly, string? assemblyPath = null)
         => LoadWithDependencies([assembly], assemblyPath);
 
-    private static void Load(HashSet<Assembly> processed, Assembly assembly, DepsJsonLookup? depsLookup)
+    private static void Load(HashSet<Assembly> processed, Assembly assembly, DepsJsonLookup? depsLookup, string? assemblyDirectory)
     {
         if (!processed.Add(assembly))
         {
@@ -46,18 +47,28 @@ internal static class AssemblyDependencyLoader
                 }
                 else
                 {
-                    var assemblyFilePath = FindAssembly(referencedAssemblyName, depsLookup);
+                    var assemblyFilePath = FindAssembly(referencedAssemblyName, depsLookup, assemblyDirectory);
                     referencedAssembly = Assembly.LoadFrom(assemblyFilePath);
                 }
             }
 
-            Load(processed, referencedAssembly, depsLookup);
+            Load(processed, referencedAssembly, depsLookup, assemblyDirectory);
         }
     }
 
     [Pure]
-    internal static string FindAssembly(AssemblyName referencedAssemblyName, DepsJsonLookup? depsLookup)
+    internal static string FindAssembly(AssemblyName referencedAssemblyName, DepsJsonLookup? depsLookup, string? assemblyDirectory = null)
     {
+        // Documentation builds can supply runtime dependencies beside the input assembly without a NuGet cache.
+        if (assemblyDirectory != null)
+        {
+            var adjacent = Path.Combine(assemblyDirectory, $"{referencedAssemblyName.Name}.dll");
+            if (File.Exists(adjacent))
+            {
+                return adjacent;
+            }
+        }
+
         // Use the deps.json lookup if available; it maps assembly names to the correct
         // NuGet package paths, handling cases where assembly version != package version.
         var resolvedPath = depsLookup?.Resolve(referencedAssemblyName.Name!);
