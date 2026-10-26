@@ -1,19 +1,16 @@
-name: Build
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-
+name: Build and Test
+on: [push, pull_request]
 permissions:
   contents: read
-
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  BuildAndTest:
+  build:
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: MrKWatkins/build/dotnet/build@main
+      - uses: MrKWatkins/build/dotnet/project@main
         with:
           directory: .
+          docs: 'false'

@@ -83,18 +83,12 @@ fail generation rather than overwriting another assembly's API.
 Build sidebars from namespace/type entries; keep member lists on type pages.
 Consumers should check `schemaVersion` before reading the manifest.
 
-## Validation and releases
+## Validation
 
 The normal build runs unit tests and builds the complete test API with VitePress
 1.6.4 in a Node 24 Docker image. Tests cover rendering, literal text, nested types,
 inherited framework documentation and internal anchors. VitePress dead-link
 checking stays enabled. Docker must be available when running the test suite.
-
-The manual Release workflow builds and validates before preparing packages, then
-publishes those artifacts using NuGet trusted publishing and tags the resolved
-source commit. Configure a nuget.org trusted-publishing policy for this
-repository's `release.yml` workflow and the `MrKWatkins` NuGet profile before its
-first release. Package artifacts are retained for 14 days for recovery.
 
 ## Name
 

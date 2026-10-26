@@ -1,67 +1,27 @@
 name: Release
-
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: Stable version without a v prefix
-        required: true
+        description: Optional version without v; blank increments the latest stable tag minor version
         type: string
-
+        required: false
 permissions:
   contents: read
-
 concurrency:
-  group: release-${{ inputs.version }}
+  group: release
   cancel-in-progress: false
-
 jobs:
-  Build:
-    name: Build and validate documentation
-    runs-on: ubuntu-latest
-    outputs:
-      commit: ${{ steps.source.outputs.commit }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ github.sha }}
-      - name: Resolve source commit
-        id: source
-        run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-      - uses: MrKWatkins/build/dotnet/build@main
-        with:
-          directory: .
-          version: ${{ inputs.version }}
-      - uses: MrKWatkins/build/dotnet/pack@main
-        with:
-          directory: .
-          version: ${{ inputs.version }}
-      - uses: actions/upload-artifact@v7
-        with:
-          name: packages
-          path: artifacts/packages/*
-          if-no-files-found: error
-          retention-days: 14
-
-  Publish:
-    name: Publish validated packages
-    needs: Build
+  release:
+    name: Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
     steps:
-      - uses: actions/setup-dotnet@v6
+      - uses: MrKWatkins/build/dotnet/project@main
         with:
-          dotnet-version: 10.0.x
-      - uses: actions/download-artifact@v8
-        with:
-          name: packages
-          path: artifacts/packages
-      - uses: MrKWatkins/build/dotnet/publish@main
-        with:
-          nuget-user: MrKWatkins
-      - uses: MrKWatkins/build/release/create@main
-        with:
+          directory: .
           version: ${{ inputs.version }}
-          commit: ${{ needs.Build.outputs.commit }}
+          docs: 'false'
+          publish-packages: 'true'
