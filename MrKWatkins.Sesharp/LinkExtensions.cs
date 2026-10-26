@@ -41,7 +41,8 @@ public static class LinkExtensions
     [Pure]
     private static string BuildMemberLink(string baseLink, MemberInfo memberInfo)
     {
-        if (memberInfo is MethodBase methodBase && methodBase.HasPublicOrProtectedOverloads() ||
+        if (memberInfo is ConstructorInfo constructor && Model.AssemblyParser.GetDocumentedConstructors(constructor.DeclaringType!).Skip(1).Any() ||
+            memberInfo is MethodInfo method && method.HasPublicOrProtectedOverloads() ||
             memberInfo is PropertyInfo property && property.GetIndexParameters().Length > 0 && property.HasPublicOrProtectedOverloads())
         {
             var id = MarkdownId.FromMember(memberInfo);

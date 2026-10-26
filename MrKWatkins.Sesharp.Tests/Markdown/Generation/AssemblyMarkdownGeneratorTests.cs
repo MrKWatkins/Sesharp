@@ -41,6 +41,20 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         }
     }
 
+    [TestCase(MarkdownDialect.VitePress)]
+    [TestCase(MarkdownDialect.MkDocs)]
+    public void Generate_RecordConstructorLinks(MarkdownDialect dialect)
+    {
+        var files = GenerateFiles(dialect);
+        foreach (var name in new[] { "DefaultConstructorRecord", "PrimaryConstructorRecord" })
+        {
+            var type = files.CreatedFiles[$"/MrKWatkins.Sesharp.TestAssembly.VitePress/{name}/index.md"].Text;
+
+            type.Should().Contain("](-ctor.md)");
+            type.Should().NotContain("](-ctor.md#");
+        }
+    }
+
     [Test]
     public void Generate_VitePressText()
     {

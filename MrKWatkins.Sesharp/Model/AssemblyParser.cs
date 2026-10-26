@@ -63,8 +63,7 @@ public static class AssemblyParser
     private static void AddConstructors(System.Type type, Type typeNode)
     {
         var constructors =
-            type.GetConstructors(Binding)
-                .Where(c => IsNotCompilerGenerated(c) && c.IsPublicOrProtected())
+            GetDocumentedConstructors(type)
                 .Select(c => new Constructor(c))
                 .OrderBy(f => f.DisplayName)
                 .ToList();
@@ -74,6 +73,10 @@ public static class AssemblyParser
             typeNode.Children.Add(new ConstructorGroup(constructors));
         }
     }
+
+    [Pure]
+    internal static IEnumerable<ConstructorInfo> GetDocumentedConstructors(System.Type type) =>
+        type.GetConstructors(Binding).Where(c => IsNotCompilerGenerated(c) && c.IsPublicOrProtected());
 
     private static void AddFields(System.Type type, Type typeNode)
     {
