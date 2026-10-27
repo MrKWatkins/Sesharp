@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
 using System.Reflection;
+using MrKWatkins.Reflection;
 
 namespace MrKWatkins.Sesharp;
 
@@ -13,7 +14,7 @@ public sealed class MemberLookup
         this.documentAssemblies = documentAssemblies.ToFrozenSet();
 
         var types = AssemblyDependencyLoader.LoadWithDependencies(this.documentAssemblies)
-            .SelectMany(a => a.GetExportedTypes())
+            .SelectMany(a => this.documentAssemblies.Contains(a) ? a.GetTypes() : a.GetExportedTypes())
             .Where(t => t.Namespace != null)
             .ToList();
 
@@ -53,6 +54,20 @@ public sealed class MemberLookup
     public MemberLocation GetLocation(MemberInfo member)
     {
         var rootType = GetRootType(member);
+        var visible = member switch
+        {
+            Type type => type.IsVisible,
+            ConstructorInfo constructor => constructor.IsPublicOrProtected(),
+            MethodInfo method => method.IsPublicOrProtected(),
+            FieldInfo field => field.IsPublicOrProtected(),
+            PropertyInfo property => property.IsPublicOrProtected(),
+            EventInfo @event => @event.IsPublicOrProtected(),
+            _ => false
+        };
+        if (!rootType.IsVisible || !visible)
+        {
+            return MemberLocation.Other;
+        }
         if (documentAssemblies.Contains(rootType.Assembly))
         {
             return MemberLocation.DocumentAssembly;

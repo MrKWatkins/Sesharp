@@ -194,6 +194,39 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         json.RootElement.GetProperty("entries").EnumerateArray().Count(e => e.GetProperty("kind").GetString() == "namespace").Should().Equal(1);
     }
 
+    [TestCase("Fraction", "double Fraction = 0.125;")]
+    [TestCase("RoundTrip", "double RoundTrip = 0.12345678901234568;")]
+    [TestCase("NegativeZero", "double NegativeZero = -0.0;")]
+    [TestCase("NotANumber", "double NotANumber = double.NaN;")]
+    [TestCase("PositiveInfinity", "double PositiveInfinity = double.PositiveInfinity;")]
+    [TestCase("NegativeInfinity", "double NegativeInfinity = double.NegativeInfinity;")]
+    [TestCase("SingleFraction", "float SingleFraction = 0.125f;")]
+    [TestCase("SingleNegativeZero", "float SingleNegativeZero = -0f;")]
+    [TestCase("SingleNotANumber", "float SingleNotANumber = float.NaN;")]
+    [TestCase("SinglePositiveInfinity", "float SinglePositiveInfinity = float.PositiveInfinity;")]
+    [TestCase("SingleNegativeInfinity", "float SingleNegativeInfinity = float.NegativeInfinity;")]
+    [SetCulture("fr-FR")]
+    public void Generate_FloatingPointConstants(string name, string signature)
+    {
+        var files = GenerateFiles();
+        files.CreatedFiles[$"/MrKWatkins.Sesharp.TestAssembly.Fields/FloatingPointConstants/{name}.md"].Text.Should().Contain("public const " + signature);
+    }
+
+    [TestCase("Named", "EnumConstants.Choice Named = EnumConstants.Choice.First;")]
+    [TestCase("Unnamed", "EnumConstants.Choice Unnamed = (EnumConstants.Choice)4;")]
+    [TestCase("Negative", "EnumConstants.Choice Negative = (EnumConstants.Choice)-1;")]
+    [TestCase("Zero", "EnumConstants.Bits Zero = EnumConstants.Bits.None;")]
+    [TestCase("Combined", "EnumConstants.Bits Combined = EnumConstants.Bits.First | EnumConstants.Bits.Second;")]
+    [TestCase("High", "EnumConstants.Bits High = EnumConstants.Bits.High;")]
+    [TestCase("HighCombined", "EnumConstants.Bits HighCombined = EnumConstants.Bits.First | EnumConstants.Bits.High;")]
+    [TestCase("UnnamedBits", "EnumConstants.Bits UnnamedBits = (EnumConstants.Bits)8;")]
+    public void Generate_EnumConstants(string name, string signature)
+    {
+        var files = GenerateFiles();
+        var text = files.CreatedFiles[$"/MrKWatkins.Sesharp.TestAssembly.Fields/EnumConstants/{name}.md"].Text;
+        Regex.Match(text, @"public const [^\r\n]+").Value.Should().Equal("public const " + signature);
+    }
+
     private static TestFileSystem GenerateFiles(MarkdownDialect dialect = MarkdownDialect.VitePress)
     {
         var documentation = Documentation.Load(new RealFileSystem(), TestAssemblyXmlPath);

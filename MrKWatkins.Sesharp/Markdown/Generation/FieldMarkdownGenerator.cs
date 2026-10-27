@@ -105,6 +105,20 @@ public sealed class FieldMarkdownGenerator(IFileSystem fileSystem, MemberLookup 
                 code.Write(value.ToString(DateTimeFormatInfo.InvariantInfo));
                 break;
 
+            case double value:
+                code.Write(double.IsNaN(value) ? "double.NaN" :
+                    double.IsPositiveInfinity(value) ? "double.PositiveInfinity" :
+                    double.IsNegativeInfinity(value) ? "double.NegativeInfinity" :
+                    value == 0 && double.IsNegative(value) ? "-0.0" : value.ToString("R", CultureInfo.InvariantCulture));
+                break;
+
+            case float value:
+                code.Write(float.IsNaN(value) ? "float.NaN" :
+                    float.IsPositiveInfinity(value) ? "float.PositiveInfinity" :
+                    float.IsNegativeInfinity(value) ? "float.NegativeInfinity" :
+                    value.ToString("R", CultureInfo.InvariantCulture) + "f");
+                break;
+
             case string value:
                 code.Write("\"");
                 code.Write(value);
@@ -113,13 +127,19 @@ public sealed class FieldMarkdownGenerator(IFileSystem fileSystem, MemberLookup 
 
             case Enum value:
                 var enumType = value.GetType();
-                if (!enumType.IsDefined(typeof(FlagsAttribute)))
+                var typeName = enumType.ToDisplayName();
+                var name = Enum.GetName(enumType, value);
+                if (name != null)
                 {
-                    throw new NotSupportedException($"Only flags enums are supported. {enumType.ToDisplayName()} is not a flags enum.");
+                    code.Write(typeName + "." + name);
                 }
-
-                code.Write(string.Join(" | ", GetIndividualFlags(value)));
-
+                else
+                {
+                    var formatted = value.ToString(enumType.IsDefined(typeof(FlagsAttribute)) ? "F" : "D");
+                    code.Write(char.IsDigit(formatted[0]) || formatted[0] == '-'
+                        ? "(" + typeName + ")" + formatted
+                        : string.Join(" | ", formatted.Split(", ").Select(flag => typeName + "." + flag)));
+                }
                 break;
 
             default:
@@ -127,35 +147,4 @@ public sealed class FieldMarkdownGenerator(IFileSystem fileSystem, MemberLookup 
         }
     }
 
-    [Pure]
-    private static IEnumerable<string> GetIndividualFlags(Enum flagsValue)
-    {
-        var enumType = flagsValue.GetType();
-        var allValues = Enum.GetValues(enumType).Cast<Enum>().ToArray();
-
-        var numericValue = Convert.ToInt64(flagsValue, null);
-
-        if (numericValue == 0)
-        {
-            yield break;
-        }
-
-        foreach (var enumValue in allValues)
-        {
-            var enumNumericValue = Convert.ToInt64(enumValue, null);
-
-            if (enumNumericValue == 0)
-            {
-                continue;
-            }
-
-            if (IsPowerOfTwo(enumNumericValue) && (numericValue & enumNumericValue) == enumNumericValue)
-            {
-                yield return enumValue.ToString();
-            }
-        }
-    }
-
-    [Pure]
-    private static bool IsPowerOfTwo(long value) => value > 0 && (value & (value - 1)) == 0;
 }
