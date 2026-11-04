@@ -96,3 +96,9 @@ A combination of [Seshat](https://en.wikipedia.org/wiki/Seshat), the Egyptian
 goddess of writing, wisdom and knowledge, and C Sharp. Yeah, it's not great, but
 all the various permutations of 'documentation generator' are gone and naming
 things is hard.
+
+## Licence
+
+Licensed under GPL v3.0 only (`GPL-3.0-only`). See [License.md](License.md).
+
+Previously published MIT versions retain their original licence.
