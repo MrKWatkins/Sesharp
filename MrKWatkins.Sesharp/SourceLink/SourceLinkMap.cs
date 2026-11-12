@@ -6,10 +6,7 @@ internal sealed class SourceLinkMap
 {
     private readonly IReadOnlyList<string> pathPrefixes;
 
-    private SourceLinkMap(IReadOnlyList<string> pathPrefixes)
-    {
-        this.pathPrefixes = pathPrefixes;
-    }
+    private SourceLinkMap(IReadOnlyList<string> pathPrefixes) => this.pathPrefixes = pathPrefixes;
 
     internal static SourceLinkMap? TryParse(string json)
     {
@@ -17,7 +14,9 @@ internal sealed class SourceLinkMap
         {
             using var document = JsonDocument.Parse(json);
             if (!document.RootElement.TryGetProperty("documents", out var documents))
+            {
                 return null;
+            }
 
             var prefixes = new List<string>();
 
@@ -46,7 +45,9 @@ internal sealed class SourceLinkMap
         foreach (var prefix in pathPrefixes)
         {
             if (normalised.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
                 return normalised[prefix.Length..].TrimStart('/');
+            }
         }
 
         return null;

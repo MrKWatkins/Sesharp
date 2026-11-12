@@ -5,8 +5,5 @@ namespace MrKWatkins.Sesharp.Model;
 
 public sealed class DocumentationListener : NodeListener<Documentation, ModelNode, DocumentableNode>
 {
-    protected override void ListenToNode(Documentation context, DocumentableNode node)
-    {
-        node.Documentation = context.GetMemberDocumentationOrNull(node.XmlDocId);
-    }
+    protected override void ListenToNode(Documentation context, DocumentableNode node) => node.Documentation = context.GetMemberDocumentationOrNull(node.XmlDocId);
 }

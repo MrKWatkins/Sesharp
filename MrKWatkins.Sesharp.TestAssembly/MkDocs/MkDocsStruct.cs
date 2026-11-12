@@ -10,10 +10,7 @@ public readonly struct MkDocsStruct
     /// Initializes a new instance of the <see cref="MkDocsStruct"/> struct.
     /// </summary>
     /// <param name="value">The value.</param>
-    public MkDocsStruct(int value)
-    {
-        Value = value;
-    }
+    public MkDocsStruct(int value) => Value = value;
 
     /// <summary>
     /// The integer value.

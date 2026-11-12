@@ -55,6 +55,43 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         }
     }
 
+    [TestCase(MarkdownDialect.VitePress, "PrimaryConstructorClass")]
+    [TestCase(MarkdownDialect.VitePress, "PrimaryConstructorStruct")]
+    [TestCase(MarkdownDialect.VitePress, "PrimaryConstructorGeneric-T")]
+    [TestCase(MarkdownDialect.VitePress, "PrimaryConstructorRecord")]
+    [TestCase(MarkdownDialect.VitePress, "EmptyPrimaryConstructorClass")]
+    [TestCase(MarkdownDialect.MkDocs, "PrimaryConstructorClass")]
+    [TestCase(MarkdownDialect.MkDocs, "PrimaryConstructorStruct")]
+    [TestCase(MarkdownDialect.MkDocs, "PrimaryConstructorGeneric-T")]
+    [TestCase(MarkdownDialect.MkDocs, "PrimaryConstructorRecord")]
+    [TestCase(MarkdownDialect.MkDocs, "EmptyPrimaryConstructorClass")]
+    public void Generate_PrimaryConstructorSummaries(MarkdownDialect dialect, string name)
+    {
+        var files = GenerateFiles(dialect);
+        var path = $"/MrKWatkins.Sesharp.TestAssembly.VitePress/{name}/";
+        var constructor = files.CreatedFiles[path + "-ctor.md"].Text;
+        var type = files.CreatedFiles[path + "index.md"].Text;
+
+        constructor.Should().Contain("Initializes a new instance of the ").And.Contain("](index.md)").And.NotContain("Represents a primary constructor");
+        type.Should().Contain("Represents a primary constructor").And.Contain("Initializes a new instance of the ");
+        if (name != "EmptyPrimaryConstructorClass")
+        {
+            constructor.Should().Contain("The initial value.");
+        }
+    }
+
+    [TestCase(MarkdownDialect.VitePress)]
+    [TestCase(MarkdownDialect.MkDocs)]
+    public void Generate_PrimaryConstructorPreservesRemarksAndExplicitOverload(MarkdownDialect dialect)
+    {
+        var files = GenerateFiles(dialect);
+        var constructor = files.CreatedFiles["/MrKWatkins.Sesharp.TestAssembly.VitePress/PrimaryConstructorClass/-ctor.md"].Text;
+
+        constructor.Should().Contain("## Remarks").And.Contain("Values are recorded without validation.");
+        constructor.Should().Contain("Creates the default instance using zero.");
+        constructor.Should().Contain("int value").And.Contain("The initial value.");
+    }
+
     [Test]
     public void Generate_VitePressText()
     {
@@ -130,7 +167,7 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
         using var json = JsonDocument.Parse(files.CreatedFiles["/navigation.json"].Text);
         json.RootElement.GetProperty("schemaVersion").GetInt32().Should().Equal(1);
         var entries = json.RootElement.GetProperty("entries").EnumerateArray().ToArray();
-        entries.Select(e => e.GetProperty("kind").GetString()).ToHashSet().Should().SetEquals("namespace", "type", "member");
+        entries.Select(e => e.GetProperty("kind").GetString()).ToHashSet(StringComparer.Ordinal).Should().SetEquals("namespace", "type", "member");
         var generic = entries.Single(e => e.GetProperty("path").GetString() == "MrKWatkins.Sesharp.TestAssembly.VitePress/VitePressClass-T/index.md");
         generic.GetProperty("title").GetString().Should().Equal("VitePressClass<T>");
         generic.GetProperty("parent").GetString().Should().Equal("N:MrKWatkins.Sesharp.TestAssembly.VitePress");
@@ -142,7 +179,7 @@ public sealed class AssemblyMarkdownGeneratorTests : TestFixture
                 entries.Select(e => e.GetProperty("id").GetString()).Should().Contain(parent);
             }
         }
-        entries.Select(e => e.GetProperty("id").GetString()).Distinct().Count().Should().Equal(entries.Length);
+        entries.Select(e => e.GetProperty("id").GetString()).Distinct(StringComparer.Ordinal).Count().Should().Equal(entries.Length);
         entries.Select(e => e.GetProperty("path").GetString()).Distinct(StringComparer.OrdinalIgnoreCase).Count().Should().Equal(entries.Length);
     }
 

@@ -15,8 +15,6 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
     private static readonly IReflectionFormatter DisplayNameOrKeywordFormatter =
         new CachedReflectionFormatter(new DisplayNameFormatter(new DisplayNameFormatterOptions { UseCSharpKeywordsForPrimitiveTypes = true }));
 
-    private string? currentNodeFile;
-
     public abstract void Generate(OutputNode node);
 
     protected IFileSystem FileSystem { get; } = fileSystem;
@@ -26,13 +24,9 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
     protected string OutputDirectory { get; } = outputDirectory;
 
     // The FileName of the node currently being written (e.g. "MrKWatkins.Foo/Bar/index.md").
-    internal string? CurrentNodeFile
-    {
-        get => currentNodeFile;
-        set => currentNodeFile = value;
-    }
+    internal string? CurrentNodeFile { get; set; }
 
-    internal string? CurrentNodeDirectory => currentNodeFile != null ? Path.GetDirectoryName(currentNodeFile)!.Replace('\\', '/') : null;
+    internal string? CurrentNodeDirectory => CurrentNodeFile != null ? Path.GetDirectoryName(CurrentNodeFile)!.Replace('\\', '/') : null;
 
     internal string? RepositoryUrl { get; set; }
 
@@ -45,7 +39,9 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
     protected void WriteSourceLink(MarkdownWriter writer, DocumentableNode node)
     {
         if (RepositoryUrl == null || node.SourceLocation == null)
+        {
             return;
+        }
 
         var path = string.Join('/', node.SourceLocation.RelativePath.Split('/').Select(Uri.EscapeDataString));
         var url = $"{RepositoryUrl.TrimEnd('/')}/blob/{Uri.EscapeDataString(SourceRef)}/{path}#L{node.SourceLocation.Line}";
@@ -57,7 +53,7 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
     protected MarkdownWriter CreateWriter(OutputNode node)
     {
         var filePath = Path.Combine(OutputDirectory, node.FileName);
-        currentNodeFile = node.FileName;
+        CurrentNodeFile = node.FileName;
         Navigation?.Add(NavigationEntry.FromNode(node));
         var writer = new MarkdownWriter(FileSystem, filePath, Dialect);
         writer.WriteFrontMatter(node is Model.Type ? node.DisplayName : null);
@@ -317,7 +313,7 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
     private void WriteSee(IParagraphWriter writer, See see)
     {
         var (member, location) = MemberLookup.Get(see.Id);
-        WriteMemberLink(writer, member, location, currentNodeFile, see.Text);
+        WriteMemberLink(writer, member, location, CurrentNodeFile, see.Text);
     }
 
     private void WriteSeeAlso(IParagraphWriter writer, SeeAlso seeAlso)
@@ -325,7 +321,7 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
         if (seeAlso.Cref != null)
         {
             var (member, location) = MemberLookup.Get(seeAlso.Cref);
-            WriteMemberLink(writer, member, location, currentNodeFile, seeAlso.Text);
+            WriteMemberLink(writer, member, location, CurrentNodeFile, seeAlso.Text);
         }
         else
         {
@@ -334,7 +330,7 @@ public abstract class MarkdownGenerator(IFileSystem fileSystem, MemberLookup mem
     }
 
     protected void WriteMemberLink(IParagraphWriter writer, MemberInfo member, string? text = null) =>
-        WriteMemberLink(writer, member, MemberLookup.GetLocation(member), currentNodeFile, text);
+        WriteMemberLink(writer, member, MemberLookup.GetLocation(member), CurrentNodeFile, text);
 
     protected static void WriteMemberLink(IParagraphWriter writer, MemberInfo member, MemberLocation location, string? text = null) =>
         WriteMemberLink(writer, member, location, null, text);

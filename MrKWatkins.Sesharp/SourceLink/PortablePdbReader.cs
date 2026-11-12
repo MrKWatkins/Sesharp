@@ -46,7 +46,9 @@ internal sealed class PortablePdbReader : IDisposable
 
         // Try embedded PDB.
         if (!File.Exists(assemblyPath))
+        {
             return null;
+        }
 
         PEReader? pe = null;
         try
@@ -97,7 +99,9 @@ internal sealed class PortablePdbReader : IDisposable
     internal SourceLocation? GetSourceLocation(MemberInfo memberInfo)
     {
         if (sourceLinkMap == null)
+        {
             return null;
+        }
 
         return memberInfo switch
         {
@@ -121,7 +125,9 @@ internal sealed class PortablePdbReader : IDisposable
         {
             var location = GetSourceLocationFromMethod(method);
             if (location != null)
+            {
                 return location;
+            }
         }
 
         return null;
@@ -130,7 +136,9 @@ internal sealed class PortablePdbReader : IDisposable
     private SourceLocation? GetSourceLocationFromMethod(MethodBase? method)
     {
         if (method == null)
+        {
             return null;
+        }
 
         try
         {
@@ -139,19 +147,25 @@ internal sealed class PortablePdbReader : IDisposable
             var debugInfo = reader.GetMethodDebugInformation(debugHandle);
 
             if (debugInfo.SequencePointsBlob.IsNil)
+            {
                 return null;
+            }
 
             foreach (var sp in debugInfo.GetSequencePoints())
             {
                 if (sp.IsHidden)
+                {
                     continue;
+                }
 
                 var document = reader.GetDocument(sp.Document);
                 var path = reader.GetString(document.Name);
 
                 var relativePath = sourceLinkMap?.TryMap(path);
                 if (relativePath == null)
+                {
                     continue;
+                }
 
                 return new SourceLocation(relativePath, sp.StartLine);
             }

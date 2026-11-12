@@ -19,7 +19,7 @@ public static class LinkExtensions
         }
 
         // Split off any fragment before computing the relative path.
-        var hashIndex = link.IndexOf('#');
+        var hashIndex = link.IndexOf('#', StringComparison.Ordinal);
         var targetFile = hashIndex >= 0 ? link[..hashIndex] : link;
         var fragment = hashIndex >= 0 ? link[hashIndex..] : string.Empty;
 
@@ -41,9 +41,9 @@ public static class LinkExtensions
     [Pure]
     private static string BuildMemberLink(string baseLink, MemberInfo memberInfo)
     {
-        if (memberInfo is ConstructorInfo constructor && Model.AssemblyParser.GetDocumentedConstructors(constructor.DeclaringType!).Skip(1).Any() ||
-            memberInfo is MethodInfo method && method.HasPublicOrProtectedOverloads() ||
-            memberInfo is PropertyInfo property && property.GetIndexParameters().Length > 0 && property.HasPublicOrProtectedOverloads())
+        if ((memberInfo is ConstructorInfo constructor && Model.AssemblyParser.GetDocumentedConstructors(constructor.DeclaringType!).Skip(1).Any()) ||
+            (memberInfo is MethodInfo method && method.HasPublicOrProtectedOverloads()) ||
+            (memberInfo is PropertyInfo property && property.GetIndexParameters().Length > 0 && property.HasPublicOrProtectedOverloads()))
         {
             var id = MarkdownId.FromMember(memberInfo);
             return $"{baseLink}#{id.MkDocsId}";
@@ -95,7 +95,7 @@ public static class LinkExtensions
         // (e.g. IntegerAssertions<Byte>) resolve to the same directory as
         // the definition (IntegerAssertions<T>).
         var definition = type.IsGenericTypeDefinition ? type : type.GetGenericTypeDefinition();
-        var tick = definition.Name.IndexOf('`');
+        var tick = definition.Name.IndexOf('`', StringComparison.Ordinal);
         var baseName = tick >= 0 ? definition.Name[..tick] : definition.Name;
         var typeParams = string.Join("-", definition.GetGenericArguments().Select(t => t.Name));
         return $"{parent}/{baseName}-{typeParams}";

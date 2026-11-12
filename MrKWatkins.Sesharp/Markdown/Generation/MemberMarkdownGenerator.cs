@@ -126,9 +126,7 @@ public abstract class MemberMarkdownGenerator<TMember, TMemberInfo>(IFileSystem 
             return;
         }
 
-        using (var returnsParagraph = writer.Paragraph())
-        {
-            WriteSection(returnsParagraph, returns);
-        }
+        using var returnsParagraph = writer.Paragraph();
+        WriteSection(returnsParagraph, returns);
     }
 }

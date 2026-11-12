@@ -7,10 +7,8 @@ public abstract class MemberGroup<TMember, TMemberInfo> : OutputNode
     where TMemberInfo : MemberInfo
 {
     protected MemberGroup(string name, [InstantHandle] IEnumerable<TMember> members)
-        : base(name)
-    {
+        : base(name) =>
         Children.Add(members);
-    }
 
     public abstract string GroupFileName { get; }
 

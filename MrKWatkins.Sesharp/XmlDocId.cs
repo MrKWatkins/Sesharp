@@ -8,10 +8,7 @@ public sealed class XmlDocId : IEquatable<XmlDocId>
 {
     private static readonly IReflectionFormatter Formatter = new CachedReflectionFormatter(new XmlDocIdFormatter());
 
-    private XmlDocId(string id)
-    {
-        Id = id;
-    }
+    private XmlDocId(string id) => Id = id;
 
     public string Id { get; }
 
@@ -26,7 +23,7 @@ public sealed class XmlDocId : IEquatable<XmlDocId>
 
     public bool Equals(XmlDocId? other)
     {
-        if (ReferenceEquals(null, other))
+        if (other is null)
         {
             return false;
         }

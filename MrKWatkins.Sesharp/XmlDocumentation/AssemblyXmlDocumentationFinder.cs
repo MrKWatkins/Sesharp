@@ -46,26 +46,36 @@ internal static class AssemblyXmlDocumentationFinder
         // Reference pack pattern:    {dotnetRoot}/packs/{frameworkName}.Ref/{version}/ref/net{major}.{minor}/
         var assemblyDir = Path.GetDirectoryName(assemblyLocation);
         if (assemblyDir == null)
+        {
             return null;
+        }
 
         var versionString = Path.GetFileName(assemblyDir);
 
         var frameworkDir = Path.GetDirectoryName(assemblyDir);
         if (frameworkDir == null)
+        {
             return null;
+        }
 
         var frameworkName = Path.GetFileName(frameworkDir);
 
         var sharedDir = Path.GetDirectoryName(frameworkDir);
         if (sharedDir == null || !Path.GetFileName(sharedDir).Equals("shared", StringComparison.OrdinalIgnoreCase))
+        {
             return null;
+        }
 
         var dotnetRoot = Path.GetDirectoryName(sharedDir);
         if (dotnetRoot == null)
+        {
             return null;
+        }
 
         if (!Version.TryParse(versionString, out var version))
+        {
             return null;
+        }
 
         var tfm = $"net{version.Major}.{version.Minor}";
         var refPackName = frameworkName + ".Ref";

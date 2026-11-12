@@ -4,7 +4,7 @@ namespace MrKWatkins.Sesharp.Testing;
 
 public sealed class TestFileSystem : IFileSystem
 {
-    private readonly Dictionary<string, CreatedFile> createdFiles = new();
+    private readonly Dictionary<string, CreatedFile> createdFiles = new(StringComparer.Ordinal);
 
     public StreamWriter CreateText(string path)
     {
@@ -27,10 +27,7 @@ public sealed class TestFileSystem : IFileSystem
 
     public bool DirectoryExists(string path) => false;
 
-    public void DeleteDirectory(string path, bool recursive)
-    {
-        throw new NotImplementedException();
-    }
+    public void DeleteDirectory(string path, bool recursive) => throw new NotImplementedException();
 
     public void CreateDirectory(string path)
     {

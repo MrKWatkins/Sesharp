@@ -8,10 +8,14 @@ internal sealed class InheritDocListener : NodeListener<InheritDocResolver, Mode
     protected override void ListenToNode(InheritDocResolver resolver, DocumentableNode node)
     {
         if (node.Documentation?.HasInheritDoc != true)
+        {
             return;
+        }
 
         var inherited = resolver.Resolve(node.MemberInfo);
         if (inherited != null)
+        {
             node.Documentation = node.Documentation.MergeWithInherited(inherited);
+        }
     }
 }

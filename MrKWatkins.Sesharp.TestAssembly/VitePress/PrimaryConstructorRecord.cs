@@ -1,5 +1,8 @@
 namespace MrKWatkins.Sesharp.TestAssembly.VitePress;
 
-/// <summary>A record used to verify constructor links.</summary>
+/// <summary>
+/// Represents a primary constructor record.
+/// </summary>
+/// <param name="Value">The initial value.</param>
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public record PrimaryConstructorRecord(int Value);

@@ -9,10 +9,7 @@ public sealed class DocumentationSection
     private static readonly Regex NewLineRegex = new(@"\r?\n", RegexOptions.Compiled);
     private static readonly Regex ReduceWhitespaceRegex = new(@"\s\s+", RegexOptions.Compiled);
 
-    private DocumentationSection([InstantHandle] IEnumerable<DocumentationElement> elements)
-    {
-        Elements = elements.ToList();
-    }
+    private DocumentationSection([InstantHandle] IEnumerable<DocumentationElement> elements) => Elements = elements.ToList();
 
     public IReadOnlyList<DocumentationElement> Elements { get; }
 

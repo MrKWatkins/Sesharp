@@ -37,7 +37,7 @@ public sealed class XmlDocIdTests : EqualityTestFixture
     private static class TestCases
     {
 #pragma warning disable CA1814
-        public static void MultidimensionalArrayParameter(int[,] parameter)
+        public static void MultidimensionalArrayParameter(int[,] _)
         {
         }
 #pragma warning restore CA1814

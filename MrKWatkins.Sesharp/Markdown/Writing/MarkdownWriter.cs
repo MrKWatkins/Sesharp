@@ -19,10 +19,10 @@ public sealed partial class MarkdownWriter(IFileSystem fileSystem, [PathReferenc
 
     [Pure]
     private static string Escape(string text) => HttpUtility.HtmlEncode(text)
-        .Replace("[]", @"\[\]")
-        .Replace("{", "&#123;")
-        .Replace("}", "&#125;")
-        .Replace("|", "&#124;");
+        .Replace("[]", @"\[\]", StringComparison.Ordinal)
+        .Replace("{", "&#123;", StringComparison.Ordinal)
+        .Replace("}", "&#125;", StringComparison.Ordinal)
+        .Replace("|", "&#124;", StringComparison.Ordinal);
 
     private void WriteLine() => writer.WriteLine();
 

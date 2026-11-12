@@ -11,10 +11,7 @@ public sealed class MkDocsGenericClass<T>
     /// Initializes a new instance of the <see cref="MkDocsGenericClass{T}"/> class.
     /// </summary>
     /// <param name="source">The source <see cref="MkDocsClass"/>.</param>
-    public MkDocsGenericClass(MkDocsClass source)
-    {
-        Source = source;
-    }
+    public MkDocsGenericClass(MkDocsClass source) => Source = source;
 
     /// <summary>
     /// The source <see cref="MkDocsClass"/>.

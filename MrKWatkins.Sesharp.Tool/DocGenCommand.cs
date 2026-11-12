@@ -62,7 +62,7 @@ public sealed class DocGenCommand(IAnsiConsole console, IFileSystem fileSystem) 
     private sealed class DocumentationLoadContext(IEnumerable<string> assemblyPaths)
         : AssemblyLoadContext(nameof(DocumentationLoadContext), isCollectible: true)
     {
-        private readonly string[] directories = assemblyPaths.Select(path => Path.GetDirectoryName(path)!).Distinct().ToArray();
+        private readonly string[] directories = [.. assemblyPaths.Select(path => Path.GetDirectoryName(path)!).Distinct(StringComparer.Ordinal)];
 
         protected override Assembly? Load(AssemblyName assemblyName)
         {

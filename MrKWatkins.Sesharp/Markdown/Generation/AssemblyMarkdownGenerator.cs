@@ -20,7 +20,7 @@ public static class AssemblyMarkdownGenerator
         var memberLookup = new MemberLookup(assembliesDetails.Select(a => a.ReflectionAssembly));
         var navigation = new List<NavigationEntry>();
         var namespaces = assembliesDetails.SelectMany(a => a.Namespaces)
-            .GroupBy(n => n.Name).OrderBy(g => g.Key, StringComparer.Ordinal).ToList();
+            .GroupBy(n => n.Name, StringComparer.Ordinal).OrderBy(g => g.Key, StringComparer.Ordinal).ToList();
 
         fileSystem.CreateDirectory(outputDirectory);
         using (var index = new MarkdownWriter(fileSystem, Path.Combine(outputDirectory, "index.md"), dialect))
@@ -37,7 +37,7 @@ public static class AssemblyMarkdownGenerator
         foreach (var group in namespaces)
         {
             var types = group.SelectMany(n => n.Types).OrderBy(t => t.FileName, StringComparer.Ordinal).ToList();
-            var collision = types.GroupBy(t => t.FileName).FirstOrDefault(g => g.Count() > 1);
+            var collision = types.GroupBy(t => t.FileName, StringComparer.Ordinal).FirstOrDefault(g => g.Count() > 1);
             if (collision != null)
             {
                 throw new InvalidOperationException($"Multiple types would write {collision.Key}; use assemblies with distinct public type names.");

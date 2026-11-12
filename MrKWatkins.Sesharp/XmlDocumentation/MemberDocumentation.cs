@@ -62,9 +62,17 @@ public sealed class MemberDocumentation
         IReadOnlyDictionary<string, DocumentationSection> local,
         IReadOnlyDictionary<string, DocumentationSection> inherited)
     {
-        if (local.Count == 0) return inherited;
-        if (inherited.Count == 0) return local;
-        var merged = new Dictionary<string, DocumentationSection>(inherited);
+        if (local.Count == 0)
+        {
+            return inherited;
+        }
+
+        if (inherited.Count == 0)
+        {
+            return local;
+        }
+
+        var merged = new Dictionary<string, DocumentationSection>(inherited, StringComparer.Ordinal);
         foreach (var (key, value) in local)
         {
             merged[key] = value;
@@ -96,13 +104,13 @@ public sealed class MemberDocumentation
             .Elements("typeparam")
             .ToDictionary(
                 tp => tp.Attribute("name")?.Value ?? throw new FormatException("<typeparam> element does not have name attribute."),
-                DocumentationSection.Parse);
+                DocumentationSection.Parse, StringComparer.Ordinal);
 
         var parameters = memberXml
             .Elements("param")
             .ToDictionary(
                 tp => tp.Attribute("name")?.Value ?? throw new FormatException("<param> element does not have name attribute."),
-                DocumentationSection.Parse);
+                DocumentationSection.Parse, StringComparer.Ordinal);
 
         var returns = DocumentationSection.ParseOrNull(memberXml.Element("returns"));
 

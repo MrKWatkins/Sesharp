@@ -124,10 +124,7 @@ internal sealed class DepsJsonLookup
 {
     private readonly Dictionary<string, string> _assemblyPaths;
 
-    private DepsJsonLookup(Dictionary<string, string> assemblyPaths)
-    {
-        _assemblyPaths = assemblyPaths;
-    }
+    private DepsJsonLookup(Dictionary<string, string> assemblyPaths) => _assemblyPaths = assemblyPaths;
 
     [Pure]
     internal string? Resolve(string assemblyName) =>
